@@ -83,6 +83,11 @@ for (const [name, spec] of Object.entries(agents)) {
   const entry = { installed: true, path, usable: false, capabilities: {} };
   data.agents[name] = entry;
   if (spec.probe.length > 0) {
+    // Pre-seed in registry order: jobs finish in any order, and key
+    // insertion order drives the rendered line — keep it deterministic.
+    for (const cap of spec.probe) {
+      entry.capabilities[cap] = { ok: false, detail: 'unprobed' };
+    }
     for (const cap of spec.probe) {
       jobs.push(
         probeOne(spec, capabilities[cap].prompt).then(({ err, out }) => {
