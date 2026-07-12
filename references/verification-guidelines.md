@@ -10,7 +10,8 @@
 
 **MUST NOT:**
 
-1. You **MUST NOT** treat compiling code, passing tests, or plausible-looking output as doneness — they are progress.
+1. You **MUST NOT** accept a substitute for driving the use path.
+   - Exemplars: reasoning that it should work; reading the code instead of running it; a passing test suite when it differs from the use path; output that merely looks right.
 
 ## The Method
 
@@ -30,7 +31,8 @@
 
 1. You **MUST** verify in-session when the session's own tools reach the interface: run the command, read the artifact, call the endpoint.
 2. You **MUST** route what the session cannot drive through the external agents: a web flow is a `browser` brief to attune:external-agent, a GUI flow is a `computer-use` brief, an independent re-check of a claim is an `auditing` brief.
-3. You **MUST** invoke the `verify` skill, when one is available in the session, before declaring a nontrivial change done — these guidelines set the standard; the skill carries the procedure.
+3. You **MUST** pin Codex (`AGENTS: codex`) in browser and computer-use verification briefs (human ruled) — verification evidence comes from Codex, never from a fallback agent.
+4. You **MUST** invoke the `verify` skill, when one is available in the session, before declaring a nontrivial change done — these guidelines set the standard; the skill carries the procedure.
 
 ## Proportionality
 
@@ -45,11 +47,5 @@
 
 1. You **MUST** report verified and unverified as different things: state what was driven and what was observed, fork by fork.
 2. You **MUST** report a fork you could not drive as unverified, with the reason.
-
-**MUST NOT:**
-
-1. You **MUST NOT** declare a result done on the strength of reasoning alone when its use path is drivable.
-2. You **MUST NOT** substitute reading the code for running the code.
-3. You **MUST NOT** let a passing test suite stand in for the use path when the two differ.
 
 </VERIFICATION_GUIDELINES>
