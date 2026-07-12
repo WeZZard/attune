@@ -45,8 +45,11 @@ reshape it back into per-agent strength lists. The
 router verifies parameters against each CLI's current `--help` before every
 launch (human ruled: external CLIs update frequently — never invoke from
 memory). When the router reports that a CLI's help contradicts the matrix,
-updating the matrix's last-verified line is the user's editorial act. Briefs
-with `OUTPUT: artifact` make the external agent reply with explicit
+updating the matrix's last-verified line is the user's editorial act. The
+brief is markdown: `## Metadata` (GOAL/TAGS/AGENTS/CAPABILITIES_MARKER), the
+task prompt inside `<EXTERNAL_AGENT_TASK_PROMPT>` tags, and `## Response` —
+the report shape the router owes the main conversation. A Response section
+that demands artifact paths makes the external agent reply with explicit
 `ARTIFACT_PATH:` lines, which the router passes through verbatim.
 
 Tool-dependent strengths (MCP-armed: browser use, computer use) are gated by

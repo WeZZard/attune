@@ -14,7 +14,7 @@ A question neither the world nor the user can answer until it is tried: "does th
 ## Protocol
 
 1. **Frame.** Name the experiment (kebab-case) and write the single criterion the candidates compete on. A candidate set without a criterion is taste-polling, not an experiment.
-2. **Produce.** Render 2–4 candidates of the same content into `${TMPDIR}/attune-experiments/<name>/`. Produce at least one yourself. Widen the set with external producers: one attune:external-agent brief per producer (`OUTPUT: text`, `AGENTS: <agent>` to pin which model renders).
+2. **Produce.** Render 2–4 candidates of the same content into `${TMPDIR}/attune-experiments/<name>/`. Produce at least one yourself. Widen the set with external producers: one attune:external-agent brief per producer (`AGENTS: <agent>` pins which model renders; the brief's `## Response` section asks for the rendered text verbatim).
 3. **Blind.** Copy the candidates to letter names (`A.md`, `B.md`, …) in shuffled order (use `$RANDOM`), stripping every provenance hint from the content. Write the letter-to-producer mapping to `mapping.txt`; never show it to a judge and never quote it before the ruling.
 4. **Judge.** Send each judge the letter-named candidates and the criterion: one attune:external-agent brief per judge (`TAGS: auditing`, `AGENTS: <agent>` to pin it), 2–3 different agents, in parallel. Each judge ranks the candidates against the criterion and justifies its ranking in two sentences.
 5. **Rule.** Present the candidates and the anonymized verdicts to the user. The user rules. Reveal the mapping only after the ruling.

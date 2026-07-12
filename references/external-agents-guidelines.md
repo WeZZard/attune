@@ -9,13 +9,22 @@ One path delegates work to an external agent: the router, **attune:external-agen
 ### Task brief contract (the one communication contract)
 
 ```text
-GOAL: <one line — what the task must accomplish>
-OUTPUT: <text | artifact — what comes back>
-TAGS: <task traits, e.g. browser, computer-use, image-generation, auditing>
-AGENTS: <optional explicit agent list; omit to let the matrix decide>
-CAPABILITIES_MARKER: <optional path to a capability marker from an earlier probe; omit to let the router probe what it needs>
----
+## Metadata
+
+- GOAL: <one line — what the task must accomplish>
+- TAGS: <task traits, e.g. browser, computer-use, image-generation, auditing>
+- AGENTS: <optional explicit agent list; omit to let the matrix decide>
+- CAPABILITIES_MARKER: <optional path to an existing capability marker; omit to let the router probe what it needs>
+
+## External Agent Task Prompt
+
+<EXTERNAL_AGENT_TASK_PROMPT>
 <the full, self-contained task prompt for the external agent — it sees nothing else>
+</EXTERNAL_AGENT_TASK_PROMPT>
+
+## Response
+
+<how the router responds to the main conversation — the report shape, including artifact paths when the task produces artifacts>
 ```
 
 The main conversation composes the brief because it holds the context; the router never invents context it was not given.
@@ -63,7 +72,7 @@ Every role is one brief to attune:external-agent:
 
 Some capabilities occupy an exclusive machine resource — concurrent use fails or cross-talks (verified 2026-07):
 
-- **computer use** — the desktop session: one GUI, one keyboard/pointer state (human ruled exclusive). Resource: `desktop`.
+- **computer use** — cua itself is concurrency-safe by design: its No-Foreground Contract keeps the real cursor and frontmost app untouched, and per-agent app instances avoid same-app contention (per amplify `agents/computer-use-cua.md`, verified against cua.ai/docs). Attune serializes anyway because it cannot verify an external agent honors that discipline or avoids the app the human is using — a policy choice, not a technical necessity (human ruled). Resource: `desktop`.
 - **Chrome DevTools MCP** — default-config instances share one persistent Chrome profile (`~/.cache/chrome-devtools-mcp/`); a second concurrent launch fails with "The browser is already running… Use --isolated" (per github.com/ChromeDevTools/chrome-devtools-mcp issues #224, #292). Resource: `chrome-devtools-profile`.
 - **Playwright MCP** — default-config instances use a persistent profile guarded by the browser's own singleton lock; a concurrent second instance fails with "Browser is already in use… use --isolated" (per the microsoft/playwright-mcp README and issues #769, #891). Resource: `playwright-profile`.
 
