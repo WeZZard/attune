@@ -32,16 +32,21 @@ own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
 that would truncate: it runs each real hook against a fixture PATH with every
 agent installed and requires 300 characters of headroom for machine-dependent
-path lengths. A new reference document means a new hook, not a bigger one.
+path lengths. A new reference document means a new hook, not a bigger one —
+or no hook at all when a command's output surfaces it progressively
+(`references/resource-guidelines.md` is the latter: `external-agents.sh
+matrix` prints the lock instructions when they apply and points to the doc
+for the reasons; it is never injected).
 
 ## External agent routing
 
-The selection matrix in `references/external-agents-guidelines.md` is the
-single source of truth for agent selection and last-verified invocations; the
-router (`agents/external-agent.md`) reads it at runtime and never restates it. The
-matrix is categorized by task, and each category lists agents in priority
-order (human ruled: Codex before Kimi for browser and computer use) — never
-reshape it back into per-agent strength lists. The
+The task categories in `references/external-agents-guidelines.md` are the
+single source of truth for agent selection; the router
+(`agents/external-agent.md`) reads them at runtime and never restates them.
+Each category lists agents in priority order (human ruled: Codex before Kimi
+for browser and computer use) — never reshape it back into per-agent
+strength lists, and never list invocations there (they live in the
+registry). The
 router verifies parameters against each CLI's current `--help` before every
 launch (human ruled: external CLIs update frequently — never invoke from
 memory). When the router reports that a CLI's help contradicts the matrix,
@@ -53,9 +58,14 @@ that demands artifact paths makes the external agent reply with explicit
 `ARTIFACT_PATH:` lines, which the router passes through verbatim.
 
 Tool-dependent strengths (MCP-armed: browser use, computer use) are gated by
-capability flags probed behaviorally by `scripts/external-agents.sh capable` from
-`capabilities.json` — the matrix names them as `requires <agent>.<capability>`
-and the router never proceeds on an unprobed flag. `capabilities.json` fields:
+capability flags probed behaviorally. The router's single probe step is
+`external-agents.sh matrix` — one call, all agents, installed/usable/capable
+in parallel, memoized in a marker (Fable-class turns cost minutes; never
+design a flow that probes layer-by-layer). The matrix output also carries the
+lock commands for exclusive resources — progressive disclosure: the lock
+protocol reaches an agent exactly when a locked capability concerns it, and
+`references/resource-guidelines.md` (never injected) holds the reasons.
+`capabilities.json` fields:
 
 - `capabilities.<name>` — one probe definition, shared by every agent that
   lists it: `prompt` (must make the agent exercise the tool, echo
@@ -63,8 +73,10 @@ and the router never proceeds on an unprobed flag. `capabilities.json` fields:
   failure reply), `expect` (the substring proving success; reduction is
   fail-closed: ok = exit 0, `expect` present, `CAPABILITY_MISSING` absent),
   and `strength` (what the flag gates, for the human reading the file).
-- `agents.<agent>.invocation` — argv template for one headless probe run of
-  this agent; `{prompt}` marks the argument the probe prompt replaces.
+- `agents.<agent>.invocation` — argv template for one headless run of this
+  agent; `{prompt}` marks the argument the prompt replaces. Serves the probes
+  AND the router's last-verified launch baseline — the registry is the only
+  place invocations live; never restate them in a guidelines document.
 - `agents.<agent>.prompt_via` — present and `"stdin"` when the CLI takes the
   prompt on stdin; the argv then carries no `{prompt}`.
 - `agents.<agent>.probe` — the capability names probed for this agent; each

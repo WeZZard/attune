@@ -37,14 +37,16 @@ standing rulings; only the user changes them.
 - **Skills** — `attune:interview` (route unknowns by oracle during
   discussions), `attune:experiment` (blind comparison with an external judge
   panel).
-- **External agents** — a Haiku router (`attune:external-agent`) dispatches task
-  briefs composed by the main conversation: it selects agents from the
-  selection matrix in the guidelines, gates tool-dependent strengths (browser
-  use, computer use) on capability flags probed behaviorally
-  (`scripts/external-agents.sh capable`, definitions in `capabilities.json`,
-  which doubles as the agent registry), verifies CLI parameters against each
-  agent's current `--help` (external CLIs update frequently), and returns
-  outputs and artifact paths verbatim. It is the single delegation path — one
+- **External agents** — a Haiku router (`attune:external-agent`) dispatches
+  task briefs composed by the main conversation. Its single probe step is
+  `scripts/external-agents.sh matrix`: one call returns installed / usable /
+  capable for every registry agent (probes in parallel, memoized in a
+  marker), plus lock instructions for exclusive resources — progressive
+  disclosure, with the reasons in `references/resource-guidelines.md` (never
+  injected). The router selects by task category, holds the printed locks,
+  verifies CLI parameters against each agent's current `--help` against the
+  registry baseline in `capabilities.json`, and responds as each brief's
+  Response section specifies. It is the single delegation path — one
   communication contract, in the external agents guidelines. An external
   agent that must write to a repository runs in a git worktree
   (`scripts/worktree.sh`); its diff returns as evidence, and merging stays an
