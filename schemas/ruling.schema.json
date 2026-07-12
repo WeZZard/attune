@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/WeZZard/attune/schemas/ruling.schema.json",
+  "title": "Attune ruling",
+  "description": "One line of a rulings.jsonl store. The store is append-only: a later row with the same id replaces the earlier row; a row whose supersedes names an id retires that id.",
+  "type": "object",
+  "required": ["id", "date", "ruling", "oracle", "scope", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Kebab-case identifier; the meaning lives in the name, never in a numeric suffix."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "The day the ruling settled."
+    },
+    "ruling": {
+      "type": "string",
+      "description": "The enforceable judgment, written so a future session can apply it without the originating conversation."
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Why the user ruled this way; present when the reason was stated."
+    },
+    "oracle": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Provenance marks: 'human ruled' (present on every ruling), 'per <source>' for research that informed it, 'per experiment <name>' for evidence built by an experiment. Consumed by the consolidate skill when deciding what may merge."
+    },
+    "provenance": {
+      "type": "string",
+      "description": "Free-form origin note, e.g. the file a seed ruling migrated from."
+    },
+    "scope": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Validity axes: 'global' (every session), 'medium:<m>' (applies when producing that medium, e.g. medium:blog, medium:commit), 'project:<dir-basename>' (sessions whose project directory matches). The sheet generator selects by these."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "superseded", "retired"],
+      "description": "'active' rulings render into the sheet; 'superseded' and 'retired' rows are history. The generator derives effective status from later same-id rows and supersedes references."
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "Id of the ruling this row absorbs or retires; present only on consolidation and reversal rows."
+    }
+  }
+}
