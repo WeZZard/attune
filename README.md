@@ -1,92 +1,91 @@
 # Attune
 
-Give every session the knowledge a model cannot internalize: the user's
-communication guidelines, output-style rulings, and external agent usage
-rules. A Claude Code plugin.
+Attune is a Claude Code plugin that injects your standing guidelines into
+every session: how to write to you, when to delegate to external agents,
+and what counts as verified work.
 
-## The epistemology
+Models start every session knowing nothing about you. Attune carries the
+part that never becomes model knowledge: your preferences and your rules.
 
-Every open question in a discussion has exactly one oracle:
+## What you get
 
-- **World knowledge comes from the world.** Research it — background `Explore`
-  agents with web search, launched eagerly the moment the unknown is
-  classified. Never ask the user what the world can answer.
-- **Subjective judgments come from the human.** Ask — one decision-changing
-  question at a time, each carrying a recommended answer.
-- **Knowledge nobody owns yet** is settled by experiment: blind candidates
-  judged by an external panel, ruled on by the human.
+Three documents arrive in context at session start, each through its own
+hook:
 
-A ruling settles the task at hand. The guidelines documents are the user's
-standing rulings; only the user changes them.
+- **Communication guidelines** — the voice and sentence discipline replies
+  must follow.
+- **External agents guidelines** — task categories with a ruled priority
+  order over Codex, Kimi, Antigravity, Cursor, and Grok; one task-brief
+  contract; and a live report of which agent CLIs are installed.
+- **Verification guidelines** — a result is done only when it has survived
+  its use path. The rules define the path, its forks, and honest reporting.
+
+One subagent does the delegating. `attune:external-agent` is a Haiku
+router: it gathers agent facts in one probe call, picks by task category,
+locks exclusive resources, checks each CLI's current `--help` before
+launching, and reports back in the shape your brief asks for.
+
+## Quick start
+
+```bash
+claude --plugin-dir /path/to/attune
+```
+
+Start a session. The guidelines appear in context, and the availability
+report at the end of the external agents section shows what your machine
+has installed.
 
 ## How it works
 
-- **Guidelines** — `references/communication-guidelines.md` (output style)
-  and `references/external-agents-guidelines.md` (external agent usage).
-  These documents are the product: version-controlled markdown authored and
-  maintained by the user.
-- **Session start** — one hook per guidelines document, so each gets its own
-  10,000-character platform output cap: the communication guidelines, the
-  external agents guidelines plus an availability report
-  (`scripts/external-agents.sh installed` — free PATH detection over the
-  agent registry), and the verification guidelines (a result is done only
-  when it survived its use path — designed, forked, and driven end to end).
-- **Usability probing** — `scripts/probe-external-agents.sh` (vendored from
-  amplify) proves an agent actually works — binary, login, network, model —
-  with one minimal paid prompt per agent, run on demand in the background.
-- **Skills** — `attune:interview` (route unknowns by oracle during
-  discussions), `attune:experiment` (blind comparison with an external judge
-  panel).
-- **External agents** — a Haiku router (`attune:external-agent`) dispatches
-  task briefs composed by the main conversation. Its single probe step is
-  `scripts/external-agents.sh matrix`: one call returns installed / usable /
-  capable for every registry agent (probes in parallel, memoized in a
-  marker), plus lock instructions for exclusive resources — progressive
-  disclosure, with the reasons in `references/resource-guidelines.md` (never
-  injected). The router selects by task category, holds the printed locks,
-  verifies CLI parameters against each agent's current `--help` against the
-  registry baseline in `capabilities.json`, and responds as each brief's
-  Response section specifies. It is the single delegation path — one
-  communication contract, in the external agents guidelines. An external
-  agent that must write to a repository runs in a git worktree
-  (`scripts/worktree.sh`); its diff returns as evidence, and merging stays an
-  explicit step in the main conversation.
+The guidelines are the product. They are markdown files under
+`references/`, written and maintained by you. Only you change them, and
+git history is the review trail. Each file is injected by its own
+SessionStart hook, so each gets the platform's full 10,000-character
+output budget. A pre-commit gate fails any commit whose document would
+overflow it.
 
-## Install
+Facts about external agents are probed, never assumed.
+`scripts/external-agents.sh matrix` answers installed, usable, and capable
+for every agent in one call; probes run in parallel and results memoize in
+a marker file. When a capability occupies an exclusive resource, such as
+the desktop or a shared browser profile, the matrix output prints the
+exact lock commands, and `scripts/resource-lock.sh` serializes access with
+leased, token-guarded locks.
 
-```bash
-/plugin marketplace add WeZZard/skills
-/plugin install attune@wezzard-skills
-```
+External agents never write to a repository directly. A writing delegation
+gets a git worktree (`scripts/worktree.sh`); the diff comes back as
+evidence, and merging stays a decision in the main conversation.
 
-(Marketplace entry pending; during development, install from this repository
-path.)
+Three sources of knowledge, three ways to settle a question: research the
+world, ask the human, and settle by experiment what neither knows. Two
+skills run that loop. `attune:interview` routes open unknowns to their
+oracle during discussions; `attune:experiment` settles style questions
+with blind comparisons judged by external models.
 
 ## Layout
 
 ```
 .claude-plugin/plugin.json   manifest
-agents/                      external-agent (the router — the one delegation path)
-capabilities.json            agent registry + capability probe definitions
-hooks/                       SessionStart guidelines + availability injection
-references/                  the guidelines documents (the product)
-scripts/                     external-agents facts command, usability probe, worktree
+agents/                      the external-agent router
+capabilities.json            agent registry and capability probe definitions
+hooks/                       one SessionStart hook per guidelines document
+references/                  the guidelines documents
+scripts/                     agent facts, resource locks, worktree isolation
 skills/                      interview, experiment
-utils/                       development tooling (the commit gate)
+utils/                       the commit gate
 ```
 
 ## Tests and the commit gate
 
 ```bash
 node --test scripts/*.test.mjs
-git config core.hooksPath .githooks   # enable the pre-commit gate, once per clone
+git config core.hooksPath .githooks   # enable the gate, once per clone
 ```
 
-The pre-commit gate syntax-checks the hook, runs the tests, and fails any
-commit whose guidelines would overflow the platform's hook output cap
-(`utils/check-hook-budget.sh`): it runs the real SessionStart hook against
-a fixture PATH with every agent installed — the longest availability report —
-and requires 300 characters of headroom for machine-dependent path lengths.
+The gate syntax-checks the hooks, runs the tests, and fails any commit
+whose guidelines would overflow the hook output cap. It runs each real
+hook against a fixture PATH with every agent installed and requires 300
+characters of headroom for machine-dependent paths.
 
 ## License
 
