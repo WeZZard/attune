@@ -2,9 +2,19 @@
 
 <EXTERNAL_AGENTS_GUIDELINES>
 
-## The interface
+## The Interface
 
-One path delegates work to an external agent: the router, **attune:external-agent**. Compose a task brief (the one contract below) and spawn it; the router selects agents, gates tool-dependent strengths on probed capability flags under their resource locks, verifies CLI parameters against each agent's current `--help`, launches headless runs, and responds as the brief's Response section specifies.
+One path delegates work to an external agent: the router, **attune:external-agent**. It selects agents, gates tool-dependent strengths on probed capability flags under their resource locks, verifies CLI parameters against each agent's current `--help`, launches headless runs, and responds as the brief's Response section specifies.
+
+**MUST:**
+
+1. You **MUST** delegate external agent work only through attune:external-agent, with a task brief in the contract below.
+2. You **MUST** compose the brief in the main conversation — it holds the context — and write the task prompt fully self-contained: the external agent sees nothing else.
+
+**MUST NOT:**
+
+1. You **MUST NOT** invoke an external agent CLI directly from the main conversation.
+2. You **MUST NOT** expect the router to invent context the brief does not carry.
 
 ### Task brief contract (the one communication contract)
 
@@ -27,41 +37,64 @@ One path delegates work to an external agent: the router, **attune:external-agen
 <how the router responds to the main conversation — the report shape, including artifact paths when the task produces artifacts>
 ```
 
-The main conversation composes the brief because it holds the context; the router never invents context it was not given.
+## Task Categories
 
-## Task categories
-
-Delegate by the task's category; within a category, agents stand in priority order (human ruled): the first whose facts hold wins, and the router falls down the list otherwise. Category names double as `TAGS` vocabulary. Only work worth sending out is listed — a task the session handles natively (e.g. reading images: Claude has vision) stays in-session and gets no category.
+Category names double as `TAGS` vocabulary. Within a category, agents stand in priority order (human ruled):
 
 - **browser** — 1. Codex (requires `codex.playwright` or `codex.chrome_devtools`); 2. Kimi (requires `kimi.playwright` or `kimi.chrome_devtools`).
 - **computer-use** — 1. Codex (requires `codex.computer_use`).
 - **image-generation** — 1. Codex; 2. Antigravity (`agy`, Gemini image models).
 - **auditing** — 1. Codex; 2. Antigravity; 3. Kimi; 4. Cursor (`cursor-agent`); 5. Grok.
 
-## Facts before use
+**MUST:**
 
-Whether an agent works right now is a volatile fact — probe it, never assume it; a failed probe fails closed. One command answers everything in one call:
+1. You **MUST** pick by the task's category and honor its priority order: the first agent whose facts hold wins, falling down the list otherwise.
+2. You **MUST** keep a task in-session when the session handles it natively (e.g. reading images: Claude has vision) — only work worth sending out gets a category.
+
+**MUST NOT:**
+
+1. You **MUST NOT** delegate a task that maps to no category without the user directing it.
+
+## Facts Before Use
+
+One command answers everything in one call, printing installed / usable / capable per registry agent plus lock instructions for any exclusive resource in play (why: `references/resource-guidelines.md`):
 
 ```bash
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/external-agents.sh" matrix <marker.json>
 ```
 
-It prints, per registry agent, installed / usable / capable-per-capability, plus lock instructions for any exclusive resource in play (why: `references/resource-guidelines.md`). Probes run in parallel and results are memoized in the marker — pass the marker path in a brief's `CAPABILITIES_MARKER` so the router never re-probes. The free installed-only report is injected below these guidelines at session start.
+**MUST:**
 
-## Write isolation (human ruled)
+1. You **MUST** treat whether an agent works right now as a volatile fact: probe it, never assume it; a failed probe fails closed.
+2. You **MUST** gather the facts in one matrix call and pass the marker path in the brief's `CAPABILITIES_MARKER` so the router never re-probes.
 
-An external agent never writes to a repository directly — it runs as its own process with its own unsynchronized git behavior. When a delegation requires repository writes, create a worktree first:
+**MUST NOT:**
 
-```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/worktree.sh" create <repo-dir> <name>
-```
+1. You **MUST NOT** probe layer-by-layer or agent-by-agent — the matrix call is the single probe step.
 
-Point the external agent at the worktree, collect `worktree.sh diff` as evidence, merge explicitly in the main conversation or discard, then `worktree.sh remove`. Non-repository artifacts (generated images and similar) are different: the prompt requires the agent to reply with each artifact's path, and the path is passed back verbatim.
+The free installed-only report is injected below these guidelines at session start.
+
+## Write Isolation
+
+**MUST:**
+
+1. You **MUST** create a worktree before a delegation that writes into a repository — `bash "${CLAUDE_PLUGIN_ROOT}/scripts/worktree.sh" create <repo-dir> <name>` — point the external agent at it, collect `worktree.sh diff` as evidence, merge or discard explicitly in the main conversation, then `worktree.sh remove`.
+2. You **MUST** require explicit artifact paths in the reply for non-repository artifacts (generated images and similar) and pass them back verbatim.
+
+**MUST NOT:**
+
+1. You **MUST NOT** let an external agent write to a repository directly — it runs as its own process with its own unsynchronized git behavior.
 
 ## Conduct
 
-- The router derives launch parameters from the registry baseline (`capabilities.json`) verified against fresh `--help` output — never from memory; external CLIs update frequently.
-- One invocation per task; parallelize independent tasks across agents.
-- External output is evidence, never a decision: synthesis and every ruling stay in the main conversation with the human.
+**MUST:**
+
+1. You **MUST** derive launch parameters from the registry baseline (`capabilities.json`) verified against fresh `--help` output — external CLIs update frequently.
+2. You **MUST** send one invocation per task and parallelize independent tasks across agents.
+3. You **MUST** treat external output as evidence, never a decision: synthesis and every ruling stay in the main conversation with the human.
+
+**MUST NOT:**
+
+1. You **MUST NOT** invoke an external CLI from remembered flags.
 
 </EXTERNAL_AGENTS_GUIDELINES>

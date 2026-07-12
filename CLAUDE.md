@@ -21,6 +21,11 @@ research- or experiment-informed rules in, inline provenance marks
 `references/communication-style-guidelines.md` and diverges as the user
 maintains it — it is NOT vendored-frozen.
 
+**Guidelines authoring style (human ruled):** principles are numbered
+**MUST:** / **MUST NOT:** lists ("1. You **MUST** …"). Factual material —
+contract templates, category tables, findings, command blocks — stays
+structural; only the rules take the list form.
+
 ## Injection budget
 
 Hook output is capped at 10,000 characters per command
