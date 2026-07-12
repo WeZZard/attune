@@ -130,7 +130,6 @@ internals).
 
 - The vendored probe script still probes `cua-driver` (an amplify concern);
   harmless, drop on the next vendoring pass if amplify splits it.
-- Marketplace registration in the WeZZard/skills repository.
 - If the injected verification guidelines do not move the model's behavior,
   escalate to a Stop hook that checks for unverified claims before the turn
   ends; reconsider an attune verify skill only if Claude Code's built-in one
