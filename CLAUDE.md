@@ -66,6 +66,13 @@ and the router never proceeds on an unprobed flag. `capabilities.json` fields:
   prompt on stdin; the argv then carries no `{prompt}`.
 - `agents.<agent>.probe` — the capability names probed for this agent; each
   reduces to the flag `<agent>.<capability>`.
+- `capabilities.<name>.resource` — present when the capability occupies an
+  exclusive machine resource (verified: default-config Chrome DevTools MCP
+  and Playwright MCP each collide on a shared persistent browser profile;
+  the desktop is exclusive by ruling). The router serializes use through
+  `scripts/resource-lock.sh` (mkdir-atomic, token-guarded release, 900 s
+  lease reclaim). Absent when the resource is parallel-safe — remove it when
+  the user's MCP configs run `--isolated`.
 
 Adding a tool-dependent strength = one `capabilities` entry plus its
 `requires` note in the matrix; checking whether another agent supports an

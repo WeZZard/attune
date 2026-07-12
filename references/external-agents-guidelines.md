@@ -59,6 +59,18 @@ Every role is one brief to attune:external-agent:
 2. **Candidate producer** — render the same content in the external model's own voice to widen an experiment's candidate set (`AGENTS: <agent>` pins the producer).
 3. **General delegation** — any other task dispatched from a brief.
 
+## Resource exclusivity
+
+Some capabilities occupy an exclusive machine resource — concurrent use fails or cross-talks (verified 2026-07):
+
+- **computer use** — the desktop session: one GUI, one keyboard/pointer state (human ruled exclusive). Resource: `desktop`.
+- **Chrome DevTools MCP** — default-config instances share one persistent Chrome profile (`~/.cache/chrome-devtools-mcp/`); a second concurrent launch fails with "The browser is already running… Use --isolated" (per github.com/ChromeDevTools/chrome-devtools-mcp issues #224, #292). Resource: `chrome-devtools-profile`.
+- **Playwright MCP** — default-config instances use a persistent profile guarded by the browser's own singleton lock; a concurrent second instance fails with "Browser is already in use… use --isolated" (per the microsoft/playwright-mcp README and issues #769, #891). Resource: `playwright-profile`.
+
+Instances configured with `--isolated` (or a distinct `--user-data-dir`) are parallel-safe — when every external agent's MCP config is isolated, remove that capability's `resource` field from `capabilities.json` and the lock disappears with it.
+
+The lock: `scripts/resource-lock.sh acquire <resource> [--wait sec] [--ttl sec]` prints a release token; `release <resource> <token>` frees it; leases (default 900 s) reclaim locks abandoned by interrupted runs. The router acquires the resource of every capability its pick relies on before probing or launching, and releases in its report step.
+
 ## Write isolation (human ruled)
 
 An external agent never writes to a repository directly — it runs as its own process with its own unsynchronized git behavior. When a delegation requires repository writes, create a worktree first:
