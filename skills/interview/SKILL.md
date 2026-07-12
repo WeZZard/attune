@@ -40,6 +40,4 @@ Dispatch the attune:experiment skill. Its outcome returns here as evidence; the 
 
 ## Boundaries
 
-- **This skill is a fixed program. It never writes to this plugin** — not the guidelines documents, not new reference documents, not any store. The plugin does not learn.
-- A settled ruling belongs to the task at hand, and only there. The standing guidelines (`references/*.md`) change solely by the user's explicit editorial decision — an ordinary edit the user directs, outside any attune skill.
-- Never ask the user a WORLD-owned question; never silently assume a HUMAN-owned answer; never guess a NOBODY-owned one.
+Never ask the user a WORLD-owned question; never silently assume a HUMAN-owned answer; never guess a NOBODY-owned one.

@@ -8,14 +8,6 @@ from every other knowledge system (retrospect, project docs, Claude Code auto
 memory) — no shared vocabulary, no cross-routing. World facts and measured
 lessons are never recorded here.
 
-## No skill learns (human ruled)
-
-Every skill in this plugin is a fixed program. No skill writes to the plugin —
-not the guidelines documents, not new reference documents, not any store,
-ledger, or generated view. Skill outcomes (settled rulings, experiment
-verdicts) belong to the task that dispatched them, never to the plugin. Never
-add a Record step or any other self-modification to a skill.
-
 ## The guidelines are the product
 
 `references/*.md` is what the plugin exists to deliver: the user's standing
