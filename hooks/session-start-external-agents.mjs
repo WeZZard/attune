@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { emitContext } from './lib.mjs';
+import { emitContext } from './_lib.mjs';
 
 try {
   const pluginRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -19,7 +19,7 @@ try {
 
   const availability = execFileSync(
     '/bin/bash',
-    [join(pluginRoot, 'scripts', 'detect-external-agents.sh'), '--lines'],
+    [join(pluginRoot, 'scripts', 'external-agents.sh'), 'installed', '--lines'],
     { encoding: 'utf8', timeout: 5000 },
   ).trim();
 

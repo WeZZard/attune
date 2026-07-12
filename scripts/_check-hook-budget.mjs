@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// check-hook-budget.mjs — commit gate: prove each SessionStart hook's
+// _check-hook-budget.mjs — commit gate: prove each SessionStart hook's
 // injected context fits the platform's hook output cap on any machine.
 //
 // The availability report varies by machine (installed agents, path
@@ -8,11 +8,17 @@
 // requires RESERVE chars of headroom to absorb longer real paths.
 
 import { execFileSync } from 'node:child_process';
-import { chmodSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  mkdtempSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CONTEXT_LIMIT } from '../hooks/lib.mjs';
+import { CONTEXT_LIMIT } from '../hooks/_lib.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HOOKS = [
@@ -25,6 +31,10 @@ const RESERVE = 300;
 const bin = mkdtempSync(join(tmpdir(), 'attune-gate-bin-'));
 let failed = false;
 try {
+  // A node symlink rides in the fixture because the availability hook shells
+  // out to external-agents.sh, which execs node. PATH stays fixture-only so
+  // nothing real is ever reachable.
+  symlinkSync(process.execPath, join(bin, 'node'));
   for (const agent of ['codex', 'kimi', 'agy', 'cursor-agent', 'grok']) {
     const fake = join(bin, agent);
     writeFileSync(fake, '#!/bin/sh\nexit 0\n');

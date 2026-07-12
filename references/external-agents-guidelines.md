@@ -46,9 +46,11 @@ The known-good headless baseline per agent; the router re-checks each against th
 
 Whether an agent works right now is a volatile fact — probe it, never assume it:
 
-1. **Installed** — the binary is on PATH. Detected free of charge at session start by `scripts/detect-external-agents.sh`; the report is injected below these guidelines.
-2. **Usable** — binary, login, network, and model all work. Proven behaviorally by `scripts/probe-external-agents.sh <marker.json>` — one minimal paid prompt per agent, run in the background, results written to the marker file. Run it before the first real delegation of a session, and re-run it when an invocation contradicts the marker.
-3. **Capable** — a tool-dependent strength (an MCP the agent must be armed with) actually functions. Defined as data in `capabilities.json` and proven by `node scripts/probe-capabilities.mjs <marker.json>` — one meaningful paid prompt per agent×capability that makes the agent exercise the tool and echo tool-derived data back. Results reduce to flags named `<agent>.<capability>` (e.g. `kimi.playwright`, `codex.computer_use`).
+One public command owns all three fact layers, one subcommand each: `scripts/external-agents.sh installed|usable|capable`.
+
+1. **Installed** — the binary is on PATH. `external-agents.sh installed [--lines]`: free, side-effect-free, run at every session start over the agent registry in `capabilities.json`; the report is injected below these guidelines.
+2. **Usable** — binary, login, network, and model all work. `external-agents.sh usable <marker.json>`: one minimal paid prompt per agent, run in the background, results written to the marker file. Run it before the first real delegation of a session, and re-run it when an invocation contradicts the marker.
+3. **Capable** — a tool-dependent strength (an MCP the agent must be armed with) actually functions. `external-agents.sh capable <marker.json> [--only agent.capability ...]`: one meaningful paid prompt per agent×capability that makes the agent exercise the tool and echo tool-derived data back. Results reduce to flags named `<agent>.<capability>` (e.g. `kimi.playwright`, `codex.computer_use`).
 
 Select an agent only when every layer the task needs holds: installed and usable always, plus each capability flag the matched strength names. A failed, missing, or simulated probe fails closed to false; report the failure detail so the human sees what would enable it (e.g. "codex is installed but not logged in — `codex login` enables it").
 

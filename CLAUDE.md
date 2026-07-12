@@ -25,11 +25,10 @@ maintains it — it is NOT vendored-frozen.
 
 Hook output is capped at 10,000 characters per command
 (code.claude.com/docs/en/hooks). Injection is split into one hook per
-guidelines document — `hooks/session-start-communication.mjs` and
-`hooks/session-start-external-agents.mjs` — so each document has its own cap.
-Both truncate past 9,500 characters (`CONTEXT_LIMIT` in `hooks/lib.mjs`, the
-single source of truth) with a visible warning. The pre-commit gate
-(`scripts/check-hook-budget.mjs`, wired through `.githooks/pre-commit`;
+guidelines document (`hooks/session-start-*.mjs`) so each document has its
+own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
+`hooks/_lib.mjs`, the single source of truth) with a visible warning. The pre-commit gate
+(`scripts/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
 that would truncate: it runs each real hook against a fixture PATH with every
 agent installed and requires 300 characters of headroom for machine-dependent
@@ -51,7 +50,7 @@ with `OUTPUT: artifact` make the external agent reply with explicit
 `ARTIFACT_PATH:` lines, which the router passes through verbatim.
 
 Tool-dependent strengths (MCP-armed: browser use, computer use) are gated by
-capability flags probed behaviorally by `scripts/probe-capabilities.mjs` from
+capability flags probed behaviorally by `scripts/external-agents.sh capable` from
 `capabilities.json` — the matrix names them as `requires <agent>.<capability>`
 and the router never proceeds on an unprobed flag. `capabilities.json` fields:
 
@@ -73,6 +72,23 @@ Adding a tool-dependent strength = one `capabilities` entry plus its
 existing tool = adding the capability name to that agent's `probe` list. No
 script or router change either way.
 
+## Command naming convention (human ruled)
+
+Every public command is a shell script (`scripts/*.sh`); when the
+implementation is JavaScript, the wrapper just `exec`s node on it.
+JavaScript not exposed as a command carries an underscore prefix
+(`_*.mjs`) — wrappers are the stable surface, underscored internals may be
+reshaped freely. Hook entry points (`hooks/session-start-*.mjs`) are wired in
+`hooks.json`, not typed by users, and keep plain names; their shared
+internals are underscored (`hooks/_lib.mjs`).
+
+`scripts/external-agents.sh` is the one public command for agent facts —
+subcommands `installed` (free), `usable` (paid), `capable` (paid) mirror the
+guidelines' three fact layers, and `capabilities.json` is the agent registry
+every layer reads (an agent with an empty `probe` list exists for identity
+and detection alone). The free and paid paths stay separate underneath so no
+unconditional caller can drift into paid probes.
+
 ## Vendored code (never hand-edit)
 
 - `scripts/run-external-agent.sh` — from amplify `scripts/`.
@@ -82,7 +98,8 @@ script or router change either way.
   `skills/capability-preflight/probe.sh`, verbatim.
 
 Re-vendor from amplify to update; divergences belong in new files (e.g.
-`scripts/worktree.sh`, `scripts/detect-external-agents.sh`).
+`scripts/worktree.sh`, `scripts/external-agents.sh` and its underscored
+internals).
 
 ## Open items
 

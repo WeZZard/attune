@@ -27,11 +27,10 @@ standing rulings; only the user changes them.
   maintained by the user.
 - **Session start** — one hook per guidelines document, so each gets its own
   10,000-character platform output cap: the communication guidelines, the
-  external agents guidelines plus an availability report from
-  `scripts/detect-external-agents.sh` (free `command -v` detection of codex,
-  kimi, agy, cursor-agent, grok), and the verification guidelines (a result
-  is done only when it survived its use path — designed, forked, and driven
-  end to end).
+  external agents guidelines plus an availability report
+  (`scripts/external-agents.sh installed` — free PATH detection over the
+  agent registry), and the verification guidelines (a result is done only
+  when it survived its use path — designed, forked, and driven end to end).
 - **Usability probing** — `scripts/probe-external-agents.sh` (vendored from
   amplify) proves an agent actually works — binary, login, network, model —
   with one minimal paid prompt per agent, run on demand in the background.
@@ -41,10 +40,11 @@ standing rulings; only the user changes them.
 - **External agents** — a Haiku router (`attune:router`) dispatches task
   briefs composed by the main conversation: it selects agents from the
   selection matrix in the guidelines, gates tool-dependent strengths (browser
-  use, computer use) on capability flags probed behaviorally from
-  `capabilities.json` (`scripts/probe-capabilities.mjs`), verifies CLI
-  parameters against each agent's current `--help` (external CLIs update
-  frequently), and returns outputs and artifact paths verbatim. Fixed read-only driver subagents for
+  use, computer use) on capability flags probed behaviorally
+  (`scripts/external-agents.sh capable`, definitions in `capabilities.json`,
+  which doubles as the agent registry), verifies CLI parameters against each
+  agent's current `--help` (external CLIs update frequently), and returns
+  outputs and artifact paths verbatim. Fixed read-only driver subagents for
   Codex, Grok, Kimi, Agy, and Cursor Agent remain over the shared runner
   (`scripts/run-external-agent.sh`) for audit-style tasks. An external agent
   that must write to a repository runs in a git worktree
@@ -66,7 +66,7 @@ path.)
 ```
 .claude-plugin/plugin.json   manifest
 agents/                      the router + external-agent drivers (vendored)
-capabilities.json            tool-dependent capability probes (data)
+capabilities.json            agent registry + capability probe definitions
 hooks/                       SessionStart guidelines + availability injection
 references/                  the guidelines documents (the product)
 scripts/                     detection, usability probe, runner, worktree
@@ -82,7 +82,7 @@ git config core.hooksPath .githooks   # enable the pre-commit gate, once per clo
 
 The pre-commit gate syntax-checks the hook, runs the tests, and fails any
 commit whose guidelines would overflow the platform's hook output cap
-(`scripts/check-hook-budget.mjs`): it runs the real SessionStart hook against
+(`scripts/check-hook-budget.sh`): it runs the real SessionStart hook against
 a fixture PATH with every agent installed — the longest availability report —
 and requires 300 characters of headroom for machine-dependent path lengths.
 

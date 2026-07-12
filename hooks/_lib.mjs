@@ -1,4 +1,4 @@
-// lib.mjs — shared context-injection mechanics for the SessionStart hooks.
+// _lib.mjs — shared context-injection mechanics for the SessionStart hooks.
 // Each hook's output is capped at 10,000 chars by the platform
 // (code.claude.com/docs/en/hooks); each injects within CONTEXT_LIMIT to
 // leave margin for the JSON envelope.

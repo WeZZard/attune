@@ -1,21 +1,31 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { chmodSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  mkdtempSync,
+  readFileSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SCRIPT = join(
+const WRAPPER = join(
   dirname(fileURLToPath(import.meta.url)),
-  'probe-capabilities.mjs',
+  'external-agents.sh',
 );
 
-// Production reality: the script runs the real capabilities.json against
-// whatever CLIs the PATH holds. The fixture is a controlled PATH with fake
-// CLIs whose replies exercise the reduction rules.
+// Production reality: `external-agents.sh capable` runs the real
+// capabilities.json against whatever CLIs the PATH holds. The fixture is a
+// FULLY controlled PATH: the fake CLIs plus a node symlink for the wrapper's
+// `exec node` — and nothing else. Real agent CLIs must be unreachable, or a
+// "missing binary" test silently runs real paid probes (node version
+// managers put npm-installed CLIs like codex in node's own directory).
 function fixture(fakes) {
   const bin = mkdtempSync(join(tmpdir(), 'attune-cap-bin-'));
+  symlinkSync(process.execPath, join(bin, 'node'));
   for (const [name, body] of Object.entries(fakes)) {
     const p = join(bin, name);
     writeFileSync(p, `#!/bin/sh\n${body}\n`);
@@ -25,8 +35,11 @@ function fixture(fakes) {
 }
 
 function run(bin, extra = []) {
-  const marker = join(mkdtempSync(join(tmpdir(), 'attune-cap-out-')), 'marker.json');
-  execFileSync(process.execPath, [SCRIPT, marker, ...extra], {
+  const marker = join(
+    mkdtempSync(join(tmpdir(), 'attune-cap-out-')),
+    'marker.json',
+  );
+  execFileSync('/bin/bash', [WRAPPER, 'capable', marker, ...extra], {
     encoding: 'utf8',
     env: { ...process.env, PATH: bin },
   });
@@ -70,4 +83,11 @@ test('--only probes exactly the named flags', () => {
   const flags = run(bin, ['--only', 'kimi.playwright']);
   assert.deepEqual(Object.keys(flags), ['kimi']);
   assert.deepEqual(Object.keys(flags.kimi), ['playwright']);
+});
+
+test('registry agents with an empty probe list get no flags', () => {
+  const bin = fixture({ kimi: 'echo "PLAYWRIGHT_OK x"' });
+  const flags = run(bin);
+  assert.equal(flags.grok, undefined);
+  assert.equal(flags['cursor-agent'], undefined);
 });
