@@ -30,7 +30,7 @@ The matrix is categorized by task, not by agent. Within a category, agents stand
 - **browser** — 1. Codex (requires `codex.playwright` or `codex.chrome_devtools`); 2. Kimi (requires `kimi.playwright` or `kimi.chrome_devtools`).
 - **computer-use** — 1. Codex (requires `codex.computer_use`).
 - **image-generation** — 1. Codex; 2. Antigravity (`agy`, Gemini image models).
-- **auditing** — 1. Codex; 2. Antigravity; 3. Cursor (`cursor-agent`); 4. Grok.
+- **auditing** — 1. Codex; 2. Antigravity; 3. Kimi; 4. Cursor (`cursor-agent`); 5. Grok.
 
 ### Last-verified invocations
 
