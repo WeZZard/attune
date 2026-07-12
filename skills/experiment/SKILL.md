@@ -1,6 +1,6 @@
 ---
 name: experiment
-description: Settle a NOBODY-owned unknown — typically an output-style question no one can answer before trying — by a blind comparison. Produce candidates, strip provenance, collect an external judge panel's verdicts, then present everything to the user for the ruling. Use when the attune:interview skill classifies an unknown as NOBODY-owned, or when the user asks to settle a style question by evidence.
+description: Settle a question that only trying can answer — an output-style comparison, a prompt phrasing, an error message, any unknown with comparable candidates — by a blind comparison. Produce candidates, strip provenance, collect an external judge panel's verdicts, then present everything to the user for the ruling. Use when the attune:interview skill classifies an unknown as NOBODY-owned, or when the user asks to settle a question by evidence.
 ---
 
 # Experiment — Settle by Evidence

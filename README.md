@@ -7,9 +7,11 @@ and what counts as verified work.
 - **The interview** (`attune:interview`) routes every open question in a
   discussion to the one oracle that can settle it: research the world, ask
   the human, and run an experiment for what nobody knows yet.
-- **The experiment** (`attune:experiment`) settles style questions by
-  evidence: blinded candidates, external models as judges, one stated
-  criterion, your ruling.
+- **The experiment** (`attune:experiment`) settles questions that only
+  trying can answer, such as "does the shorter opening actually read
+  better?". It produces candidate versions, blinds them, has external
+  models rank them against one criterion stated up front, and hands you
+  the verdicts. You make the ruling.
 - **The communication style** governs how replies read: direct engineering
   prose, one action per sentence, no internal workflow language. You author
   it; only you change it.
