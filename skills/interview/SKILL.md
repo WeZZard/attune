@@ -1,9 +1,9 @@
 ---
 name: interview
-description: <EXTREMELY_IMPORTANT>You MUST use interview when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It routes every open unknown to its oracle — research the world, ask the human, experiment on the unknown — and records what the human rules.</EXTREMELY_IMPORTANT>
+description: <EXTREMELY_IMPORTANT>You MUST use interview when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It routes every open unknown to its oracle — research the world, ask the human, experiment on the unknown — and records what the human rules into the guidelines documents.</EXTREMELY_IMPORTANT>
 ---
 
-# Interview — Capture Rulings by Oracle
+# Interview — Settle Unknowns by Oracle
 
 **Announce at start:** "I'm using the attune interview skill to route unknowns and record rulings."
 
@@ -27,7 +27,7 @@ Validate every brief: check source credibility; check dates and discard stale fa
 
 1. Pick the single most decision-changing open HUMAN-owned unknown.
 2. Ask exactly one question via `AskUserQuestion`, carrying your recommended answer and the reason for it — never a bare open prompt, and never a menu for a decision you can reason out yourself.
-3. Record the ruling (below) before asking the next question, so the store always reflects what is settled.
+3. Record the ruling (below) before asking the next question, so the documents always reflect what is settled.
 
 Constraints, verified against the Claude Code docs:
 
@@ -40,26 +40,18 @@ Dispatch the attune:experiment skill. Its outcome returns here as evidence; the 
 
 ## Record
 
-A ruling is recorded the moment it settles:
+A ruling is recorded the moment it settles — before the next question — by editing the guidelines document it belongs to, in place:
 
-```bash
-node "${CLAUDE_PLUGIN_ROOT}/scripts/record-ruling.mjs" '<one JSON object>'
-```
+- Output style and communication rulings → `references/communication-guidelines.md`.
+- External agent usage rulings → `references/external-agents-guidelines.md`.
+- A ruling that fits neither starts a new document under `references/`; the SessionStart hook (`hooks/session-start.mjs`) must then also inject it, within the hook output limit noted there.
 
-The object follows `${CLAUDE_PLUGIN_ROOT}/schemas/ruling.schema.json`:
+Write the ruling as an enforceable rule in the document's existing shape (MUST / MUST NOT), placed in the section it belongs to. Human ruling is the default oracle of these documents, so a directly ruled preference needs no mark; carry provenance inline only where it matters: `(per <source>)` for research-informed rules, `(per experiment <name>)` for experiment-settled ones.
 
-- `id` — kebab-case, unique; the meaning lives in the name, never in a numeric suffix.
-- `date` — the ISO date the ruling settled.
-- `ruling` — the enforceable judgment, written so a future session can apply it without this conversation.
-- `rationale` — why the user ruled this way; present when the reason was stated.
-- `oracle` — provenance marks: `human ruled` on every ruling; `per <source>` when research informed it; `per experiment <name>` when an experiment produced the evidence.
-- `scope` — validity: `global`, `medium:<blog|code|commit|chat|…>`, `project:<dir-basename>`.
-- `status` — `active`. To change a ruling later, append a new row: a later row with the same `id` replaces the earlier one; a row with `supersedes: <old-id>` retires that id. Never edit or delete existing lines.
+The documents are version-controlled — git history is the ledger. Never keep a parallel database of rulings.
 
-A `global` or `medium:*` ruling goes to the user store (the default path). A `project:*` ruling goes to the project store — pass `<project>/.claude/attune/rulings.jsonl` as the second argument.
+## Boundaries
 
-## What never enters the store
-
-- World facts on their own — they decay, and the web re-derives them. They persist only as `per <source>` marks on a ruling.
-- Workflow lessons and measured results — out of attune's domain (human ruled: attune is fully disjoint from every other knowledge system).
-- Anything the user has not ruled on.
+- World facts on their own are never recorded — they decay, and research re-derives them. They survive only as `(per <source>)` marks on a rule they informed.
+- Workflow lessons and measured results are out of attune's domain (human ruled: attune is fully disjoint from every other knowledge system).
+- Nothing the user has not ruled on enters the guidelines.

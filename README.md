@@ -1,7 +1,8 @@
 # Attune
 
-Capture and apply the knowledge a model cannot internalize: the user's
-preferences and output-style rulings. A Claude Code plugin.
+Give every session the knowledge a model cannot internalize: the user's
+communication guidelines, output-style rulings, and external agent usage
+rules. A Claude Code plugin.
 
 ## The epistemology
 
@@ -15,8 +16,31 @@ Every open question in a discussion has exactly one oracle:
 - **Knowledge nobody owns yet** is settled by experiment: blind candidates
   judged by an external panel, ruled on by the human.
 
-Only human-ruled judgments persist. Research and experiments persist only as
-provenance marks on a ruling.
+What the human rules is written into the guidelines documents; research and
+experiments survive only as provenance marks on the rules they informed.
+
+## How it works
+
+- **Guidelines** — `references/communication-guidelines.md` (output style)
+  and `references/external-agents-guidelines.md` (external agent usage).
+  These documents are the product: version-controlled markdown, edited in
+  place when a ruling settles. Git history is the ledger.
+- **Session start** — a hook injects both documents plus an availability
+  report from `scripts/detect-external-agents.sh` (free `command -v`
+  detection of codex, kimi, agy, cursor-agent, grok). Output stays under the
+  platform's 10,000-character hook limit.
+- **Usability probing** — `scripts/probe-external-agents.sh` (vendored from
+  amplify) proves an agent actually works — binary, login, network, model —
+  with one minimal paid prompt per agent, run on demand in the background.
+- **Skills** — `attune:interview` (route unknowns by oracle, record rulings
+  into the guidelines), `attune:experiment` (blind comparison with an
+  external judge panel).
+- **External agents** — driver subagents for Codex, Grok, Kimi, Agy, and
+  Cursor Agent over the shared runner (`scripts/run-external-agent.sh`),
+  serving as blind judges, candidate producers, and a general delegation
+  surface. An external agent that must write to a repository runs in a git
+  worktree (`scripts/worktree.sh`); its diff returns as evidence, and merging
+  stays an explicit step in the main conversation.
 
 ## Install
 
@@ -28,39 +52,15 @@ provenance marks on a ruling.
 (Marketplace entry pending; during development, install from this repository
 path.)
 
-## How it works
-
-- **Store** — `~/.claude/attune/store/rulings.jsonl`, seeded on first session
-  from `seeds/rulings.jsonl` (migrated from amplify's communication style
-  guidelines), plus an optional per-project store at
-  `<project>/.claude/attune/rulings.jsonl`. Append-only JSONL, one ruling per
-  line (`schemas/ruling.schema.json`): a later row with the same `id` replaces
-  the earlier one; a row with `supersedes` retires the referenced id.
-- **Sheet** — at SessionStart, a hook distills the active in-scope rulings
-  into a preference sheet and injects it. The sheet budgets 8,000 characters
-  under the platform's 10,000-character hook output limit; when it truncates,
-  run the attune:consolidate skill.
-- **Skills** — `attune:interview` (route unknowns by oracle, capture rulings),
-  `attune:experiment` (blind comparison with an external judge panel),
-  `attune:consolidate` (keep the sheet under budget).
-- **External agents** — driver agents for Codex, Grok, Kimi, Agy, and
-  Cursor Agent, vendored from amplify over the shared runner
-  (`scripts/run-external-agent.sh`). They serve as blind judges, candidate
-  producers, and a general delegation surface. An external agent that must
-  write to a repository runs in a git worktree (`scripts/worktree.sh`); its
-  diff returns as evidence, and merging stays an explicit step in the main
-  conversation.
-
 ## Layout
 
 ```
 .claude-plugin/plugin.json   manifest
 agents/                      external-agent drivers (vendored from amplify)
-hooks/                       SessionStart sheet injection
-schemas/ruling.schema.json   one store row
-scripts/                     sheet generator, ruling recorder, runner, worktree
-seeds/rulings.jsonl          initial store content
-skills/                      interview, experiment, consolidate
+hooks/                       SessionStart guidelines + availability injection
+references/                  the guidelines documents (the product)
+scripts/                     detection, usability probe, runner, worktree
+skills/                      interview, experiment
 ```
 
 ## Tests
