@@ -25,22 +25,27 @@ standing rulings; only the user changes them.
   and `references/external-agents-guidelines.md` (external agent usage).
   These documents are the product: version-controlled markdown authored and
   maintained by the user.
-- **Session start** — a hook injects both documents plus an availability
-  report from `scripts/detect-external-agents.sh` (free `command -v`
-  detection of codex, kimi, agy, cursor-agent, grok). Output stays under the
-  platform's 10,000-character hook limit.
+- **Session start** — two hooks, one per guidelines document, so each gets
+  its own 10,000-character platform output cap: one injects the communication
+  guidelines, the other injects the external agents guidelines plus an
+  availability report from `scripts/detect-external-agents.sh` (free
+  `command -v` detection of codex, kimi, agy, cursor-agent, grok).
 - **Usability probing** — `scripts/probe-external-agents.sh` (vendored from
   amplify) proves an agent actually works — binary, login, network, model —
   with one minimal paid prompt per agent, run on demand in the background.
 - **Skills** — `attune:interview` (route unknowns by oracle during
   discussions), `attune:experiment` (blind comparison with an external judge
   panel).
-- **External agents** — driver subagents for Codex, Grok, Kimi, Agy, and
-  Cursor Agent over the shared runner (`scripts/run-external-agent.sh`),
-  serving as blind judges, candidate producers, and a general delegation
-  surface. An external agent that must write to a repository runs in a git
-  worktree (`scripts/worktree.sh`); its diff returns as evidence, and merging
-  stays an explicit step in the main conversation.
+- **External agents** — a Haiku router (`attune:router`) dispatches task
+  briefs composed by the main conversation: it selects agents from the
+  selection matrix in the guidelines, verifies CLI parameters against each
+  agent's current `--help` (external CLIs update frequently), and returns
+  outputs and artifact paths verbatim. Fixed read-only driver subagents for
+  Codex, Grok, Kimi, Agy, and Cursor Agent remain over the shared runner
+  (`scripts/run-external-agent.sh`) for audit-style tasks. An external agent
+  that must write to a repository runs in a git worktree
+  (`scripts/worktree.sh`); its diff returns as evidence, and merging stays an
+  explicit step in the main conversation.
 
 ## Install
 

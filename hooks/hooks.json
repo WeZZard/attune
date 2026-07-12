@@ -1,5 +1,5 @@
 {
-  "description": "Attune preference sheet injection",
+  "description": "Attune guidelines injection — one hook per guidelines document, each within its own output cap",
   "hooks": {
     "SessionStart": [
       {
@@ -7,7 +7,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.mjs\"",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start-communication.mjs\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start-external-agents.mjs\"",
             "timeout": 10
           }
         ]

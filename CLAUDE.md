@@ -23,15 +23,29 @@ maintains it — it is NOT vendored-frozen.
 
 ## Injection budget
 
-Hook output is capped at 10,000 characters per event
-(code.claude.com/docs/en/hooks). `hooks/session-start.mjs` injects every
-reference document plus the availability report and truncates past 9,500
-characters (`CONTEXT_LIMIT`, the single source of truth) with a visible
-warning. The pre-commit gate (`scripts/check-hook-budget.mjs`, wired through
-`.githooks/pre-commit`; enable per clone with
-`git config core.hooksPath .githooks`) fails any commit that would truncate:
-it runs the real hook against a fixture PATH with every agent installed and
-requires 300 characters of headroom for machine-dependent path lengths.
+Hook output is capped at 10,000 characters per command
+(code.claude.com/docs/en/hooks). Injection is split into one hook per
+guidelines document — `hooks/session-start-communication.mjs` and
+`hooks/session-start-external-agents.mjs` — so each document has its own cap.
+Both truncate past 9,500 characters (`CONTEXT_LIMIT` in `hooks/lib.mjs`, the
+single source of truth) with a visible warning. The pre-commit gate
+(`scripts/check-hook-budget.mjs`, wired through `.githooks/pre-commit`;
+enable per clone with `git config core.hooksPath .githooks`) fails any commit
+that would truncate: it runs each real hook against a fixture PATH with every
+agent installed and requires 300 characters of headroom for machine-dependent
+path lengths. A new reference document means a new hook, not a bigger one.
+
+## External agent routing
+
+The selection matrix in `references/external-agents-guidelines.md` is the
+single source of truth for agent strengths and last-verified invocations; the
+router (`agents/router.md`) reads it at runtime and never restates it. The
+router verifies parameters against each CLI's current `--help` before every
+launch (human ruled: external CLIs update frequently — never invoke from
+memory). When the router reports that a CLI's help contradicts the matrix,
+updating the matrix's last-verified line is the user's editorial act. Briefs
+with `OUTPUT: artifact` make the external agent reply with explicit
+`ARTIFACT_PATH:` lines, which the router passes through verbatim.
 
 ## Vendored code (never hand-edit)
 
@@ -46,10 +60,6 @@ Re-vendor from amplify to update; divergences belong in new files (e.g.
 
 ## Open items
 
-- Per-tool write-mode invocations for the external drivers. Worktree
-  isolation exists (`scripts/worktree.sh`), but the runner's invocations stay
-  read-only until each tool's write flags are verified against its own docs —
-  never guess CLI flags.
 - Driver descriptions still carry amplify's audit wording; re-word on the next
   vendoring pass.
 - The vendored probe script still probes `cua-driver` (an amplify concern);
