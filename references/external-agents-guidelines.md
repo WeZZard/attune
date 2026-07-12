@@ -14,7 +14,7 @@ Two paths delegate work to an external agent:
 ```text
 GOAL: <one line — what the task must accomplish>
 OUTPUT: <text | artifact — what comes back>
-TAGS: <task traits, e.g. browser, computer-use, image-generation, documentation, auditing>
+TAGS: <task traits, e.g. browser, computer-use, image-generation, auditing>
 AGENTS: <optional explicit agent list; omit to let the matrix decide>
 CAPABILITIES_MARKER: <optional path to a capability marker from an earlier probe; omit to let the router probe what it needs>
 ---
@@ -30,7 +30,6 @@ The matrix is categorized by task, not by agent. Within a category, agents stand
 - **browser** — 1. Codex (requires `codex.playwright` or `codex.chrome_devtools`); 2. Kimi (requires `kimi.playwright` or `kimi.chrome_devtools`).
 - **computer-use** — 1. Codex (requires `codex.computer_use`).
 - **image-generation** — 1. Codex; 2. Antigravity (`agy`, Gemini image models).
-- **documentation** — 1. Antigravity.
 - **auditing** — 1. Codex; 2. Antigravity; 3. Cursor (`cursor-agent`); 4. Grok.
 
 ### Last-verified invocations
