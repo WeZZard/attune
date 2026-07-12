@@ -18,7 +18,7 @@ A question neither the world nor the user can answer until it is tried: "does th
 3. **Blind.** Copy the candidates to letter names (`A.md`, `B.md`, …) in shuffled order (use `$RANDOM`), stripping every provenance hint from the content. Write the letter-to-producer mapping to `mapping.txt`; never show it to a judge and never quote it before the ruling.
 4. **Judge.** Send each judge the letter-named candidates and the criterion. Use 2–3 different driver agents, one invocation each, in parallel. Each judge ranks the candidates against the criterion and justifies its ranking in two sentences.
 5. **Rule.** Present the candidates and the anonymized verdicts to the user. The user rules. Reveal the mapping only after the ruling.
-6. **Record.** Hand the ruling back to the attune:interview Record step: an enforceable rule edited into the guidelines document it belongs to, marked `(per experiment <name>)`. Then delete the experiment directory — its artifacts are evidence, never design artifacts.
+6. **Conclude.** Report the ruling as the experiment's outcome to the task that dispatched it, then delete the experiment directory — its artifacts are evidence, never design artifacts. This skill never writes the outcome into this plugin; the plugin does not learn.
 
 ## Isolation
 

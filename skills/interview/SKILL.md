@@ -1,11 +1,11 @@
 ---
 name: interview
-description: <EXTREMELY_IMPORTANT>You MUST use interview when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It routes every open unknown to its oracle — research the world, ask the human, experiment on the unknown — and records what the human rules into the guidelines documents.</EXTREMELY_IMPORTANT>
+description: <EXTREMELY_IMPORTANT>You MUST use interview when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It routes every open unknown to its oracle — research the world, ask the human, experiment on the unknown — so discussions settle on evidence and rulings instead of assumptions.</EXTREMELY_IMPORTANT>
 ---
 
 # Interview — Settle Unknowns by Oracle
 
-**Announce at start:** "I'm using the attune interview skill to route unknowns and record rulings."
+**Announce at start:** "I'm using the attune interview skill to route unknowns by oracle."
 
 ## Overview
 
@@ -15,7 +15,7 @@ Knowledge has three sources, and each source settles a question in exactly one w
 - **HUMAN-owned** — preference, taste, budget, tacit constraints, output style. Only the user's head holds the answer. Settle by asking; never assume.
 - **NOBODY-owned** — no one knows until it is tried. Settle by experiment (the attune:experiment skill); never ask, never assume.
 
-This skill runs that routing eagerly during any discussion and persists what the human rules. Until its oracle answers, a question stays open, no matter what is already written down.
+This skill runs that routing eagerly during any discussion. Until its oracle answers, a question stays open, no matter what is already written down.
 
 ## Eager research (WORLD-owned)
 
@@ -27,7 +27,7 @@ Validate every brief: check source credibility; check dates and discard stale fa
 
 1. Pick the single most decision-changing open HUMAN-owned unknown.
 2. Ask exactly one question via `AskUserQuestion`, carrying your recommended answer and the reason for it — never a bare open prompt, and never a menu for a decision you can reason out yourself.
-3. Record the ruling (below) before asking the next question, so the documents always reflect what is settled.
+3. Before the next question, state the settled ruling explicitly and carry it into the work at hand — the decision it unblocks, the artifact the current task owns (the active plan, the document under discussion, the code). A ruling left implicit is not settled.
 
 Constraints, verified against the Claude Code docs:
 
@@ -36,22 +36,10 @@ Constraints, verified against the Claude Code docs:
 
 ## Experiments (NOBODY-owned)
 
-Dispatch the attune:experiment skill. Its outcome returns here as evidence; the user still rules on it, and the ruling records the experiment as provenance.
-
-## Record
-
-A ruling is recorded the moment it settles — before the next question — by editing the guidelines document it belongs to, in place:
-
-- Output style and communication rulings → `references/communication-guidelines.md`.
-- External agent usage rulings → `references/external-agents-guidelines.md`.
-- A ruling that fits neither starts a new document under `references/`; the SessionStart hook (`hooks/session-start.mjs`) must then also inject it, within the hook output limit noted there.
-
-Write the ruling as an enforceable rule in the document's existing shape (MUST / MUST NOT), placed in the section it belongs to. Human ruling is the default oracle of these documents, so a directly ruled preference needs no mark; carry provenance inline only where it matters: `(per <source>)` for research-informed rules, `(per experiment <name>)` for experiment-settled ones.
-
-The documents are version-controlled — git history is the ledger. Never keep a parallel database of rulings.
+Dispatch the attune:experiment skill. Its outcome returns here as evidence; the user still rules on it, and the ruling carries into the task like any other.
 
 ## Boundaries
 
-- World facts on their own are never recorded — they decay, and research re-derives them. They survive only as `(per <source>)` marks on a rule they informed.
-- Workflow lessons and measured results are out of attune's domain (human ruled: attune is fully disjoint from every other knowledge system).
-- Nothing the user has not ruled on enters the guidelines.
+- **This skill is a fixed program. It never writes to this plugin** — not the guidelines documents, not new reference documents, not any store. The plugin does not learn.
+- A settled ruling belongs to the task at hand, and only there. The standing guidelines (`references/*.md`) change solely by the user's explicit editorial decision — an ordinary edit the user directs, outside any attune skill.
+- Never ask the user a WORLD-owned question; never silently assume a HUMAN-owned answer; never guess a NOBODY-owned one.

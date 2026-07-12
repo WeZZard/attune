@@ -6,19 +6,28 @@ Attune holds human-ruled subjective knowledge only: communication and
 output-style guidelines, and external agent usage rules. It is fully disjoint
 from every other knowledge system (retrospect, project docs, Claude Code auto
 memory) — no shared vocabulary, no cross-routing. World facts and measured
-lessons are never recorded here; they survive only as inline provenance marks
-(`(per <source>)`, `(per experiment <name>)`) on rules they informed.
+lessons are never recorded here.
+
+## No skill learns (human ruled)
+
+Every skill in this plugin is a fixed program. No skill writes to the plugin —
+not the guidelines documents, not new reference documents, not any store,
+ledger, or generated view. Skill outcomes (settled rulings, experiment
+verdicts) belong to the task that dispatched them, never to the plugin. Never
+add a Record step or any other self-modification to a skill.
 
 ## The guidelines are the product
 
-`references/*.md` is what the plugin exists to deliver. The documents are
-edited in place when a ruling settles (the interview skill's Record step);
-git history is the ledger. Never introduce a parallel database, store, or
-generated view of the rulings.
+`references/*.md` is what the plugin exists to deliver: the user's standing
+rulings, injected at session start. They change solely by the user's explicit
+editorial decision — an ordinary edit the user makes or directs, outside any
+attune skill — and git history is the review trail. When the user does fold
+research- or experiment-informed rules in, inline provenance marks
+(`(per <source>)`, `(per experiment <name>)`) carry the evidence.
 
 `references/communication-guidelines.md` was seeded from amplify's
-`references/communication-style-guidelines.md` and diverges from it by design
-as rulings accumulate — it is NOT vendored-frozen.
+`references/communication-style-guidelines.md` and diverges as the user
+maintains it — it is NOT vendored-frozen.
 
 ## Injection budget
 

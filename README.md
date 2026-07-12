@@ -16,15 +16,16 @@ Every open question in a discussion has exactly one oracle:
 - **Knowledge nobody owns yet** is settled by experiment: blind candidates
   judged by an external panel, ruled on by the human.
 
-What the human rules is written into the guidelines documents; research and
-experiments survive only as provenance marks on the rules they informed.
+A ruling settles the task at hand, and only that. The plugin itself never
+learns: no skill writes to it. The guidelines documents are the user's
+standing rulings, and only the user decides to change them.
 
 ## How it works
 
 - **Guidelines** — `references/communication-guidelines.md` (output style)
   and `references/external-agents-guidelines.md` (external agent usage).
-  These documents are the product: version-controlled markdown, edited in
-  place when a ruling settles. Git history is the ledger.
+  These documents are the product: version-controlled markdown authored and
+  maintained by the user. No skill writes to them.
 - **Session start** — a hook injects both documents plus an availability
   report from `scripts/detect-external-agents.sh` (free `command -v`
   detection of codex, kimi, agy, cursor-agent, grok). Output stays under the
@@ -32,9 +33,10 @@ experiments survive only as provenance marks on the rules they informed.
 - **Usability probing** — `scripts/probe-external-agents.sh` (vendored from
   amplify) proves an agent actually works — binary, login, network, model —
   with one minimal paid prompt per agent, run on demand in the background.
-- **Skills** — `attune:interview` (route unknowns by oracle, record rulings
-  into the guidelines), `attune:experiment` (blind comparison with an
-  external judge panel).
+- **Skills** — `attune:interview` (route unknowns by oracle during
+  discussions), `attune:experiment` (blind comparison with an external judge
+  panel). Both are fixed programs: their outcomes belong to the task at
+  hand, never to the plugin.
 - **External agents** — driver subagents for Codex, Grok, Kimi, Agy, and
   Cursor Agent over the shared runner (`scripts/run-external-agent.sh`),
   serving as blind judges, candidate producers, and a general delegation
