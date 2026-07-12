@@ -18,6 +18,7 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HOOKS = [
   'session-start-communication.mjs',
   'session-start-external-agents.mjs',
+  'session-start-verification.mjs',
 ];
 const RESERVE = 300;
 

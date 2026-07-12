@@ -25,11 +25,13 @@ standing rulings; only the user changes them.
   and `references/external-agents-guidelines.md` (external agent usage).
   These documents are the product: version-controlled markdown authored and
   maintained by the user.
-- **Session start** — two hooks, one per guidelines document, so each gets
-  its own 10,000-character platform output cap: one injects the communication
-  guidelines, the other injects the external agents guidelines plus an
-  availability report from `scripts/detect-external-agents.sh` (free
-  `command -v` detection of codex, kimi, agy, cursor-agent, grok).
+- **Session start** — one hook per guidelines document, so each gets its own
+  10,000-character platform output cap: the communication guidelines, the
+  external agents guidelines plus an availability report from
+  `scripts/detect-external-agents.sh` (free `command -v` detection of codex,
+  kimi, agy, cursor-agent, grok), and the verification guidelines (a result
+  is done only when it survived its use path — designed, forked, and driven
+  end to end).
 - **Usability probing** — `scripts/probe-external-agents.sh` (vendored from
   amplify) proves an agent actually works — binary, login, network, model —
   with one minimal paid prompt per agent, run on demand in the background.

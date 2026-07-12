@@ -91,6 +91,10 @@ Re-vendor from amplify to update; divergences belong in new files (e.g.
 - The vendored probe script still probes `cua-driver` (an amplify concern);
   harmless, drop on the next vendoring pass if amplify splits it.
 - Marketplace registration in the WeZZard/skills repository.
+- If the injected verification guidelines do not move the model's behavior,
+  escalate to a Stop hook that checks for unverified claims before the turn
+  ends; reconsider an attune verify skill only if Claude Code's built-in one
+  proves absent or too shallow — never ship a competing duplicate.
 - Amplify injects the same communication guidelines at SessionStart; once
   attune is installed alongside it, that injection is redundant and should be
   retired from amplify.
