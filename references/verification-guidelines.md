@@ -15,7 +15,7 @@ A result is done only when it has survived its use path — being used the way a
 ## Execution routes
 
 - Verify in-session when the session's own tools reach the interface: run the command, read the artifact, call the endpoint.
-- Route what the session cannot drive through the external agents: a web flow is a `browser` brief to attune:router, a GUI flow is a `computer-use` brief, an independent re-check of a claim is an `auditing` brief.
+- Route what the session cannot drive through the external agents: a web flow is a `browser` brief to attune:external-agent, a GUI flow is a `computer-use` brief, an independent re-check of a claim is an `auditing` brief.
 - When a `verify` skill is available in the session, invoke it before declaring a nontrivial change done — these guidelines set the standard; the skill carries the procedure.
 
 ## Proportionality

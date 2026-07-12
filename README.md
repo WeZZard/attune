@@ -37,17 +37,16 @@ standing rulings; only the user changes them.
 - **Skills** — `attune:interview` (route unknowns by oracle during
   discussions), `attune:experiment` (blind comparison with an external judge
   panel).
-- **External agents** — a Haiku router (`attune:router`) dispatches task
+- **External agents** — a Haiku router (`attune:external-agent`) dispatches task
   briefs composed by the main conversation: it selects agents from the
   selection matrix in the guidelines, gates tool-dependent strengths (browser
   use, computer use) on capability flags probed behaviorally
   (`scripts/external-agents.sh capable`, definitions in `capabilities.json`,
   which doubles as the agent registry), verifies CLI parameters against each
   agent's current `--help` (external CLIs update frequently), and returns
-  outputs and artifact paths verbatim. Fixed read-only driver subagents for
-  Codex, Grok, Kimi, Agy, and Cursor Agent remain over the shared runner
-  (`scripts/run-external-agent.sh`) for audit-style tasks. An external agent
-  that must write to a repository runs in a git worktree
+  outputs and artifact paths verbatim. It is the single delegation path — one
+  communication contract, in the external agents guidelines. An external
+  agent that must write to a repository runs in a git worktree
   (`scripts/worktree.sh`); its diff returns as evidence, and merging stays an
   explicit step in the main conversation.
 
@@ -65,12 +64,13 @@ path.)
 
 ```
 .claude-plugin/plugin.json   manifest
-agents/                      the router + external-agent drivers (vendored)
+agents/                      external-agent (the router — the one delegation path)
 capabilities.json            agent registry + capability probe definitions
 hooks/                       SessionStart guidelines + availability injection
 references/                  the guidelines documents (the product)
-scripts/                     detection, usability probe, runner, worktree
+scripts/                     external-agents facts command, usability probe, worktree
 skills/                      interview, experiment
+utils/                       development tooling (the commit gate)
 ```
 
 ## Tests and the commit gate
@@ -82,7 +82,7 @@ git config core.hooksPath .githooks   # enable the pre-commit gate, once per clo
 
 The pre-commit gate syntax-checks the hook, runs the tests, and fails any
 commit whose guidelines would overflow the platform's hook output cap
-(`scripts/check-hook-budget.sh`): it runs the real SessionStart hook against
+(`utils/check-hook-budget.sh`): it runs the real SessionStart hook against
 a fixture PATH with every agent installed — the longest availability report —
 and requires 300 characters of headroom for machine-dependent path lengths.
 

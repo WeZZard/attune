@@ -28,7 +28,7 @@ Hook output is capped at 10,000 characters per command
 guidelines document (`hooks/session-start-*.mjs`) so each document has its
 own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
 `hooks/_lib.mjs`, the single source of truth) with a visible warning. The pre-commit gate
-(`scripts/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
+(`utils/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
 that would truncate: it runs each real hook against a fixture PATH with every
 agent installed and requires 300 characters of headroom for machine-dependent
@@ -38,7 +38,7 @@ path lengths. A new reference document means a new hook, not a bigger one.
 
 The selection matrix in `references/external-agents-guidelines.md` is the
 single source of truth for agent selection and last-verified invocations; the
-router (`agents/router.md`) reads it at runtime and never restates it. The
+router (`agents/external-agent.md`) reads it at runtime and never restates it. The
 matrix is categorized by task, and each category lists agents in priority
 order (human ruled: Codex before Kimi for browser and computer use) — never
 reshape it back into per-agent strength lists. The
@@ -74,13 +74,14 @@ script or router change either way.
 
 ## Command naming convention (human ruled)
 
-Every public command is a shell script (`scripts/*.sh`); when the
-implementation is JavaScript, the wrapper just `exec`s node on it.
-JavaScript not exposed as a command carries an underscore prefix
-(`_*.mjs`) — wrappers are the stable surface, underscored internals may be
-reshaped freely. Hook entry points (`hooks/session-start-*.mjs`) are wired in
-`hooks.json`, not typed by users, and keep plain names; their shared
-internals are underscored (`hooks/_lib.mjs`).
+Every public command is a shell script; when the implementation is
+JavaScript, the wrapper just `exec`s node on it. JavaScript not exposed as a
+command carries an underscore prefix (`_*.mjs`) — wrappers are the stable
+surface, underscored internals may be reshaped freely. Hook entry points
+(`hooks/session-start-*.mjs`) are wired in `hooks.json`, not typed by users,
+and keep plain names; their shared internals are underscored
+(`hooks/_lib.mjs`). Placement: `scripts/` holds runtime commands the plugin
+surface calls; `utils/` holds development tooling (the commit gate).
 
 `scripts/external-agents.sh` is the one public command for agent facts —
 subcommands `installed` (free), `usable` (paid), `capable` (paid) mirror the
@@ -91,9 +92,6 @@ unconditional caller can drift into paid probes.
 
 ## Vendored code (never hand-edit)
 
-- `scripts/run-external-agent.sh` — from amplify `scripts/`.
-- `agents/*-driver.md` — from amplify `agents/`, `<!-- amplify:region -->`
-  markers stripped.
 - `scripts/probe-external-agents.sh` — from amplify
   `skills/capability-preflight/probe.sh`, verbatim.
 
@@ -103,8 +101,6 @@ internals).
 
 ## Open items
 
-- Driver descriptions still carry amplify's audit wording; re-word on the next
-  vendoring pass.
 - The vendored probe script still probes `cua-driver` (an amplify concern);
   harmless, drop on the next vendoring pass if amplify splits it.
 - Marketplace registration in the WeZZard/skills repository.

@@ -1,5 +1,5 @@
 ---
-name: router
+name: external-agent
 description: Dispatch one task brief to the best-fit external agents. Use for any work that should run on an external agent per the external agents guidelines. Input is a task brief (GOAL/OUTPUT/TAGS/AGENTS/CAPABILITIES_MARKER control block, then ---, then the self-contained task prompt). The router selects agents from the selection matrix, gates tool-dependent strengths on probed capability flags, verifies CLI parameters against each agent's current --help, launches headless runs, and returns outputs and artifact paths verbatim. It performs no synthesis and no judgment.
 model: haiku
 tools: Bash, Read

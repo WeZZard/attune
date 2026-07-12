@@ -4,12 +4,9 @@
 
 ## The interface
 
-Two paths delegate work to an external agent:
+One path delegates work to an external agent: the router, **attune:external-agent**. Compose a task brief (the one contract below) and spawn it; the router selects agents from the selection matrix, gates tool-dependent strengths on capability flags, verifies CLI parameters against each agent's current `--help`, launches headless runs, and returns outputs and artifact paths verbatim.
 
-1. **The router (attune:router)** — the default path. Compose a task brief (contract below) and spawn the router; it selects agents from the selection matrix, verifies CLI parameters against each agent's current `--help`, launches headless runs, and returns outputs and artifact paths verbatim.
-2. **The fixed drivers** (attune:codex-driver, attune:kimi-driver, attune:agy-driver, attune:cursor-agent-driver, attune:grok-driver) — one fixed, read-only invocation each over the shared runner (`scripts/run-external-agent.sh`); suited to audit-style text tasks such as the experiment skill's judges.
-
-### Task brief contract (router input)
+### Task brief contract (the one communication contract)
 
 ```text
 GOAL: <one line — what the task must accomplish>
@@ -56,9 +53,11 @@ Select an agent only when every layer the task needs holds: installed and usable
 
 ## Roles
 
-1. **Blind judge** — rank or critique anonymized candidates against a stated criterion (the attune:experiment skill). An external judge adds evidence Claude cannot produce about itself.
-2. **Candidate producer** — render the same content in the external model's own voice to widen an experiment's candidate set.
-3. **General delegation** — any task the router dispatches from a brief.
+Every role is one brief to attune:external-agent:
+
+1. **Blind judge** — rank or critique anonymized candidates against a stated criterion (`TAGS: auditing`; the attune:experiment skill sends one brief per judge). An external judge adds evidence Claude cannot produce about itself.
+2. **Candidate producer** — render the same content in the external model's own voice to widen an experiment's candidate set (`AGENTS: <agent>` pins the producer).
+3. **General delegation** — any other task dispatched from a brief.
 
 ## Write isolation (human ruled)
 
@@ -72,7 +71,7 @@ Point the external agent at the worktree, collect `worktree.sh diff` as evidence
 
 ## Conduct
 
-- The fixed drivers never choose models or permission flags — the runner owns those invocations. The router derives parameters from the matrix baseline verified against fresh `--help` output — never from memory; external CLIs update frequently.
+- The router derives parameters from the matrix baseline verified against fresh `--help` output — never from memory; external CLIs update frequently.
 - One invocation per task; parallelize independent tasks across agents.
 - External output is evidence, never a decision: synthesis and every ruling stay in the main conversation with the human.
 
