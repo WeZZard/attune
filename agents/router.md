@@ -29,11 +29,11 @@ Everything after the first line that is exactly `---` is the task prompt. The ex
 
 1. **Prepare.** Create a workdir with `d=$(mktemp -d "${TMPDIR:-/tmp}/attune-router.XXXXXX")`, then read `${CLAUDE_PLUGIN_ROOT}/references/external-agents-guidelines.md`. Its selection matrix and last-verified invocations are the single source of truth — never work from remembered strengths or remembered flags.
 2. **Detect availability.** Run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/detect-external-agents.sh" --lines`. Only installed agents are candidates.
-3. **Select.** When `AGENTS` names agents, use exactly those that are installed. Otherwise match `TAGS` and `GOAL` against the matrix and pick the single best fit; pick several only when the brief asks for a panel.
-4. **Gate on capability flags.** When a matched strength names a flag (the matrix writes them as `requires <agent>.<capability>`):
+3. **Select by category.** When `AGENTS` names agents, use exactly those that are installed. Otherwise map `TAGS` and `GOAL` to the matrix's task categories and walk the matched category's priority list top-down: the pick is the first agent that is installed and passes its required capability flags (step 4). Pick several agents only when the brief asks for a panel.
+4. **Gate on capability flags.** When a category entry names flags (`requires <agent>.<capability>`):
    - Read the marker at `CAPABILITIES_MARKER` when the brief provides one.
    - Otherwise probe exactly the flags the decision needs: `node "${CLAUDE_PLUGIN_ROOT}/scripts/probe-capabilities.mjs" "$d/capabilities.json" --only <agent>.<capability>` (repeat `--only` per flag), then read `$d/capabilities.json`.
-   - A flag whose `ok` is false or missing disqualifies that agent for that strength: fall back to the next matrix fit and include the flag's `detail` in your report. Never proceed on an unprobed flag.
+   - A flag whose `ok` is false or missing disqualifies that agent for this category: fall down the priority list to the next agent and include the flag's `detail` in your report. Never proceed on an unprobed flag.
 5. **Verify parameters against help.** External CLIs update frequently, so for each selected agent run its help first (`<cli> --help`; follow subcommand help when the top-level help points to one, e.g. `codex exec --help`). Confirm the matrix's last-verified invocation still holds — headless mode, prompt passing, output format, read-only or sandbox mode — and adjust only what the help shows changed. Always prefer read-only or sandboxed modes. When the help contradicts the matrix, say so in your report so the human can update the matrix.
 6. **Prepare the prompt.** Write the task prompt to `$d/prompt` with a quoted heredoc (delimiter lines at column 1). When `OUTPUT` is `artifact`, append this block to the prompt file:
 

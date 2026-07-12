@@ -32,7 +32,7 @@ for (let i = 1; i < args.length; i++) {
   if (args[i] === '--only' && args[i + 1]) only.push(args[++i]);
 }
 
-const config = JSON.parse(
+const { capabilities, agents } = JSON.parse(
   readFileSync(
     join(dirname(fileURLToPath(import.meta.url)), '..', 'capabilities.json'),
     'utf8',
@@ -57,8 +57,15 @@ function probeOne(spec, prompt) {
 }
 
 const jobs = [];
-for (const [agent, spec] of Object.entries(config)) {
-  for (const [capability, cap] of Object.entries(spec.capabilities)) {
+for (const [agent, spec] of Object.entries(agents)) {
+  for (const capability of spec.probe) {
+    const cap = capabilities[capability];
+    if (!cap) {
+      console.error(
+        `probe-capabilities: unknown capability in agents.${agent}.probe: ${capability}`,
+      );
+      process.exit(64);
+    }
     const flag = `${agent}.${capability}`;
     if (only.length > 0 && !only.includes(flag)) continue;
     jobs.push(

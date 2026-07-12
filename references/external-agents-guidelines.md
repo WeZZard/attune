@@ -25,18 +25,24 @@ The main conversation composes the brief because it holds the context; the route
 
 ## Selection matrix
 
-Pick by the task's dominant demand; availability still gates every pick. `Last verified` is the known-good headless baseline the router re-checks against the CLI's current `--help` before use.
+The matrix is categorized by task, not by agent. Within a category, agents stand in priority order (human ruled): take the first whose availability and required capability flags all hold, and fall down the list otherwise. Category names double as `TAGS` vocabulary.
 
-- **Kimi** (`kimi`) — visual tasks; browser use (requires `kimi.playwright` or `kimi.chrome_devtools`).
-  Last verified: `kimi -p "<prompt>" --output-format text`
-- **Codex** (`codex`, GPT) — computer use (requires `codex.computer_use`); visual tasks; image generation.
-  Last verified: `codex exec --skip-git-repo-check -s read-only -c approval_policy=never` (prompt on stdin)
-- **Antigravity** (`agy`, Gemini including its image models) — image generation; documentation.
-  Last verified: `agy -p "<prompt>" --sandbox --print-timeout 30m`
-- **Cursor** (`cursor-agent`) — building on open-source tech stacks.
-  Last verified: `cursor-agent -p --mode ask --output-format text --trust --model auto "<prompt>"`
-- **Grok** (`grok`) — building on open-source tech stacks.
-  Last verified: `grok -p "<prompt>" --output-format plain --permission-mode plan`
+- **browser** — 1. Codex (requires `codex.playwright` or `codex.chrome_devtools`); 2. Kimi (requires `kimi.playwright` or `kimi.chrome_devtools`).
+- **computer-use** — 1. Codex (requires `codex.computer_use`).
+- **visual** — 1. Codex; 2. Kimi.
+- **image-generation** — 1. Antigravity (`agy`, Gemini image models); 2. Codex.
+- **documentation** — 1. Antigravity.
+- **open-source-stack** — 1. Cursor (`cursor-agent`); 2. Grok.
+
+### Last-verified invocations
+
+The known-good headless baseline per agent; the router re-checks each against the CLI's current `--help` before use.
+
+- `kimi -p "<prompt>" --output-format text`
+- `codex exec --skip-git-repo-check -s read-only -c approval_policy=never` (prompt on stdin)
+- `agy -p "<prompt>" --sandbox --print-timeout 30m`
+- `cursor-agent -p --mode ask --output-format text --trust --model auto "<prompt>"`
+- `grok -p "<prompt>" --output-format plain --permission-mode plan`
 
 ## Availability: facts before use
 

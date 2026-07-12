@@ -43,6 +43,9 @@ test('expect marker present reduces to true; wrong marker reduces to false', () 
   // Same fake reply lacks DEVTOOLS_OK, so the sibling capability fails closed.
   assert.equal(flags.kimi.chrome_devtools.ok, false);
   assert.equal(flags.codex.computer_use.ok, true);
+  // Codex is probed for the browser capabilities too; this reply proves neither.
+  assert.equal(flags.codex.playwright.ok, false);
+  assert.equal(flags.codex.chrome_devtools.ok, false);
 });
 
 test('CAPABILITY_MISSING and nonzero exits reduce to false', () => {

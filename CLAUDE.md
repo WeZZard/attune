@@ -38,8 +38,11 @@ path lengths. A new reference document means a new hook, not a bigger one.
 ## External agent routing
 
 The selection matrix in `references/external-agents-guidelines.md` is the
-single source of truth for agent strengths and last-verified invocations; the
+single source of truth for agent selection and last-verified invocations; the
 router (`agents/router.md`) reads it at runtime and never restates it. The
+matrix is categorized by task, and each category lists agents in priority
+order (human ruled: Codex before Kimi for browser and computer use) — never
+reshape it back into per-agent strength lists. The
 router verifies parameters against each CLI's current `--help` before every
 launch (human ruled: external CLIs update frequently — never invoke from
 memory). When the router reports that a CLI's help contradicts the matrix,
@@ -52,20 +55,23 @@ capability flags probed behaviorally by `scripts/probe-capabilities.mjs` from
 `capabilities.json` — the matrix names them as `requires <agent>.<capability>`
 and the router never proceeds on an unprobed flag. `capabilities.json` fields:
 
-- `invocation` — argv template for one headless probe run of this agent;
-  `{prompt}` marks the argument the probe prompt replaces.
-- `prompt_via` — present and `"stdin"` when the CLI takes the prompt on
-  stdin; the argv then carries no `{prompt}`.
-- `capabilities.<name>.prompt` — the probe prompt; it must make the agent
-  exercise the tool and echo tool-derived data back, and it must offer
-  `CAPABILITY_MISSING` as the honest failure reply.
-- `capabilities.<name>.expect` — the substring proving success. Reduction is
-  fail-closed: ok = exit 0, `expect` present, `CAPABILITY_MISSING` absent.
-- `capabilities.<name>.strength` — the matrix strength this flag gates, for
-  the human reading the file.
+- `capabilities.<name>` — one probe definition, shared by every agent that
+  lists it: `prompt` (must make the agent exercise the tool, echo
+  tool-derived data back, and offer `CAPABILITY_MISSING` as the honest
+  failure reply), `expect` (the substring proving success; reduction is
+  fail-closed: ok = exit 0, `expect` present, `CAPABILITY_MISSING` absent),
+  and `strength` (what the flag gates, for the human reading the file).
+- `agents.<agent>.invocation` — argv template for one headless probe run of
+  this agent; `{prompt}` marks the argument the probe prompt replaces.
+- `agents.<agent>.prompt_via` — present and `"stdin"` when the CLI takes the
+  prompt on stdin; the argv then carries no `{prompt}`.
+- `agents.<agent>.probe` — the capability names probed for this agent; each
+  reduces to the flag `<agent>.<capability>`.
 
-Adding a tool-dependent strength = one `capabilities.json` entry plus its
-`requires` note in the matrix — no script or router change.
+Adding a tool-dependent strength = one `capabilities` entry plus its
+`requires` note in the matrix; checking whether another agent supports an
+existing tool = adding the capability name to that agent's `probe` list. No
+script or router change either way.
 
 ## Vendored code (never hand-edit)
 

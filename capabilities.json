@@ -1,28 +1,30 @@
 {
-  "kimi": {
-    "invocation": ["kimi", "-p", "{prompt}", "--output-format", "text"],
-    "capabilities": {
-      "playwright": {
-        "strength": "browser use via the Playwright MCP",
-        "prompt": "This is a capability probe. Using your Playwright MCP browser tools, navigate to about:blank and read the current URL back through a browser tool call. If every tool call actually succeeded, reply with exactly one line: PLAYWRIGHT_OK <the url you read>. If the Playwright browser tools are not available to you, reply with exactly one line: CAPABILITY_MISSING. Never simulate a tool call.",
-        "expect": "PLAYWRIGHT_OK"
-      },
-      "chrome_devtools": {
-        "strength": "browser use via the Chrome DevTools MCP",
-        "prompt": "This is a capability probe. Using your Chrome DevTools MCP tools, list the open pages and count them. If the tool call actually succeeded, reply with exactly one line: DEVTOOLS_OK <the count>. If the Chrome DevTools tools are not available to you, reply with exactly one line: CAPABILITY_MISSING. Never simulate a tool call.",
-        "expect": "DEVTOOLS_OK"
-      }
+  "capabilities": {
+    "playwright": {
+      "strength": "browser use via the Playwright MCP",
+      "prompt": "This is a capability probe. Using your Playwright MCP browser tools, navigate to about:blank and read the current URL back through a browser tool call. If every tool call actually succeeded, reply with exactly one line: PLAYWRIGHT_OK <the url you read>. If the Playwright browser tools are not available to you, reply with exactly one line: CAPABILITY_MISSING. Never simulate a tool call.",
+      "expect": "PLAYWRIGHT_OK"
+    },
+    "chrome_devtools": {
+      "strength": "browser use via the Chrome DevTools MCP",
+      "prompt": "This is a capability probe. Using your Chrome DevTools MCP tools, list the open pages and count them. If the tool call actually succeeded, reply with exactly one line: DEVTOOLS_OK <the count>. If the Chrome DevTools tools are not available to you, reply with exactly one line: CAPABILITY_MISSING. Never simulate a tool call.",
+      "expect": "DEVTOOLS_OK"
+    },
+    "computer_use": {
+      "strength": "computer use via the cua MCP",
+      "prompt": "This is a capability probe. Using your cua computer-use MCP, call get_screen_size and report the result. If the tool call actually succeeded, reply with exactly one line: CUA_OK <width>x<height>. If the cua tools are not available to you, reply with exactly one line: CAPABILITY_MISSING. Never simulate a tool call.",
+      "expect": "CUA_OK"
     }
   },
-  "codex": {
-    "invocation": ["codex", "exec", "--skip-git-repo-check", "-s", "read-only", "-c", "approval_policy=never"],
-    "prompt_via": "stdin",
-    "capabilities": {
-      "computer_use": {
-        "strength": "computer use via the cua MCP",
-        "prompt": "This is a capability probe. Using your cua computer-use MCP, call get_screen_size and report the result. If the tool call actually succeeded, reply with exactly one line: CUA_OK <width>x<height>. If the cua tools are not available to you, reply with exactly one line: CAPABILITY_MISSING. Never simulate a tool call.",
-        "expect": "CUA_OK"
-      }
+  "agents": {
+    "kimi": {
+      "invocation": ["kimi", "-p", "{prompt}", "--output-format", "text"],
+      "probe": ["playwright", "chrome_devtools"]
+    },
+    "codex": {
+      "invocation": ["codex", "exec", "--skip-git-repo-check", "-s", "read-only", "-c", "approval_policy=never"],
+      "prompt_via": "stdin",
+      "probe": ["playwright", "chrome_devtools", "computer_use"]
     }
   }
 }
