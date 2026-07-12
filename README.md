@@ -38,9 +38,11 @@ standing rulings; only the user changes them.
   panel).
 - **External agents** — a Haiku router (`attune:router`) dispatches task
   briefs composed by the main conversation: it selects agents from the
-  selection matrix in the guidelines, verifies CLI parameters against each
-  agent's current `--help` (external CLIs update frequently), and returns
-  outputs and artifact paths verbatim. Fixed read-only driver subagents for
+  selection matrix in the guidelines, gates tool-dependent strengths (browser
+  use, computer use) on capability flags probed behaviorally from
+  `capabilities.json` (`scripts/probe-capabilities.mjs`), verifies CLI
+  parameters against each agent's current `--help` (external CLIs update
+  frequently), and returns outputs and artifact paths verbatim. Fixed read-only driver subagents for
   Codex, Grok, Kimi, Agy, and Cursor Agent remain over the shared runner
   (`scripts/run-external-agent.sh`) for audit-style tasks. An external agent
   that must write to a repository runs in a git worktree
@@ -61,7 +63,8 @@ path.)
 
 ```
 .claude-plugin/plugin.json   manifest
-agents/                      external-agent drivers (vendored from amplify)
+agents/                      the router + external-agent drivers (vendored)
+capabilities.json            tool-dependent capability probes (data)
 hooks/                       SessionStart guidelines + availability injection
 references/                  the guidelines documents (the product)
 scripts/                     detection, usability probe, runner, worktree

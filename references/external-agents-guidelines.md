@@ -16,6 +16,7 @@ GOAL: <one line — what the task must accomplish>
 OUTPUT: <text | artifact — what comes back>
 TAGS: <task traits, e.g. visual, browser, computer-use, image-generation, documentation, open-source-stack>
 AGENTS: <optional explicit agent list; omit to let the matrix decide>
+CAPABILITIES_MARKER: <optional path to a capability marker from an earlier probe; omit to let the router probe what it needs>
 ---
 <the full, self-contained task prompt for the external agent — it sees nothing else>
 ```
@@ -26,9 +27,9 @@ The main conversation composes the brief because it holds the context; the route
 
 Pick by the task's dominant demand; availability still gates every pick. `Last verified` is the known-good headless baseline the router re-checks against the CLI's current `--help` before use.
 
-- **Kimi** (`kimi`) — visual tasks; browser use.
+- **Kimi** (`kimi`) — visual tasks; browser use (requires `kimi.playwright` or `kimi.chrome_devtools`).
   Last verified: `kimi -p "<prompt>" --output-format text`
-- **Codex** (`codex`, GPT) — computer use; visual tasks; image generation.
+- **Codex** (`codex`, GPT) — computer use (requires `codex.computer_use`); visual tasks; image generation.
   Last verified: `codex exec --skip-git-repo-check -s read-only -c approval_policy=never` (prompt on stdin)
 - **Antigravity** (`agy`, Gemini including its image models) — image generation; documentation.
   Last verified: `agy -p "<prompt>" --sandbox --print-timeout 30m`
@@ -43,8 +44,9 @@ Whether an agent works right now is a volatile fact — probe it, never assume i
 
 1. **Installed** — the binary is on PATH. Detected free of charge at session start by `scripts/detect-external-agents.sh`; the report is injected below these guidelines.
 2. **Usable** — binary, login, network, and model all work. Proven behaviorally by `scripts/probe-external-agents.sh <marker.json>` — one minimal paid prompt per agent, run in the background, results written to the marker file. Run it before the first real delegation of a session, and re-run it when an invocation contradicts the marker.
+3. **Capable** — a tool-dependent strength (an MCP the agent must be armed with) actually functions. Defined as data in `capabilities.json` and proven by `node scripts/probe-capabilities.mjs <marker.json>` — one meaningful paid prompt per agent×capability that makes the agent exercise the tool and echo tool-derived data back. Results reduce to flags named `<agent>.<capability>` (e.g. `kimi.playwright`, `codex.computer_use`).
 
-Select an agent only when installed and usable both hold. A failed or unknown probe fails closed to unavailable; report the failure detail so the human sees what would enable it (e.g. "codex is installed but not logged in — `codex login` enables it").
+Select an agent only when every layer the task needs holds: installed and usable always, plus each capability flag the matched strength names. A failed, missing, or simulated probe fails closed to false; report the failure detail so the human sees what would enable it (e.g. "codex is installed but not logged in — `codex login` enables it").
 
 ## Roles
 

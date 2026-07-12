@@ -47,6 +47,26 @@ updating the matrix's last-verified line is the user's editorial act. Briefs
 with `OUTPUT: artifact` make the external agent reply with explicit
 `ARTIFACT_PATH:` lines, which the router passes through verbatim.
 
+Tool-dependent strengths (MCP-armed: browser use, computer use) are gated by
+capability flags probed behaviorally by `scripts/probe-capabilities.mjs` from
+`capabilities.json` — the matrix names them as `requires <agent>.<capability>`
+and the router never proceeds on an unprobed flag. `capabilities.json` fields:
+
+- `invocation` — argv template for one headless probe run of this agent;
+  `{prompt}` marks the argument the probe prompt replaces.
+- `prompt_via` — present and `"stdin"` when the CLI takes the prompt on
+  stdin; the argv then carries no `{prompt}`.
+- `capabilities.<name>.prompt` — the probe prompt; it must make the agent
+  exercise the tool and echo tool-derived data back, and it must offer
+  `CAPABILITY_MISSING` as the honest failure reply.
+- `capabilities.<name>.expect` — the substring proving success. Reduction is
+  fail-closed: ok = exit 0, `expect` present, `CAPABILITY_MISSING` absent.
+- `capabilities.<name>.strength` — the matrix strength this flag gates, for
+  the human reading the file.
+
+Adding a tool-dependent strength = one `capabilities.json` entry plus its
+`requires` note in the matrix — no script or router change.
+
 ## Vendored code (never hand-edit)
 
 - `scripts/run-external-agent.sh` — from amplify `scripts/`.
