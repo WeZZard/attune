@@ -34,8 +34,12 @@ maintains it — it is NOT vendored-frozen.
 Hook output is capped at 10,000 characters per event
 (code.claude.com/docs/en/hooks). `hooks/session-start.mjs` injects every
 reference document plus the availability report and truncates past 9,500
-characters with a visible warning. Adding a reference document means checking
-the combined size still fits.
+characters (`CONTEXT_LIMIT`, the single source of truth) with a visible
+warning. The pre-commit gate (`scripts/check-hook-budget.mjs`, wired through
+`.githooks/pre-commit`; enable per clone with
+`git config core.hooksPath .githooks`) fails any commit that would truncate:
+it runs the real hook against a fixture PATH with every agent installed and
+requires 300 characters of headroom for machine-dependent path lengths.
 
 ## Vendored code (never hand-edit)
 

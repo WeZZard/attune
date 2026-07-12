@@ -65,11 +65,18 @@ scripts/                     detection, usability probe, runner, worktree
 skills/                      interview, experiment
 ```
 
-## Tests
+## Tests and the commit gate
 
 ```bash
 node --test scripts/*.test.mjs
+git config core.hooksPath .githooks   # enable the pre-commit gate, once per clone
 ```
+
+The pre-commit gate syntax-checks the hook, runs the tests, and fails any
+commit whose guidelines would overflow the platform's hook output cap
+(`scripts/check-hook-budget.mjs`): it runs the real SessionStart hook against
+a fixture PATH with every agent installed — the longest availability report —
+and requires 300 characters of headroom for machine-dependent path lengths.
 
 ## License
 
