@@ -1,7 +1,7 @@
 {
   "name": "attune",
   "description": "Capture and apply human-ruled knowledge the model cannot internalize — user preferences and output-style rulings, settled by oracle: research the world, ask the human, experiment on the unknown.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "WeZZard",
     "email": "me@wezzard.com"
