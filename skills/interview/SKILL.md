@@ -19,21 +19,23 @@ This skill runs that routing eagerly during any discussion. Until its oracle ans
 
 ## Eager research (WORLD-owned)
 
-The moment you classify an unknown as WORLD-owned, launch one background `Explore` subagent per unknown or candidate, in parallel (one message, multiple tool calls), each grounded with `WebSearch`. The conversation continues while they run; fold each brief in when it lands. Keep only compact briefs in this thread, never the raw research.
+The moment you classify an unknown as WORLD-owned, launch one background `Explore` subagent per unknown or candidate, in parallel (one message, multiple tool calls), each grounded with `WebSearch`. The conversation continues while they run, but the report back does not: wait for every spawned explorer to complete, then report once, carrying every brief — never a partial report as briefs land. Keep only compact briefs in this thread, never the raw research.
 
 **Designing Spawning Prompts:**
 
 **MUST:**
 
-1. You **MUST** state the explorer's response requirements in the spawning prompt as **MUST:** / **MUST NOT:** lists — the `Agent` tool enforces no schema, so the prompt carries the whole contract.
-2. You **MUST** require the explorer's response to take the template below.
-3. You **MUST** require a dated source for every claim.
-4. You **MUST** keep every field fail-open — "none" is a valid entry, so the template never pressures a fabricated source, conflict, or confidence.
+1. You **MUST** carry the whole response contract in the spawning prompt — the `Agent` tool enforces no schema.
+2. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists.
+3. You **MUST** require the explorer's response to take the template below.
+4. You **MUST** require a dated source for every claim.
+5. You **MUST** keep every field fail-open — "none" is a valid entry.
 
 **MUST NOT:**
 
 1. You **MUST NOT** let the template bind the research behind the response — it binds only the returned brief.
-2. You **MUST NOT** use all-caps section titles or labels in the template.
+2. You **MUST NOT** let the template pressure a fabricated source, conflict, or confidence.
+3. You **MUST NOT** use all-caps section titles or labels in the template.
 
 Required response template:
 

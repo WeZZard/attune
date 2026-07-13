@@ -24,9 +24,12 @@ A question neither the world nor the user can answer until it is tried: "does th
 
 **MUST:**
 
-1. You **MUST** state each delegate's response requirements in its brief's `## Response` section as **MUST:** / **MUST NOT:** lists — the same contract style as the interview skill's explorer prompts.
-2. You **MUST** require a producer's response to carry the rendered candidate verbatim.
-3. You **MUST** require a judge's response to take the template below: a ranking against the stated criterion alone, justified in two sentences.
+1. You **MUST** carry each delegate's response contract in its brief's `## Response` section.
+2. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists — the same contract style as the interview skill's explorer prompts.
+3. You **MUST** require a producer's response to carry the rendered candidate verbatim.
+4. You **MUST** require a judge's response to take the template below.
+5. You **MUST** require the ranking judged against the stated criterion alone.
+6. You **MUST** require a two-sentence justification of the ranking.
 
 **MUST NOT:**
 

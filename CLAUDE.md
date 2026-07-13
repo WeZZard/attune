@@ -22,9 +22,10 @@ research- or experiment-informed rules in, inline provenance marks
 maintains it — it is NOT vendored-frozen.
 
 **Guidelines authoring style (human ruled):** principles are numbered
-**MUST:** / **MUST NOT:** lists ("1. You **MUST** …"). Factual material —
-contract templates, category tables, findings, command blocks — stays
-structural; only the rules take the list form.
+**MUST:** / **MUST NOT:** lists ("1. You **MUST** …"). Each principle
+carries one idea — decompose a compound rule into separate numbered items.
+Factual material — contract templates, category tables, findings, command
+blocks — stays structural; only the rules take the list form.
 
 ## Injection budget
 
