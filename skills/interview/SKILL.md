@@ -21,7 +21,39 @@ This skill runs that routing eagerly during any discussion. Until its oracle ans
 
 The moment you classify an unknown as WORLD-owned, launch one background `Explore` subagent per unknown or candidate, in parallel (one message, multiple tool calls), each grounded with `WebSearch`. The conversation continues while they run; fold each brief in when it lands. Keep only compact briefs in this thread, never the raw research.
 
-Validate every brief: check source credibility; check dates and discard stale facts; resolve conflicts by source authority and recency; never conclude without validation.
+**Designing Spawning Prompts:**
+
+**MUST:**
+
+1. You **MUST** state the explorer's response requirements in the spawning prompt as **MUST:** / **MUST NOT:** lists — the `Agent` tool enforces no schema, so the prompt carries the whole contract.
+2. You **MUST** require the explorer's response to take the template below.
+3. You **MUST** require a dated source for every claim.
+4. You **MUST** keep every field fail-open — "none" is a valid entry, so the template never pressures a fabricated source, conflict, or confidence.
+
+**MUST NOT:**
+
+1. You **MUST NOT** let the template bind the research behind the response — it binds only the returned brief.
+2. You **MUST NOT** use all-caps section titles or labels in the template.
+
+Required response template:
+
+```markdown
+## Findings
+- Claim: <one sentence>
+  Evidence: <what supports it>
+  Source: <name or URL, date>
+(one entry per claim)
+
+## Conflicts
+<disagreements between sources, or "none">
+
+## Confidence
+<one line: how settled this is, and what would change it>
+```
+
+The shape is the explorer's duty alone: relay its brief to the user verbatim, and never compile or reshape subagent output into the template in the main thread.
+
+Validate every brief against its fields: check source credibility; check dates and discard stale facts; resolve conflicts by source authority and recency; never conclude without validation. Validation is a judgment passed on the brief, not a rewrite of it.
 
 ## The interview (HUMAN-owned)
 

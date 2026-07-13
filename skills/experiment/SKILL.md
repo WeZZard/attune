@@ -16,13 +16,36 @@ A question neither the world nor the user can answer until it is tried: "does th
 1. **Frame.** Name the experiment (kebab-case) and write the single criterion the candidates compete on. A candidate set without a criterion is taste-polling, not an experiment.
 2. **Produce.** Render 2–4 candidates of the same content into `${TMPDIR}/attune-experiments/<name>/`. Produce at least one yourself. Widen the set with external producers: one attune:external-agent brief per producer (`AGENTS: <agent>` pins which model renders; the brief's `## Response` section asks for the rendered text verbatim).
 3. **Blind.** Copy the candidates to letter names (`A.md`, `B.md`, …) in shuffled order (use `$RANDOM`), stripping every provenance hint from the content. Write the letter-to-producer mapping to `mapping.txt`; never show it to a judge and never quote it before the ruling.
-4. **Judge.** Send each judge the letter-named candidates and the criterion: one attune:external-agent brief per judge (`TAGS: auditing`, `AGENTS: <agent>` to pin it), 2–3 different agents, in parallel. Each judge ranks the candidates against the criterion and justifies its ranking in two sentences.
-5. **Rule.** Present the candidates and the anonymized verdicts to the user. The user rules. Reveal the mapping only after the ruling.
+4. **Judge.** Send each judge the letter-named candidates and the criterion: one attune:external-agent brief per judge (`TAGS: auditing`, `AGENTS: <agent>` to pin it), 2–3 different agents, in parallel. Design each brief's `## Response` section per **Designing Spawning Prompts** below.
+5. **Rule.** Present the candidates and the anonymized verdicts to the user — each verdict verbatim as the judge returned it; never compile or reshape a judge's report in the main thread. The user rules. Reveal the mapping only after the ruling.
 6. **Conclude.** Report the ruling as the experiment's outcome to the task that dispatched it, then delete the experiment directory — its artifacts are evidence, never design artifacts.
+
+**Designing Spawning Prompts:**
+
+**MUST:**
+
+1. You **MUST** state each delegate's response requirements in its brief's `## Response` section as **MUST:** / **MUST NOT:** lists — the same contract style as the interview skill's explorer prompts.
+2. You **MUST** require a producer's response to carry the rendered candidate verbatim.
+3. You **MUST** require a judge's response to take the template below: a ranking against the stated criterion alone, justified in two sentences.
+
+**MUST NOT:**
+
+1. You **MUST NOT** use all-caps section titles or labels in the template.
+2. You **MUST NOT** let a judge's brief carry any provenance hint.
+
+Required judge response template:
+
+```markdown
+## Ranking
+<letters, best to worst>
+
+## Justification
+<two sentences against the criterion>
+```
 
 ## Isolation
 
-Producers and judges run read-only. When a future experiment requires an external agent to write into a repository, create a git worktree first (human ruled: external agents never write to a repo directly):
+Producers and judges run read-only. When a future experiment requires an external agent to write into a repository, create a git worktree first (external agents never write to a repo directly):
 
 ```bash
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/worktree.sh" create <repo-dir> <experiment-name>
