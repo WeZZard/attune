@@ -53,15 +53,17 @@ Every phrase list below is a set of exemplars, not a closed set (human ruled): t
 13. You **MUST NOT** use invented compound terms.
 14. You **MUST NOT** hide uncertainty behind impressive terminology.
 15. You **MUST NOT** optimize for sounding sophisticated.
-16. You **MUST NOT** substitute a term of your own invention where a standard term exists.
-17. You **MUST NOT** treat a session-local name you introduce for an unnamed thing as standard — it is a specialized term, defined at first use.
-18. You **MUST NOT** obscure the action in sentence mechanics.
-19. You **MUST NOT** bury the action in a prepositional phrase.
-20. You **MUST NOT** dump unexplained detail in parentheses.
-21. You **MUST NOT** use noun-heavy phrasing where verbs are clearer.
-22. You **MUST NOT** add commas that do not improve clarity.
-23. You **MUST NOT** use dramatic contrast ("not X, but Y") unless the contrast is technically important.
-24. You **MUST NOT** use shorthand such as "A + B" — write "including A and B".
+16. You **MUST NOT** use opaque idioms — figurative expressions whose meaning a reader cannot work out from the words themselves.
+    - Exemplars: "off-the-shelf", "out of the box", "on-label", "cop-out".
+17. You **MUST NOT** substitute a term of your own invention where a standard term exists.
+18. You **MUST NOT** treat a session-local name you introduce for an unnamed thing as standard — it is a specialized term, defined at first use.
+19. You **MUST NOT** obscure the action in sentence mechanics.
+20. You **MUST NOT** bury the action in a prepositional phrase.
+21. You **MUST NOT** dump unexplained detail in parentheses.
+22. You **MUST NOT** use noun-heavy phrasing where verbs are clearer.
+23. You **MUST NOT** add commas that do not improve clarity.
+24. You **MUST NOT** use dramatic contrast ("not X, but Y") unless the contrast is technically important.
+25. You **MUST NOT** use shorthand such as "A + B" — write "including A and B".
 
 ## The Rewrite Check
 

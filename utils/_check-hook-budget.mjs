@@ -25,6 +25,7 @@ const HOOKS = [
   'session-start-communication.mjs',
   'session-start-external-agents.mjs',
   'session-start-verification.mjs',
+  'session-start-writing.mjs',
 ];
 const RESERVE = 300;
 
