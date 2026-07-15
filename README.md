@@ -4,7 +4,7 @@ Attune is a Claude Code plugin that injects your standing guidelines into
 every session: how to write to you, when to delegate to external agents,
 and what counts as verified work.
 
-- **The interview** (`attune:interview`) routes every open question in a
+- **Explore** (`attune:explore`) routes every open question in a
   discussion to the one oracle that can settle it: research the world, ask
   the human, and run an experiment for what nobody knows yet.
 - **The experiment** (`attune:experiment`) settles questions that only

@@ -1,11 +1,11 @@
 ---
-name: interview
-description: <EXTREMELY_IMPORTANT>You MUST use interview when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It routes every open unknown to its oracle — research the world, ask the human, experiment on the unknown — so discussions settle on evidence and rulings instead of assumptions.</EXTREMELY_IMPORTANT>
+name: explore
+description: <EXTREMELY_IMPORTANT>You MUST use explore when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It routes every open unknown to its oracle — research the world, ask the human, experiment on the unknown — so discussions settle on evidence and rulings instead of assumptions.</EXTREMELY_IMPORTANT>
 ---
 
-# Interview — Settle Unknowns by Oracle
+# Explore — Settle Unknowns by Oracle
 
-**Announce at start:** "I'm using the attune interview skill to route unknowns by oracle."
+**Announce at start:** "I'm using the attune explore skill to route unknowns by oracle."
 
 ## Overview
 

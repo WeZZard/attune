@@ -1,6 +1,6 @@
 ---
 name: experiment
-description: Settle a question that only trying can answer — an output-style comparison, a prompt phrasing, an error message, any unknown with comparable candidates — by a blind comparison. Produce candidates, strip provenance, collect an external judge panel's verdicts, then present everything to the user for the ruling. Use when the attune:interview skill classifies an unknown as NOBODY-owned, or when the user asks to settle a question by evidence.
+description: Settle a question that only trying can answer — an output-style comparison, a prompt phrasing, an error message, any unknown with comparable candidates — by a blind comparison. Produce candidates, strip provenance, collect an external judge panel's verdicts, then present everything to the user for the ruling. Use when the attune:explore skill classifies an unknown as NOBODY-owned, or when the user asks to settle a question by evidence.
 ---
 
 # Experiment — Settle by Evidence
@@ -9,7 +9,7 @@ description: Settle a question that only trying can answer — an output-style c
 
 ## When
 
-A question neither the world nor the user can answer until it is tried: "does the shorter opening actually read better?", "does this voice survive the blog medium?". If the user can answer it directly, it is HUMAN-owned — interview instead. If the web can answer it, it is WORLD-owned — research instead.
+A question neither the world nor the user can answer until it is tried: "does the shorter opening actually read better?", "does this voice survive the blog medium?". If the user can answer it directly, it is HUMAN-owned — explore instead. If the web can answer it, it is WORLD-owned — research instead.
 
 ## Protocol
 
@@ -25,7 +25,7 @@ A question neither the world nor the user can answer until it is tried: "does th
 **MUST:**
 
 1. You **MUST** carry each delegate's response contract in its brief's `## Response` section.
-2. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists — the same contract style as the interview skill's explorer prompts.
+2. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists — the same contract style as the explore skill's explorer prompts.
 3. You **MUST** require a producer's response to carry the rendered candidate verbatim.
 4. You **MUST** require a judge's response to take the template below.
 5. You **MUST** require the ranking judged against the stated criterion alone.
