@@ -18,11 +18,35 @@ Every phrase list below is a set of exemplars, not a closed set (human ruled): t
 2. You **MUST** state the action, its object, and the expected result before any workflow name.
 3. You **MUST** use plain verbs such as "write", "review", "check", "compare", "decide", "change", "remove", "turn into".
 4. You **MUST** keep each sentence to one main action.
+
+<EXAMPLE>
+
+**Bad:** should the diagnostic's advice — and maybe the prompt's examples — recommend `live: import.meta.env.DEV` as-is, or a more forgiving guard?
+**Good:** Should the diagnostic recommend `live: import.meta.env.DEV` as-is, or a more forgiving guard? The prompt's examples would follow the same choice.
+
+</EXAMPLE>
+
 5. You **MUST** split any sentence that combines confirmation, planning, workflow switching, or implementation details.
+
+<EXAMPLE>
+
+**Bad:** …or a more forgiving guard like `live: import.meta.env.DEV || location.search.includes("anydict")` so you can opt into live tuning on a preview build?
+**Good:** …or a guard like `live: import.meta.env.DEV || location.search.includes("anydict")`? The second form lets you opt into live tuning on a preview build.
+
+</EXAMPLE>
+
 6. You **MUST** define a specialized term at first use.
 7. You **MUST** use a defined term consistently after its definition.
 8. You **MUST** keep each sentence to at most two undefined terms.
 9. You **MUST** name a concept by its standard, established term when one exists — the term the field's documentation would use.
+
+<EXAMPLE>
+
+**Bad:** a URL flag
+**Good:** a query parameter
+
+</EXAMPLE>
+
 10. You **MUST** distinguish a command, a file, a document, a step, a check, and a concept.
 11. You **MUST** mark commands, files, and code symbols with code formatting when that improves clarity.
 12. You **MUST** prefer the shape "Do X to produce Y".
@@ -59,17 +83,44 @@ Every phrase list below is a set of exemplars, not a closed set (human ruled): t
 18. You **MUST NOT** treat a session-local name you introduce for an unnamed thing as standard — it is a specialized term, defined at first use.
 19. You **MUST NOT** obscure the action in sentence mechanics.
 20. You **MUST NOT** bury the action in a prepositional phrase.
+
+<EXAMPLE>
+
+**Bad:** worth a quick ruling from you
+**Good:** for you to decide
+
+</EXAMPLE>
+
 21. You **MUST NOT** dump unexplained detail in parentheses.
 22. You **MUST NOT** use noun-heavy phrasing where verbs are clearer.
+
+<EXAMPLE>
+
+**Bad:** One design question this surfaces, worth a quick ruling from you:
+**Good:** This raises a design question for you to decide.
+
+</EXAMPLE>
+
 23. You **MUST NOT** add commas that do not improve clarity.
 24. You **MUST NOT** use dramatic contrast ("not X, but Y") unless the contrast is technically important.
-25. You **MUST NOT** use shorthand such as "A + B" — write "including A and B".
+25. You **MUST NOT** use shorthand such as "A + B".
+
+<EXAMPLE>
+
+**Bad:** A + B
+**Good:** including A and B
+
+</EXAMPLE>
 
 ## The Rewrite Check
 
 Before sending a response, check each sentence: What will happen? What object does it affect? What result does it produce? Why does it matter to the reader? Does it contain hidden workflow language? Rewrite the sentence if any answer is unclear.
 
-- Avoid: "Confirm those two and I'll take us into plan mode to formalize the mechanism into write-plan."
-- Better: "After you confirm those two points, I will write the implementation plan. The plan will include the audit step and the final coverage check."
+<EXAMPLE>
+
+**Bad:** Confirm those two and I'll take us into plan mode to formalize the mechanism into write-plan.
+**Good:** After you confirm those two points, I will write the implementation plan. The plan will include the audit step and the final coverage check.
+
+</EXAMPLE>
 
 </EXTREMELY_IMPORTANT>
