@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./hooks/session-start-communication.mjs --platform codex",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "./hooks/session-start-external-agents.mjs --platform codex",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "./hooks/session-start-verification.mjs --platform codex",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "./hooks/session-start-writing.mjs --platform codex",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

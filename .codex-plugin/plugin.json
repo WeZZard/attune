@@ -1,0 +1,25 @@
+{
+  "name": "attune",
+  "version": "0.4.0",
+  "description": "Capture and apply human-ruled knowledge the model cannot internalize — user preferences and output-style rulings, settled by oracle: research the world, ask the human, experiment on the unknown.",
+  "author": {
+    "name": "WeZZard",
+    "email": "me@wezzard.com"
+  },
+  "homepage": "https://github.com/WeZZard/attune",
+  "repository": "https://github.com/WeZZard/attune",
+  "license": "MIT",
+  "keywords": [
+    "guidelines",
+    "communication-style",
+    "verification",
+    "external-agents"
+  ],
+  "skills": "./codex/skills/",
+  "interface": {
+    "displayName": "Attune",
+    "shortDescription": "Standing guidelines, a verification standard, and an external-agent router",
+    "developerName": "WeZZard",
+    "websiteURL": "https://github.com/WeZZard/attune"
+  }
+}
