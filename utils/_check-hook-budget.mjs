@@ -42,35 +42,40 @@ try {
     chmodSync(fake, 0o755);
   }
 
-  for (const hook of HOOKS) {
-    const out = execFileSync(
-      process.execPath,
-      [join(repoRoot, 'hooks', hook)],
-      { encoding: 'utf8', env: { ...process.env, PATH: bin } },
-    );
-    if (!out) {
-      console.error(
-        `check-hook-budget: FAIL — ${hook} produced no output (it swallowed an error; run it by hand to see which)`,
+  // Both hook platforms run the same scripts; the platform flag changes the
+  // token substitutions (router handle length differs), so each budget is
+  // proven per platform.
+  for (const platform of ['claude', 'codex']) {
+    for (const hook of HOOKS) {
+      const out = execFileSync(
+        process.execPath,
+        [join(repoRoot, 'hooks', hook), '--platform', platform],
+        { encoding: 'utf8', env: { ...process.env, PATH: bin } },
       );
-      failed = true;
-      continue;
-    }
-    const context = JSON.parse(out).hookSpecificOutput.additionalContext;
-    const headroom = CONTEXT_LIMIT - context.length;
-    if (context.includes('truncated at the hook output limit')) {
-      console.error(
-        `check-hook-budget: FAIL — ${hook} exceeds the ${CONTEXT_LIMIT}-char context limit; tighten its reference doc`,
-      );
-      failed = true;
-    } else if (headroom < RESERVE) {
-      console.error(
-        `check-hook-budget: FAIL — ${hook} has only ${headroom} chars of headroom (< ${RESERVE} reserved for machine-dependent paths); tighten its reference doc`,
-      );
-      failed = true;
-    } else {
-      console.log(
-        `check-hook-budget: OK — ${hook}: ${context.length}/${CONTEXT_LIMIT} chars, ${headroom} headroom`,
-      );
+      if (!out) {
+        console.error(
+          `check-hook-budget: FAIL — ${hook} [${platform}] produced no output (it swallowed an error; run it by hand to see which)`,
+        );
+        failed = true;
+        continue;
+      }
+      const context = JSON.parse(out).hookSpecificOutput.additionalContext;
+      const headroom = CONTEXT_LIMIT - context.length;
+      if (context.includes('truncated at the hook output limit')) {
+        console.error(
+          `check-hook-budget: FAIL — ${hook} [${platform}] exceeds the ${CONTEXT_LIMIT}-char context limit; tighten its reference doc`,
+        );
+        failed = true;
+      } else if (headroom < RESERVE) {
+        console.error(
+          `check-hook-budget: FAIL — ${hook} [${platform}] has only ${headroom} chars of headroom (< ${RESERVE} reserved for machine-dependent paths); tighten its reference doc`,
+        );
+        failed = true;
+      } else {
+        console.log(
+          `check-hook-budget: OK — ${hook} [${platform}]: ${context.length}/${CONTEXT_LIMIT} chars, ${headroom} headroom`,
+        );
+      }
     }
   }
 } finally {
