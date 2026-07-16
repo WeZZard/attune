@@ -30,7 +30,7 @@
 **MUST:**
 
 1. You **MUST** verify in-session when the session's own tools reach the interface: run the command, read the artifact, call the endpoint.
-2. You **MUST** route what the session cannot drive through the external agents: a web flow is a `browser` brief to attune:external-agent, a GUI flow is a `computer-use` brief, an independent re-check of a claim is an `auditing` brief.
+2. You **MUST** route what the session cannot drive through the external agents: a web flow is a `browser` brief to {{ROUTER}}, a GUI flow is a `computer-use` brief, an independent re-check of a claim is an `auditing` brief.
 3. You **MUST** pin Codex (`AGENTS: codex`) in browser and computer-use verification briefs (human ruled) — verification evidence comes from Codex, never from a fallback agent.
 4. You **MUST** invoke the `verify` skill, when one is available in the session, before declaring a nontrivial change done — these guidelines set the standard; the skill carries the procedure.
 

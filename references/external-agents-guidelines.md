@@ -4,11 +4,11 @@
 
 ## The Interface
 
-One path delegates work to an external agent: the router, **attune:external-agent**. It selects agents, gates tool-dependent strengths on probed capability flags under their resource locks, verifies CLI parameters against each agent's current `--help`, launches headless runs, and responds as the brief's Response section specifies.
+One path delegates work to an external agent: the router, **{{ROUTER}}**. It selects agents, gates tool-dependent strengths on probed capability flags under their resource locks, verifies CLI parameters against each agent's current `--help`, launches headless runs, and responds as the brief's Response section specifies.
 
 **MUST:**
 
-1. You **MUST** delegate external agent work only through attune:external-agent, with a task brief in the contract below.
+1. You **MUST** delegate external agent work only through {{ROUTER}}, with a task brief in the contract below.
 2. You **MUST** compose the brief in the main conversation — it holds the context — and write the task prompt fully self-contained: the external agent sees nothing else.
 
 **MUST NOT:**
@@ -49,7 +49,7 @@ Category names double as `TAGS` vocabulary. Within a category, agents stand in p
 **MUST:**
 
 1. You **MUST** pick by the task's category and honor its priority order: the first agent whose facts hold wins, falling down the list otherwise.
-2. You **MUST** keep a task in-session when the session handles it natively (e.g. reading images: Claude has vision) — only work worth sending out gets a category.
+2. You **MUST** keep a task in-session when the session handles it natively (e.g. reading images: the session has vision) — only work worth sending out gets a category.
 
 **MUST NOT:**
 
@@ -60,7 +60,7 @@ Category names double as `TAGS` vocabulary. Within a category, agents stand in p
 One command answers everything in one call, printing installed / usable / capable per registry agent plus lock instructions for any exclusive resource in play (why: `references/resource-guidelines.md`):
 
 ```bash
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/external-agents.sh" matrix <marker.json>
+bash "{{ATTUNE_ROOT}}/scripts/external-agents.sh" matrix <marker.json>
 ```
 
 **MUST:**
@@ -72,13 +72,13 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/external-agents.sh" matrix <marker.json>
 
 1. You **MUST NOT** probe layer-by-layer or agent-by-agent — the matrix call is the single probe step.
 
-The free installed-only report is injected below these guidelines at session start.
+A free installed-only report may accompany these guidelines at session start; without it, the router's matrix call gathers the same facts at dispatch.
 
 ## Write Isolation
 
 **MUST:**
 
-1. You **MUST** create a worktree before a delegation that writes into a repository — `bash "${CLAUDE_PLUGIN_ROOT}/scripts/worktree.sh" create <repo-dir> <name>` — point the external agent at it, collect `worktree.sh diff` as evidence, merge or discard explicitly in the main conversation, then `worktree.sh remove`.
+1. You **MUST** create a worktree before a delegation that writes into a repository — `bash "{{ATTUNE_ROOT}}/scripts/worktree.sh" create <repo-dir> <name>` — point the external agent at it, collect `worktree.sh diff` as evidence, merge or discard explicitly in the main conversation, then `worktree.sh remove`.
 2. You **MUST** require explicit artifact paths in the reply for non-repository artifacts (generated images and similar) and pass them back verbatim.
 
 **MUST NOT:**

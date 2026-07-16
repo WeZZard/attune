@@ -15,9 +15,9 @@ MCP instances configured with `--isolated` (or a distinct `--user-data-dir`) are
 ## The Lock
 
 ```bash
-TOKEN=$(bash "${CLAUDE_PLUGIN_ROOT}/scripts/resource-lock.sh" acquire <resource> [--wait sec] [--ttl sec])
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/resource-lock.sh" release <resource> "$TOKEN"
-bash "${CLAUDE_PLUGIN_ROOT}/scripts/resource-lock.sh" status
+TOKEN=$(bash "<attune plugin root>/scripts/resource-lock.sh" acquire <resource> [--wait sec] [--ttl sec])
+bash "<attune plugin root>/scripts/resource-lock.sh" release <resource> "$TOKEN"
+bash "<attune plugin root>/scripts/resource-lock.sh" status
 ```
 
 - `acquire` prints a release token and exits 0; it exits 75 while the resource is busy. `--wait N` retries for up to N seconds.
