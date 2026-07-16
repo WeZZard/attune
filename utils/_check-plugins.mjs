@@ -137,23 +137,32 @@ if (sessionSkill && skillDirs.has('kimi')) {
 // Hook commands: Codex root hooks.json runs plugin-root-relative
 // executables; Claude hooks/hooks.json runs node on ${CLAUDE_PLUGIN_ROOT}
 // paths.
+// Codex hook commands are self-locating `sh -c` globs over the installed
+// plugin cache — codex 0.144.4 gives a hook command neither a plugin-root
+// cwd nor a plugin-root variable (verified empirically; relative commands
+// exit 127). The gate checks the hook script each command references.
 const codexHooks = readJson('hooks.json');
 for (const group of Object.values(codexHooks?.hooks ?? {})) {
   for (const entry of group) {
     for (const hook of entry.hooks ?? []) {
-      const script = hook.command.split(' ')[0];
-      const abs = join(repoRoot, script);
+      const m = hook.command.match(/session-start-[a-z-]+\.mjs/);
+      if (!m) {
+        fail(`hooks.json: no hooks/session-start-*.mjs reference in: ${hook.command}`);
+        continue;
+      }
+      const rel = join('hooks', m[0]);
+      const abs = join(repoRoot, rel);
       if (!existsSync(abs)) {
-        fail(`hooks.json: ${script} does not exist`);
+        fail(`hooks.json: ${rel} does not exist`);
         continue;
       }
       try {
         accessSync(abs, constants.X_OK);
       } catch {
-        fail(`hooks.json: ${script} is not executable (Codex runs it directly)`);
+        fail(`hooks.json: ${rel} is not executable (Codex hook commands exec it directly)`);
       }
       if (!readFileSync(abs, 'utf8').startsWith('#!')) {
-        fail(`hooks.json: ${script} has no shebang`);
+        fail(`hooks.json: ${rel} has no shebang`);
       }
     }
   }

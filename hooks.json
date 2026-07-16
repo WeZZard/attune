@@ -5,22 +5,22 @@
         "hooks": [
           {
             "type": "command",
-            "command": "./hooks/session-start-communication.mjs --platform codex",
+            "command": "/bin/sh -c 'for f in \"${CODEX_HOME:-$HOME/.codex}\"/plugins/cache/*/attune/*/hooks/session-start-communication.mjs; do p=\"$f\"; done; exec \"$p\" --platform codex'",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "./hooks/session-start-external-agents.mjs --platform codex",
+            "command": "/bin/sh -c 'for f in \"${CODEX_HOME:-$HOME/.codex}\"/plugins/cache/*/attune/*/hooks/session-start-external-agents.mjs; do p=\"$f\"; done; exec \"$p\" --platform codex'",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "./hooks/session-start-verification.mjs --platform codex",
+            "command": "/bin/sh -c 'for f in \"${CODEX_HOME:-$HOME/.codex}\"/plugins/cache/*/attune/*/hooks/session-start-verification.mjs; do p=\"$f\"; done; exec \"$p\" --platform codex'",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "./hooks/session-start-writing.mjs --platform codex",
+            "command": "/bin/sh -c 'for f in \"${CODEX_HOME:-$HOME/.codex}\"/plugins/cache/*/attune/*/hooks/session-start-writing.mjs; do p=\"$f\"; done; exec \"$p\" --platform codex'",
             "timeout": 10
           }
         ]
