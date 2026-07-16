@@ -16,6 +16,7 @@
     "external-agents"
   ],
   "skills": "./codex/skills/",
+  "hooks": "./hooks.json",
   "interface": {
     "displayName": "Attune",
     "shortDescription": "Standing guidelines, a verification standard, and an external-agent router",
