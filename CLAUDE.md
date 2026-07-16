@@ -27,6 +27,77 @@ carries one idea — decompose a compound rule into separate numbered items.
 Factual material — contract templates, category tables, findings, command
 blocks — stays structural; only the rules take the list form.
 
+## Multi-platform packaging
+
+One repo ships three plugins; `references/*.md` stays the single hand-edited
+source. Three manifests coexist: `.claude-plugin/plugin.json` (Claude Code),
+`.codex-plugin/plugin.json` (Codex — its `hooks` pointer to the root
+`hooks.json` is REQUIRED: without it Codex would auto-discover
+`hooks/hooks.json`, which is Claude's), and `kimi.plugin.json` (Kimi Code —
+`sessionStart.skill` loads the generated `guidelines` skill). The gate
+enforces one version across all three; bump them together.
+
+**Delivery tokens.** The injected reference docs carry two delivery-time
+tokens: `{{ATTUNE_ROOT}}` (absolute plugin root) and `{{ROUTER}}` (the
+platform's router handle). `hooks/_lib.mjs` resolves them for the two hook
+platforms (`--platform claude|codex`); `utils/_generate-platform-assets.mjs`
+resolves them into Kimi's generated guidelines skill.
+`references/resource-guidelines.md` is never injected, so it uses the prose
+placeholder `<attune plugin root>` instead of a token.
+
+**Generated trees.** `kimi/` and `codex/` are build products of
+`utils/generate-platform-assets.sh` — never hand-edit them; edit the sources
+(`references/`, `skills/`, `agents/external-agent.md`) and regenerate. The
+pre-commit gate fails on stale, missing, or foreign files there. A new
+reference document therefore means a new hook AND a generator entry, not a
+bigger one. Neither Kimi nor Codex runs Claude subagents, so the router
+ships as a generated skill on both; the Claude subagent
+(`agents/external-agent.md`) is the generation source and stays authoritative.
+
+**Codex facts (verified against codex-cli 0.144.4).** Hook commands run with
+neither a plugin-root cwd nor any plugin-root variable — a plugin-relative
+command exits 127 — so the root `hooks.json` commands are self-locating
+`sh -c` globs over `${CODEX_HOME:-$HOME/.codex}/plugins/cache/*/attune/*/`.
+Non-managed hooks require one-time user trust (startup dialog or `/hooks`,
+`t`), stored as definition hashes under `[hooks.state]` in
+`~/.codex/config.toml` — any change to a hook definition re-triggers review.
+SessionStart hooks fire on the first turn of a session, in `codex exec` too.
+Skills are namespaced `attune:*`. Codex also installs Claude-format plugins
+(falls back to `.claude-plugin/plugin.json`), which is why the native
+manifest must stay present and correct.
+
+**Kimi facts (verified against kimi-code 0.26.0).** `sessionStart.skill`
+injected the full ~17k-char concatenated guidelines untruncated (verified by
+tail quote); re-verify after sizeable growth — no documented cap exists. The
+availability report is dropped on Kimi (no context-injecting hooks); the
+router's matrix call gathers the same facts at dispatch. `/plugins install`
+accepts a GitHub URL or a local path and reads `kimi.plugin.json`;
+`disableModelInvocation: true` keeps the guidelines skill out of the
+invokable list while sessionStart still loads it.
+
+**Distribution (human ruled).** `wezzard/skills` is the unique marketplace
+for every coding agent: the Claude catalog lives there today and the Codex
+catalog (`.agents/plugins/marketplace.json`) is filed as a handoff in that
+repo — attune itself carries no marketplace catalog. Kimi installs straight
+from the GitHub URL.
+
+## Commit gates
+
+`.githooks/pre-commit` (enable per clone with `git config core.hooksPath
+.githooks`) runs, besides syntax and unit tests:
+
+- `utils/generate-platform-assets.sh --check` — generated-tree staleness.
+- `utils/check-hook-budget.sh` — per-hook injection budget, for
+  `--platform claude` and `codex` both (see "Injection budget").
+- `utils/check-plugins.sh` — the three-packaging gate: structural checks
+  (manifest schemas, version equality, referenced paths, SKILL.md
+  frontmatter, hook-command targets), then official validators when the CLI
+  is on PATH: `claude plugin validate` (not `--strict`: the maintainer
+  CLAUDE.md draws an inherent warning) and a hermetic Codex install
+  round-trip of the STAGED tree (checkout-index → temp git repo → `file://`
+  catalog → throwaway `CODEX_HOME`). Kimi ships no validator; it relies on
+  the structural layer. A missing CLI prints SKIPPED, never a silent pass.
+
 ## Injection budget
 
 Hook output is capped at 10,000 characters per command
