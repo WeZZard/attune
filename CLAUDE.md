@@ -33,28 +33,62 @@ One repo ships three plugins; `references/*.md` stays the single hand-edited
 source. Three manifests coexist: `.claude-plugin/plugin.json` (Claude Code),
 `.codex-plugin/plugin.json` (Codex — its `hooks` pointer to the root
 `hooks.json` is REQUIRED: without it Codex would auto-discover
-`hooks/hooks.json`, which is Claude's), and `kimi.plugin.json` (Kimi Code —
-`sessionStart.skill` loads the generated `guidelines` skill). The gate
-enforces one version across all three; bump them together.
+`hooks/hooks.json`, which is Claude's), and `package.json` (Pi — the `pi`
+key lists `extensions` and `skills`; the `pi-package` keyword is Pi's
+gallery flag). The gate enforces one version across all three; bump them
+together.
 
 **Delivery tokens.** The injected reference docs carry two delivery-time
 tokens: `{{ATTUNE_ROOT}}` (absolute plugin root) and `{{ROUTER}}` (the
 platform's router handle). `hooks/_lib.mjs` resolves them for the two hook
-platforms (`--platform claude|codex`); `utils/_generate-platform-assets.mjs`
-resolves them into Kimi's generated guidelines skill.
-`references/resource-guidelines.md` is never injected, so it uses the prose
-placeholder `<attune plugin root>` instead of a token.
+platforms (`--platform claude|codex`); `extensions/attune.js` resolves them
+at runtime on Pi. `references/resource-guidelines.md` is never injected, so
+it uses the prose placeholder `<attune plugin root>` instead of a token.
 
-**Generated trees.** `kimi/` and `codex/` are build products of
-`utils/generate-platform-assets.sh` — never hand-edit them; edit the sources
-(`references/`, `skills/`, `agents/external-agent.md`) and regenerate. The
-pre-commit gate fails on stale, missing, or foreign files there. A new
-reference document therefore means a new hook AND a generator entry, not a
-bigger one. Neither Kimi nor Codex runs Claude subagents, so the router
-ships as a generated skill on both; the Claude subagent
-(`agents/external-agent.md`) is the generation source and stays authoritative.
+**Port matrix.** `porting.json` (human ruled) is the single control for
+what ships where: per platform, which reference docs inject, which skills
+ship, and whether the router ports. Claude Code never appears in it — it
+always ships the full feature set and is the source of truth; the other
+platforms are projections. The current ruling keeps the external-agent
+surface (router, external-agents guidelines, availability report) off
+Codex and Pi: Pi reaches many models natively, and Codex's own agentic
+coding, reasoning, and computer use cover what the router would delegate.
+Re-porting any of it is a `porting.json` edit plus regeneration, not a
+code change.
 
-**Codex facts (verified against codex-cli 0.144.4).** Hook commands run with
+**Skill variants (@port DSL).** A source skill that needs per-platform text
+carries `@port` blocks, spliced by the generator (`projectSkill` in
+`utils/_porting.mjs`). `skills/*.md` stays Claude Code's literal version,
+so the DSL is inert there: a visible block (`<!-- @port claude -->` …
+`<!-- @end -->`) is plain text Claude reads anyway and must list `claude`;
+another platform's variant hides inside a comment block
+(`<!-- @port codex pi` … `-->`) Claude never sees and must not list
+`claude` — the parser enforces both. This is how explore and experiment
+port to Codex and Pi in variants that run without external agents
+(self-run research, self-produced and self-judged candidates with the bias
+named to the user).
+
+**Generated trees.** `codex/`, `pi/`, and the root `hooks.json` are build
+products of `utils/generate-platform-assets.sh` — never hand-edit them;
+edit the sources (`skills/`, `agents/external-agent.md`, `porting.json`)
+and regenerate. The pre-commit gate fails on stale, missing, or foreign
+files there (and on any resurrected `kimi/` file). Matrix-selected skills
+mirror into `<platform>/skills/`; the router, when ported, becomes a
+generated skill there too (neither Codex nor Pi runs Claude subagents from
+a plugin; the Claude subagent `agents/external-agent.md` stays the
+generation source). A new reference document means a new hook plus a
+`HOOK_BY_DOC` entry in `utils/_porting.mjs` and per-platform `porting.json`
+listings — never a bigger hook. Runtime consumers read the matrix too:
+`extensions/attune.js` injects Pi's selected docs, and `hooks/_lib.mjs`
+resolves `{{ROUTER}}` to the router handle where it ships and to the
+visible name "the `attune:external-agent` router (Claude Code only)" where
+it does not.
+
+**Codex facts (verified against codex-cli 0.144.4).** Codex has native
+subagents (TOML files in `~/.codex/agents/`, GA 2026-03-16), but a plugin
+cannot ship them — the plugin manifest has no `agents` key — and tool-backed
+sessions cannot spawn named custom agents (openai/codex#15250); hence
+router-as-skill. Hook commands run with
 neither a plugin-root cwd nor any plugin-root variable — a plugin-relative
 command exits 127 — so the root `hooks.json` commands are self-locating
 `sh -c` globs over `${CODEX_HOME:-$HOME/.codex}/plugins/cache/*/attune/*/`.
@@ -66,37 +100,53 @@ Skills are namespaced `attune:*`. Codex also installs Claude-format plugins
 (falls back to `.claude-plugin/plugin.json`), which is why the native
 manifest must stay present and correct.
 
-**Kimi facts (verified against kimi-code 0.26.0).** `sessionStart.skill`
-injected the full ~17k-char concatenated guidelines untruncated (verified by
-tail quote); re-verify after sizeable growth — no documented cap exists. The
-availability report is dropped on Kimi (no context-injecting hooks); the
-router's matrix call gathers the same facts at dispatch. `/plugins install`
-accepts a GitHub URL or a local path and reads `kimi.plugin.json`;
-`disableModelInvocation: true` keeps the guidelines skill out of the
-invokable list while sessionStart still loads it.
+**Pi facts (verified against pi 0.80.10).** Extensions are TS/JS
+default-export factories loaded by jiti; `before_agent_start` returns a
+chained `systemPrompt` (the injection path — no documented cap; re-verify
+after sizeable growth) and `session_start` is where the extension reads
+`references/` and runs the availability probe, fail-open. `pi install`
+accepts a GitHub URL (full git clone into `~/.pi/agent/git/<host>/<path>`,
+`npm install` run when package.json exists) or a local path (referenced in
+place, stored relative to the settings file). Skills follow the same Agent
+Skills standard as Claude Code (SKILL.md frontmatter), mirrored per the
+port matrix. RPC mode (`pi --mode rpc`) is the headless path that actually
+loads package extensions and reports load errors at startup
+(`pi --list-models` does not) — the gate's load check relies on that.
+
+**Kimi Code (dropped in 0.5.0, human ruled).** kimi-code (verified 0.26.0)
+offers no plugin- or user-defined subagents and no context-injecting
+session-start hook (`sessionStart.skill` injects skill text only; its lone
+injecting hook, `UserPromptSubmit`, fires per prompt), and installs GitHub
+plugins from zipballs. Kimi models stay reachable through Pi's `kimi-coding`
+provider. `kimi/`, `kimi.plugin.json`, and the guidelines-concatenation
+generator path were removed with the 0.5.0 bump.
 
 **Distribution (human ruled).** `wezzard/skills` is the unique marketplace
 for every coding agent: the Claude catalog lives there today and the Codex
 catalog (`.agents/plugins/marketplace.json`) is filed as a handoff in that
-repo — attune itself carries no marketplace catalog. Kimi installs straight
-from the GitHub URL.
+repo — attune itself carries no marketplace catalog. Pi installs straight
+from the GitHub URL (`pi install https://github.com/WeZZard/attune`).
 
 ## Commit gates
 
 `.githooks/pre-commit` (enable per clone with `git config core.hooksPath
 .githooks`) runs, besides syntax and unit tests:
 
-- `utils/generate-platform-assets.sh --check` — generated-tree staleness.
+- `utils/generate-platform-assets.sh --check` — staleness of the generated
+  trees and the generated root `hooks.json`, all projected from
+  `porting.json`.
 - `utils/check-hook-budget.sh` — per-hook injection budget, for
   `--platform claude` and `codex` both (see "Injection budget").
 - `utils/check-plugins.sh` — the three-packaging gate: structural checks
   (manifest schemas, version equality, referenced paths, SKILL.md
   frontmatter, hook-command targets), then official validators when the CLI
   is on PATH: `claude plugin validate` (not `--strict`: the maintainer
-  CLAUDE.md draws an inherent warning) and a hermetic Codex install
+  CLAUDE.md draws an inherent warning), a hermetic Codex install
   round-trip of the STAGED tree (checkout-index → temp git repo → `file://`
-  catalog → throwaway `CODEX_HOME`). Kimi ships no validator; it relies on
-  the structural layer. A missing CLI prints SKIPPED, never a silent pass.
+  catalog → throwaway `CODEX_HOME`), and a hermetic Pi round-trip (throwaway
+  `PI_CODING_AGENT_DIR`: local-path install of the staged tree, then an
+  RPC-startup extension load check). A missing CLI prints SKIPPED, never a
+  silent pass.
 
 ## Injection budget
 

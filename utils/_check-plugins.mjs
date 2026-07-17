@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // _check-plugins.mjs — commit gate: prove all three plugin packagings
-// (Claude Code, Codex, Kimi Code) stay well-formed and installable.
+// (Claude Code, Codex, Pi) stay well-formed and installable.
 //
 // Layer 1 — structural, always runs, no CLI needed: manifests parse, their
 // versions agree, every referenced path exists, hook commands resolve, and
@@ -9,14 +9,16 @@
 //
 // Layer 2 — official validators, when the CLI is on PATH (a missing CLI
 // prints SKIPPED, never a silent pass):
-//   claude — `claude plugin validate <root> --strict`.
+//   claude — `claude plugin validate <root>`.
 //   codex  — hermetic install round-trip of the STAGED tree:
 //            git checkout-index → temp git repo → file:// catalog →
 //            marketplace add + plugin add under a throwaway CODEX_HOME.
 //            (The user's marketplace lives in WeZZard/skills; the catalog
 //            synthesized here is gate plumbing, never committed.)
-//   kimi   — no official plugin validator exists (kimi doctor covers
-//            config.toml/tui.toml only); Kimi relies on Layer 1.
+//   pi     — hermetic install round-trip of the STAGED tree under a
+//            throwaway PI_CODING_AGENT_DIR (local-path install; pi ships
+//            no standalone manifest validator), then an RPC-startup load
+//            check, which is what actually exercises the extension.
 
 import { execFileSync } from 'node:child_process';
 import {
@@ -27,12 +29,13 @@ import {
   mkdtempSync,
   readdirSync,
   readFileSync,
+  realpathSync,
   rmSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { delimiter, join } from 'node:path';
+import { delimiter, join, resolve } from 'node:path';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -59,7 +62,7 @@ function readJson(rel) {
 const MANIFESTS = {
   claude: '.claude-plugin/plugin.json',
   codex: '.codex-plugin/plugin.json',
-  kimi: 'kimi.plugin.json',
+  pi: 'package.json',
 };
 const manifests = Object.fromEntries(
   Object.entries(MANIFESTS).map(([p, rel]) => [p, readJson(rel)]),
@@ -71,9 +74,6 @@ for (const [platform, manifest] of Object.entries(manifests)) {
     if (!manifest[field]) fail(`${MANIFESTS[platform]}: missing ${field}`);
   }
 }
-if (manifests.kimi?.name && !/^[a-z0-9][a-z0-9_-]{0,63}$/.test(manifests.kimi.name)) {
-  fail(`kimi.plugin.json: name ${manifests.kimi.name} violates [a-z0-9][a-z0-9_-]{0,63}`);
-}
 const versions = new Set(
   Object.values(manifests).filter(Boolean).map((m) => m.version),
 );
@@ -83,17 +83,51 @@ if (versions.size > 1) {
   ok(`all manifests at version ${[...versions][0]}`);
 }
 
-// Skills dirs the manifests point at, plus Claude's conventional skills/.
-const skillDirs = new Map([['claude', 'skills']]);
-for (const platform of ['codex', 'kimi']) {
-  const rel = manifests[platform]?.skills;
-  if (!rel) continue;
-  const clean = rel.replace(/^\.\//, '').replace(/\/$/, '');
-  if (!existsSync(join(repoRoot, clean))) {
-    fail(`${MANIFESTS[platform]}: skills dir ${rel} does not exist`);
-  } else {
-    skillDirs.set(platform, clean);
+// The pi manifest key: extensions and skills paths must exist, and the
+// pi-package keyword keeps the package discoverable on pi.dev/packages.
+const piManifest = manifests.pi?.pi;
+if (!piManifest) {
+  fail('package.json: missing "pi" manifest key');
+} else {
+  for (const rel of piManifest.extensions ?? []) {
+    const clean = rel.replace(/^\.\//, '');
+    if (!existsSync(join(repoRoot, clean))) {
+      fail(`package.json: pi.extensions entry ${rel} does not exist`);
+    }
   }
+  if (!(piManifest.extensions ?? []).length) {
+    fail('package.json: pi.extensions is empty');
+  }
+}
+if (!(manifests.pi?.keywords ?? []).includes('pi-package')) {
+  fail('package.json: keywords must include pi-package');
+}
+
+// Skills dirs the manifests point at, plus Claude's conventional skills/.
+// Pi's manifest lists an array of dirs; the others a single dir.
+const skillDirs = new Map([['claude', ['skills']]]);
+{
+  const rel = manifests.codex?.skills;
+  if (rel) {
+    const clean = rel.replace(/^\.\//, '').replace(/\/$/, '');
+    if (!existsSync(join(repoRoot, clean))) {
+      fail(`${MANIFESTS.codex}: skills dir ${rel} does not exist`);
+    } else {
+      skillDirs.set('codex', [clean]);
+    }
+  }
+}
+{
+  const dirs = [];
+  for (const rel of piManifest?.skills ?? []) {
+    const clean = rel.replace(/^\.\//, '').replace(/\/$/, '');
+    if (!existsSync(join(repoRoot, clean))) {
+      fail(`package.json: pi.skills dir ${rel} does not exist`);
+    } else {
+      dirs.push(clean);
+    }
+  }
+  if (dirs.length) skillDirs.set('pi', dirs);
 }
 
 function frontmatter(rel) {
@@ -108,31 +142,26 @@ function frontmatter(rel) {
   return fields;
 }
 
-for (const [platform, dir] of skillDirs) {
-  for (const entry of readdirSync(join(repoRoot, dir))) {
-    if (!statSync(join(repoRoot, dir, entry)).isDirectory()) continue;
-    const rel = join(dir, entry, 'SKILL.md');
-    if (!existsSync(join(repoRoot, rel))) {
-      fail(`${rel} is missing (${platform} skill dir without SKILL.md)`);
-      continue;
+const checkedDirs = new Set();
+for (const [platform, dirs] of skillDirs) {
+  for (const dir of dirs) {
+    if (checkedDirs.has(dir)) continue;
+    checkedDirs.add(dir);
+    for (const entry of readdirSync(join(repoRoot, dir))) {
+      if (!statSync(join(repoRoot, dir, entry)).isDirectory()) continue;
+      const rel = join(dir, entry, 'SKILL.md');
+      if (!existsSync(join(repoRoot, rel))) {
+        fail(`${rel} is missing (${platform} skill dir without SKILL.md)`);
+        continue;
+      }
+      const fm = frontmatter(rel);
+      if (!fm) fail(`${rel}: no frontmatter block`);
+      else if (!fm.name || !fm.description) fail(`${rel}: frontmatter needs name and description`);
+      else if (fm.name !== entry) fail(`${rel}: name ${fm.name} != directory ${entry}`);
     }
-    const fm = frontmatter(rel);
-    if (!fm) fail(`${rel}: no frontmatter block`);
-    else if (!fm.name || !fm.description) fail(`${rel}: frontmatter needs name and description`);
-    else if (fm.name !== entry) fail(`${rel}: name ${fm.name} != directory ${entry}`);
   }
 }
-ok(`SKILL.md frontmatter checked across ${[...skillDirs.values()].join(', ')}`);
-
-const sessionSkill = manifests.kimi?.sessionStart?.skill;
-if (sessionSkill && skillDirs.has('kimi')) {
-  const rel = join(skillDirs.get('kimi'), sessionSkill, 'SKILL.md');
-  if (!existsSync(join(repoRoot, rel))) {
-    fail(`kimi.plugin.json: sessionStart.skill ${sessionSkill} has no ${rel}`);
-  } else {
-    ok(`kimi sessionStart.skill resolves to ${rel}`);
-  }
-}
+ok(`SKILL.md frontmatter checked across ${[...checkedDirs].join(', ')}`);
 
 // Hook commands: Codex root hooks.json runs plugin-root-relative
 // executables; Claude hooks/hooks.json runs node on ${CLAUDE_PLUGIN_ROOT}
@@ -193,6 +222,20 @@ function onPath(cli) {
   });
 }
 
+// Export the staged tree (what this commit ships) into a scratch dir —
+// install round-trips against the working tree or HEAD would validate the
+// wrong content. Shared by the codex and pi round-trips.
+function exportStagedTree(work) {
+  const tree = join(work, 'tree');
+  mkdirSync(tree);
+  execFileSync('git', ['checkout-index', '-a', `--prefix=${tree}/`], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    timeout: 60000,
+  });
+  return tree;
+}
+
 // Not --strict: strict turns warnings into errors, and the maintainer
 // CLAUDE.md at the repo root draws an inherent "not loaded as project
 // context" warning. Errors still fail; warnings are surfaced.
@@ -214,14 +257,11 @@ if (onPath('claude')) {
 if (onPath('codex') && onPath('git')) {
   const work = mkdtempSync(join(tmpdir(), 'attune-plugins-gate-'));
   try {
-    // Export the staged tree (what this commit ships) into a throwaway git
-    // repo — `codex plugin add` git-clones its source, so HEAD alone would
-    // validate the previous commit, not this one.
-    const tree = join(work, 'tree');
-    mkdirSync(tree);
+    // `codex plugin add` git-clones its source, so the staged tree needs
+    // to become a throwaway git repo first.
+    const tree = exportStagedTree(work);
     const git = (args, cwd) =>
       execFileSync('git', args, { cwd, encoding: 'utf8', timeout: 60000 });
-    git(['checkout-index', '-a', `--prefix=${tree}/`], repoRoot);
     git(['init', '-q'], tree);
     git(['add', '-A'], tree);
     git(
@@ -261,8 +301,71 @@ if (onPath('codex') && onPath('git')) {
   console.log('check-plugins: SKIPPED — codex not installed; hermetic install round-trip not run');
 }
 
-console.log(
-  'check-plugins: NOTE — kimi ships no plugin validator (kimi doctor covers config.toml/tui.toml only); the structural checks above are the Kimi gate',
-);
+if (onPath('pi') && onPath('git')) {
+  const work = mkdtempSync(join(tmpdir(), 'attune-pi-gate-'));
+  try {
+    // Local-path installs are referenced in place, so the exported staged
+    // tree is installable directly — no git repo needed.
+    const tree = exportStagedTree(work);
+    const agentDir = join(work, 'pi-agent-dir');
+    mkdirSync(agentDir);
+    const env = {
+      ...process.env,
+      PI_CODING_AGENT_DIR: agentDir,
+      PI_OFFLINE: '1',
+      PI_SKIP_VERSION_CHECK: '1',
+    };
+    execFileSync('pi', ['install', tree], {
+      encoding: 'utf8',
+      timeout: 120000,
+      env,
+    });
+    const settings = JSON.parse(
+      readFileSync(join(agentDir, 'settings.json'), 'utf8'),
+    );
+    // pi stores local-path sources relative to the settings file.
+    const sources = (settings.packages ?? [])
+      .map((p) => (typeof p === 'string' ? p : p.source))
+      .map((p) => {
+        try {
+          return realpathSync(resolve(agentDir, p));
+        } catch {
+          return p;
+        }
+      });
+    if (sources.includes(realpathSync(tree))) {
+      ok('pi hermetic install round-trip passed (staged tree)');
+    } else {
+      fail(`pi round-trip: settings.json does not list ${tree}: ${JSON.stringify(sources)}`);
+    }
+
+    // Load check: RPC mode is the headless path that actually loads
+    // package extensions and prints "Failed to load extension" on error
+    // (`pi --list-models` does not load them — verified). RPC mode does
+    // not exit on stdin EOF, so the timeout kill is the expected exit.
+    let loadOut = '';
+    try {
+      loadOut = execFileSync('pi', ['--mode', 'rpc', '--no-session'], {
+        encoding: 'utf8',
+        timeout: 15000,
+        env,
+        input: '',
+      });
+    } catch (e) {
+      loadOut = `${e.stdout || ''}${e.stderr || ''}`;
+    }
+    if (/Failed to load extension/i.test(loadOut)) {
+      fail(`pi round-trip: extension failed to load:\n${loadOut.slice(0, 500)}`);
+    } else {
+      ok('pi extension load check passed (rpc startup)');
+    }
+  } catch (e) {
+    fail(`pi round-trip: ${(e.stdout || '') + (e.stderr || e.message)}`);
+  } finally {
+    rmSync(work, { recursive: true, force: true });
+  }
+} else {
+  console.log('check-plugins: SKIPPED — pi not installed; hermetic install round-trip not run');
+}
 
 process.exit(failed ? 1 : 0);

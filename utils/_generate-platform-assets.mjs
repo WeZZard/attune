@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// _generate-platform-assets.mjs — generate the Kimi Code and Codex plugin
-// trees (kimi/skills/, codex/skills/) from the shared sources:
-// references/*.md, skills/*/SKILL.md, and agents/external-agent.md.
-// references/ stays the only hand-edited home of the guidelines; the
-// generated trees are build products and are never edited directly.
+// _generate-platform-assets.mjs — project the port matrix (porting.json)
+// into the platform trees. Claude Code ships the full feature set from the
+// hand-authored sources (skills/, agents/, hooks/hooks.json) and is the
+// source of truth; for each other platform the matrix selects which skills
+// mirror, whether the router ports, and (for Codex) which guideline hooks
+// wire into the generated root hooks.json.
 //
-// Kimi has no context-injecting hooks, so its guidelines land as one
-// sessionStart skill whose body concatenates the injected reference docs.
-// Neither platform runs Claude subagents, so the router agent becomes a
-// skill on both. explore/experiment mirror the shared skills verbatim.
+// Generated build products — never hand-edit: codex/, pi/, hooks.json.
+// Edit the sources (skills/, agents/external-agent.md, porting.json) and
+// regenerate.
 //
 // --check: regenerate in memory and fail listing any committed file that
 // differs, is missing, or should no longer exist.
@@ -21,20 +21,14 @@ import {
   statSync,
   writeFileSync,
 } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { HOOK_BY_DOC, loadPorting, projectSkill } from './_porting.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (...p) => readFileSync(join(repoRoot, ...p), 'utf8');
 
-// Same documents, same order, as the SessionStart hooks inject.
-const INJECTED_DOCS = [
-  'communication-guidelines.md',
-  'external-agents-guidelines.md',
-  'verification-guidelines.md',
-  'writing-style-guidelines.md',
-];
-
+const PLATFORMS = ['codex', 'pi'];
 const ROUTER_HANDLE = 'the `external-agent` skill';
 
 const marker = (source) =>
@@ -48,13 +42,13 @@ const resolveTokens = (text) =>
     .replaceAll('{{ROUTER}}', ROUTER_HANDLE);
 
 const ROOT_PROLOGUE = {
-  kimi:
-    'Resolve `ATTUNE_ROOT` to the absolute path of `${KIMI_SKILL_DIR}/../../..`\n' +
-    '(three directories above this skill file) before running any command\n' +
-    'quoted below.',
   codex:
     'Resolve `ATTUNE_ROOT` to the absolute path three directories above this\n' +
     'SKILL.md file (the installed plugin root) before running any command\n' +
+    'quoted below.',
+  pi:
+    'Resolve `ATTUNE_ROOT` to the absolute path three directories above this\n' +
+    'SKILL.md file (the installed package root) before running any command\n' +
     'quoted below.',
 };
 
@@ -62,26 +56,6 @@ function splitFrontmatter(text, source) {
   const m = text.match(/^---\n([\s\S]*?)\n---\n/);
   if (!m) throw new Error(`${source}: no frontmatter block`);
   return { frontmatter: m[1], body: text.slice(m[0].length).trim() };
-}
-
-function guidelinesSkill() {
-  const docs = INJECTED_DOCS.map((doc) =>
-    resolveTokens(read('references', doc).trim()),
-  );
-  return [
-    '---',
-    'name: guidelines',
-    'description: Attune standing guidelines — loaded automatically at session start; not for direct invocation.',
-    'disableModelInvocation: true',
-    '---',
-    '',
-    marker('references/*.md'),
-    '',
-    ROOT_PROLOGUE.kimi,
-    '',
-    docs.join('\n\n'),
-    '',
-  ].join('\n');
 }
 
 function routerSkill(platform) {
@@ -111,26 +85,64 @@ function routerSkill(platform) {
   ].join('\n');
 }
 
-function mirroredSkill(name) {
+// Mirror a source skill for one platform, splicing its @port blocks —
+// skills/*.md is Claude's literal version; the DSL carries the variants.
+function mirroredSkill(name, platform) {
   const source = `skills/${name}/SKILL.md`;
   const { frontmatter, body } = splitFrontmatter(read(source), source);
-  return ['---', frontmatter, '---', '', marker(source), '', body, ''].join(
-    '\n',
-  );
+  return [
+    '---',
+    frontmatter,
+    '---',
+    '',
+    marker(source),
+    '',
+    projectSkill(body, platform),
+    '',
+  ].join('\n');
+}
+
+// The Codex hook wiring: one self-locating command per ported guideline
+// doc. Codex hook commands get neither a plugin-root cwd nor a plugin-root
+// variable (verified against codex-cli 0.144.4), hence the glob.
+function codexHooksJson(docs) {
+  const command = (hook) =>
+    `/bin/sh -c 'for f in "\${CODEX_HOME:-$HOME/.codex}"/plugins/cache/*/attune/*/hooks/${hook}; do p="$f"; done; exec "$p" --platform codex'`;
+  const wiring = {
+    hooks: {
+      SessionStart: [
+        {
+          hooks: docs.map((doc) => ({
+            type: 'command',
+            command: command(HOOK_BY_DOC[doc]),
+            timeout: 10,
+          })),
+        },
+      ],
+    },
+  };
+  return `${JSON.stringify(wiring, null, 2)}\n`;
 }
 
 function generate() {
+  const porting = loadPorting();
   const files = new Map();
-  files.set('kimi/skills/guidelines/SKILL.md', guidelinesSkill());
-  for (const platform of ['kimi', 'codex']) {
-    files.set(
-      `${platform}/skills/external-agent/SKILL.md`,
-      routerSkill(platform),
-    );
-    for (const name of ['explore', 'experiment']) {
-      files.set(`${platform}/skills/${name}/SKILL.md`, mirroredSkill(name));
+  for (const platform of PLATFORMS) {
+    const spec = porting[platform] ?? {};
+    for (const name of spec.skills ?? []) {
+      files.set(
+        `${platform}/skills/${name}/SKILL.md`,
+        mirroredSkill(name, platform),
+      );
+    }
+    if (spec.router) {
+      files.set(
+        `${platform}/skills/external-agent/SKILL.md`,
+        routerSkill(platform),
+      );
     }
   }
+  files.set('hooks.json', codexHooksJson(porting.codex?.guidelines ?? []));
   return files;
 }
 
@@ -154,7 +166,9 @@ const checking = process.argv.includes('--check');
 let failed = false;
 
 if (checking) {
-  const onDisk = [...walk('kimi'), ...walk('codex')];
+  // kimi/ stays in the walk so a resurrected Kimi tree fails the gate:
+  // the Kimi packaging was dropped in 0.5.0 (human ruled).
+  const onDisk = PLATFORMS.concat('kimi').flatMap((dir) => walk(dir));
   for (const [rel, content] of files) {
     let disk = null;
     try {
@@ -171,7 +185,7 @@ if (checking) {
   for (const rel of onDisk) {
     if (!files.has(rel)) {
       console.error(
-        `generate-platform-assets: FAIL — ${rel} is not a generated file; the generator owns kimi/ and codex/`,
+        `generate-platform-assets: FAIL — ${rel} is not a generated file; the generator owns the platform trees`,
       );
       failed = true;
     }
@@ -186,7 +200,7 @@ if (checking) {
     );
   }
 } else {
-  for (const dir of ['kimi', 'codex']) {
+  for (const dir of PLATFORMS) {
     rmSync(join(repoRoot, dir), { recursive: true, force: true });
   }
   for (const [rel, content] of files) {
@@ -196,8 +210,4 @@ if (checking) {
   }
 }
 
-const guidelines = files.get('kimi/skills/guidelines/SKILL.md');
-console.log(
-  `generate-platform-assets: kimi guidelines skill body is ${guidelines.length} chars (no documented Kimi cap; verify injection end-to-end after sizeable growth)`,
-);
 process.exit(failed ? 1 : 0);

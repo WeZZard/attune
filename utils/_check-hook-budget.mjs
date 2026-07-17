@@ -19,14 +19,15 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CONTEXT_LIMIT } from '../hooks/_lib.mjs';
+import { HOOK_BY_DOC, loadPorting } from './_porting.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
-const HOOKS = [
-  'session-start-communication.mjs',
-  'session-start-external-agents.mjs',
-  'session-start-verification.mjs',
-  'session-start-writing.mjs',
-];
+// Claude Code always runs every hook (source of truth); Codex runs the
+// subset the port matrix wires into the generated root hooks.json.
+const HOOKS_BY_PLATFORM = {
+  claude: Object.values(HOOK_BY_DOC),
+  codex: (loadPorting().codex?.guidelines ?? []).map((doc) => HOOK_BY_DOC[doc]),
+};
 const RESERVE = 300;
 
 const bin = mkdtempSync(join(tmpdir(), 'attune-gate-bin-'));
@@ -45,8 +46,8 @@ try {
   // Both hook platforms run the same scripts; the platform flag changes the
   // token substitutions (router handle length differs), so each budget is
   // proven per platform.
-  for (const platform of ['claude', 'codex']) {
-    for (const hook of HOOKS) {
+  for (const [platform, hooks] of Object.entries(HOOKS_BY_PLATFORM)) {
+    for (const hook of hooks) {
       const out = execFileSync(
         process.execPath,
         [join(repoRoot, 'hooks', hook), '--platform', platform],

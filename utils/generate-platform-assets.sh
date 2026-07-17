@@ -1,6 +1,6 @@
 #!/bin/bash
-# generate-platform-assets.sh — regenerate the Kimi Code and Codex plugin
-# trees (kimi/, codex/) from the shared sources; --check verifies instead.
+# generate-platform-assets.sh — regenerate the Codex and Pi plugin skill
+# trees (codex/, pi/) from the shared sources; --check verifies instead.
 set -euo pipefail
 src="${BASH_SOURCE[0]:-$0}"
 case "$src" in

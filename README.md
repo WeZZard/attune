@@ -2,8 +2,12 @@
 
 Attune injects your standing guidelines into every session — how to write
 to you, when to delegate to external agents, and what counts as verified
-work. One repo ships three plugins: Claude Code, Codex, and Kimi Code,
-all fed by the same `references/*.md` source of truth.
+work. One repo ships three plugins: Claude Code, Codex, and Pi, all fed by
+the same `references/*.md` source of truth. Claude Code always carries the
+full feature set; `porting.json` (the port matrix) decides what ships to
+the other platforms — today that keeps the external-agent surface (router,
+availability report) Claude-only, while explore and experiment port
+everywhere in variants that run without external agents.
 
 - **Explore** routes every open question in a discussion to the one oracle
   that can settle it: research the world, ask the human, and run an
@@ -49,22 +53,22 @@ codex plugin add attune@wezzard-skills
 Then one one-time step: hooks need your review before they run. Start
 `codex`, and in the "Hooks need review" dialog choose **Trust all and
 continue** (or run `/hooks` and press `t`). From the next session on, the
-same four hooks inject the guidelines and the availability report. The
-router and skills are `attune:external-agent`, `attune:explore`, and
-`attune:experiment` (see `/skills`).
+ported hooks inject the communication, verification, and writing-style
+guidelines. The ported skills are `attune:explore` and `attune:experiment`
+(see `/skills`), in variants that run without external agents; the
+external-agent router stays Claude-only per `porting.json`.
 
-### Kimi Code
+### Pi
 
-```text
-/plugins install https://github.com/WeZZard/attune
+```bash
+pi install https://github.com/WeZZard/attune
 ```
 
-Choose **Trust and install**, then `/new` (or `/reload`). The guidelines
-load at session start through the plugin's `guidelines` skill — Kimi runs
-no context-injecting hooks, so the availability report is skipped; the
-router's matrix call gathers the same facts at dispatch. The router and
-skills are `/skill:external-agent`, `/skill:explore`, and
-`/skill:experiment`.
+Start a session. The attune extension appends the ported guidelines
+(communication, verification, writing style) to the system prompt at
+session start. The ported skills are `explore` and `experiment`, in
+variants that run without external agents; the external-agent router
+stays Claude-only per `porting.json`.
 
 ## License
 

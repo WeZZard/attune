@@ -21,23 +21,24 @@ This skill runs that routing eagerly during any discussion. Until its oracle ans
 
 ## Eager research (WORLD-owned)
 
-The moment you classify an unknown as WORLD-owned, launch one background research subagent per unknown or candidate, in parallel (one message, multiple tool calls), each grounded with web search (on Claude Code: the `Explore` subagent with `WebSearch`; on a platform without background subagents, run the searches yourself before continuing). The conversation continues while they run, but the report back does not: wait for every spawned explorer to complete, then report once, carrying every brief — never a partial report as briefs land. Keep only compact briefs in this thread, never the raw research.
+The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate.
 
-**Designing Spawning Prompts:**
+Without background research subagents, run the web searches yourself, one unknown at a time, before the discussion continues — and still write up each unknown's findings as its own brief in the response template below.
+
+Keep only compact briefs in this thread, never the raw research.
+
+**Writing briefs:**
 
 **MUST:**
 
-1. You **MUST** carry the whole response contract in the spawning prompt — the subagent interface enforces no schema.
-2. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists.
-3. You **MUST** require the explorer's response to take the template below.
-4. You **MUST** require a dated source for every claim.
-5. You **MUST** keep every field fail-open — "none" is a valid entry.
+1. You **MUST** write each unknown's brief in the template below.
+2. You **MUST** give a dated source for every claim.
+3. You **MUST** keep every field fail-open — "none" is a valid entry.
 
 **MUST NOT:**
 
-1. You **MUST NOT** let the template bind the research behind the response — it binds only the returned brief.
-2. You **MUST NOT** let the template pressure a fabricated source, conflict, or confidence.
-3. You **MUST NOT** use all-caps section titles or labels in the template.
+1. You **MUST NOT** let the template pressure a fabricated source, conflict, or confidence.
+2. You **MUST NOT** use all-caps section titles or labels in the template.
 
 Required response template:
 
@@ -55,7 +56,7 @@ Required response template:
 <one line: how settled this is, and what would change it>
 ```
 
-The shape is the explorer's duty alone: relay its brief to the user verbatim, and never compile or reshape subagent output into the template in the main thread.
+Relay each brief to the user in full, and keep the template's discipline even though you authored it: every claim carries its dated source, and an empty field stays visibly empty rather than filled by guesswork.
 
 Validate every brief against its fields: check source credibility; check dates and discard stale facts; resolve conflicts by source authority and recency; never conclude without validation. Validation is a judgment passed on the brief, not a rewrite of it.
 
