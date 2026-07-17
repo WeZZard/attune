@@ -14,6 +14,7 @@
 // differs, is missing, or should no longer exist.
 
 import {
+  existsSync,
   mkdirSync,
   readdirSync,
   readFileSync,
@@ -85,10 +86,26 @@ function routerSkill(platform) {
   ].join('\n');
 }
 
+// A ported skill's source lives in skills/ (Claude's literal set) or, when
+// it has no Claude runtime surface, in portable-skills/ — never both.
+function skillSource(name) {
+  const homes = ['skills', 'portable-skills'].filter((home) =>
+    existsSync(join(repoRoot, home, name, 'SKILL.md')),
+  );
+  if (homes.length !== 1) {
+    throw new Error(
+      homes.length
+        ? `${name}: SKILL.md in both skills/ and portable-skills/ — a skill has exactly one source home`
+        : `${name}: no SKILL.md in skills/ or portable-skills/`,
+    );
+  }
+  return `${homes[0]}/${name}/SKILL.md`;
+}
+
 // Mirror a source skill for one platform, splicing its @port blocks —
 // skills/*.md is Claude's literal version; the DSL carries the variants.
 function mirroredSkill(name, platform) {
-  const source = `skills/${name}/SKILL.md`;
+  const source = skillSource(name);
   const { frontmatter, body } = splitFrontmatter(read(source), source);
   return [
     '---',

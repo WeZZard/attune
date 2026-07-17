@@ -6,7 +6,7 @@
       "verification-guidelines.md",
       "writing-style-guidelines.md"
     ],
-    "skills": ["explore", "experiment"],
+    "skills": ["explore", "experiment", "keystone"],
     "router": false
   },
   "pi": {
@@ -15,7 +15,7 @@
       "verification-guidelines.md",
       "writing-style-guidelines.md"
     ],
-    "skills": ["explore", "experiment"],
+    "skills": ["explore", "experiment", "keystone"],
     "router": false
   }
 }

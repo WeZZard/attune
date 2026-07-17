@@ -8,6 +8,23 @@ from every other knowledge system (retrospect, project docs, Claude Code auto
 memory) — no shared vocabulary, no cross-routing. World facts and measured
 lessons are never recorded here.
 
+## Source of truth: the Claude Code plugin source (human ruled)
+
+The hand-authored Claude Code plugin source IS the plugin: `references/`,
+`skills/` (Claude's literal text — `@port` blocks stay inert comments
+there), `agents/`, `hooks/hooks.json`, and the hook scripts. Everything
+every other platform receives is a projection of that source: `porting.json`
+selects, the generator projects (`codex/`, `pi/`, the root `hooks.json`),
+and the runtime consumers read the matrix. Maintenance therefore always
+edits the Claude source and regenerates — never a generated tree, never a
+platform copy, never a platform-specific fork of content that has a Claude
+home. Even a feature with no Claude runtime surface keeps its source in
+the Claude-side tree: the router ships as a skill on other platforms, yet
+its source stays the Claude subagent `agents/external-agent.md`, and a
+skill Claude itself never runs sources from `portable-skills/<name>/`
+(Claude Code auto-discovers `skills/`, so `skills/` holds exactly what
+Claude runs — nothing more).
+
 ## The guidelines are the product
 
 `references/*.md` is what the plugin exists to deliver: the user's standing
@@ -48,13 +65,16 @@ it uses the prose placeholder `<attune plugin root>` instead of a token.
 **Port matrix.** `porting.json` (human ruled) is the single control for
 what ships where: per platform, which reference docs inject, which skills
 ship, and whether the router ports. Claude Code never appears in it — it
-always ships the full feature set and is the source of truth; the other
-platforms are projections. The current ruling keeps the external-agent
-surface (router, external-agents guidelines, availability report) off
-Codex and Pi: Pi reaches many models natively, and Codex's own agentic
-coding, reasoning, and computer use cover what the router would delegate.
-Re-porting any of it is a `porting.json` edit plus regeneration, not a
-code change.
+ships every feature with a Claude surface and its source tree is the
+source of truth; the other platforms are projections. The current ruling
+keeps the external-agent surface (router, external-agents guidelines,
+availability report) off Codex and Pi: Pi reaches many models natively,
+and Codex's own agentic coding, reasoning, and computer use cover what
+the router would delegate. The keystone skill inverts the direction
+(human ruled): it compensates for sub-frontier models that miss a plan's
+load-bearing decision, so it ships to Codex and Pi only — Claude Code
+runs a frontier-class model and does not carry it. Re-porting any of
+this is a `porting.json` edit plus regeneration, not a code change.
 
 **Skill variants (@port DSL).** A source skill that needs per-platform text
 carries `@port` blocks, spliced by the generator (`projectSkill` in
@@ -73,10 +93,11 @@ products of `utils/generate-platform-assets.sh` — never hand-edit them;
 edit the sources (`skills/`, `agents/external-agent.md`, `porting.json`)
 and regenerate. The pre-commit gate fails on stale, missing, or foreign
 files there (and on any resurrected `kimi/` file). Matrix-selected skills
-mirror into `<platform>/skills/`; the router, when ported, becomes a
-generated skill there too (neither Codex nor Pi runs Claude subagents from
-a plugin; the Claude subagent `agents/external-agent.md` stays the
-generation source). A new reference document means a new hook plus a
+mirror into `<platform>/skills/`, sourced from `skills/` or
+`portable-skills/` (exactly one home per skill); the router, when ported,
+becomes a generated skill there too (neither Codex nor Pi runs Claude
+subagents from a plugin; the Claude subagent `agents/external-agent.md`
+stays the generation source). A new reference document means a new hook plus a
 `HOOK_BY_DOC` entry in `utils/_porting.mjs` and per-platform `porting.json`
 listings — never a bigger hook. Runtime consumers read the matrix too:
 `extensions/attune.js` injects Pi's selected docs, and `hooks/_lib.mjs`

@@ -129,6 +129,11 @@ const skillDirs = new Map([['claude', ['skills']]]);
   }
   if (dirs.length) skillDirs.set('pi', dirs);
 }
+// Projection-only skill sources (no Claude runtime surface) live in
+// portable-skills/ and get the same frontmatter checks.
+if (existsSync(join(repoRoot, 'portable-skills'))) {
+  skillDirs.set('portable', ['portable-skills']);
+}
 
 function frontmatter(rel) {
   const text = readFileSync(join(repoRoot, rel), 'utf8');

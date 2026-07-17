@@ -24,6 +24,10 @@ everywhere in variants that run without external agents.
   the path a human would walk, fork it where mechanisms differ, drive every
   fork, and report observations. External agents extend the drivable
   boundary to web and GUI flows through Codex.
+- **The keystone discipline** (Codex and Pi only) opens every plan by
+  naming the one decision it stands or falls on — the part a sub-frontier
+  model most often gets wrong — with its evidence and strongest rejected
+  alternative, for your scrutiny before work proceeds.
 - **The external agent router** puts five agents (Codex, Kimi, Antigravity,
   Cursor, Grok) behind one brief contract: facts probed in one call, picks
   by your ruled category priorities, exclusive resources locked, outputs
@@ -54,9 +58,10 @@ Then one one-time step: hooks need your review before they run. Start
 `codex`, and in the "Hooks need review" dialog choose **Trust all and
 continue** (or run `/hooks` and press `t`). From the next session on, the
 ported hooks inject the communication, verification, and writing-style
-guidelines. The ported skills are `attune:explore` and `attune:experiment`
-(see `/skills`), in variants that run without external agents; the
-external-agent router stays Claude-only per `porting.json`.
+guidelines. The ported skills are `attune:explore`, `attune:experiment`
+(in variants that run without external agents), and `attune:keystone`
+(see `/skills`); the external-agent router stays Claude-only per
+`porting.json`.
 
 ### Pi
 
@@ -66,9 +71,9 @@ pi install https://github.com/WeZZard/attune
 
 Start a session. The attune extension appends the ported guidelines
 (communication, verification, writing style) to the system prompt at
-session start. The ported skills are `explore` and `experiment`, in
-variants that run without external agents; the external-agent router
-stays Claude-only per `porting.json`.
+session start. The ported skills are `explore`, `experiment` (in variants
+that run without external agents), and `keystone`; the external-agent
+router stays Claude-only per `porting.json`.
 
 ## License
 
