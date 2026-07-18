@@ -19,10 +19,10 @@ This skill runs that routing eagerly during any discussion. Until its oracle ans
 
 ## Eager research (WORLD-owned)
 
-The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate. Every researcher writes its full brief to `${TMPDIR}/attune-explore/<topic>/<unknown>.md` — the brief files are the evidence trail the user can check; the thread carries only the compiled digest.
+The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate. Every researcher writes its full brief to `${TMPDIR:-/tmp}/attune-explore/<topic>/<unknown>.md` — the brief files are the evidence trail the user can check; the thread carries only the compiled digest.
 
 <!-- @port claude -->
-Launch the researchers as background subagents, in parallel (one message, multiple tool calls). The conversation continues while they run, but the digest does not: wait for every spawned explorer to complete — never a partial digest as briefs land.
+Launch the researchers as background subagents with the Agent tool, in parallel (one message, multiple Agent calls). The conversation continues while they run, but the digest does not: wait for every spawned explorer to complete — never a partial digest as briefs land.
 <!-- @end -->
 <!-- @port codex pi
 Without background research subagents, run the web searches yourself, one unknown at a time, before the discussion continues — and write each unknown's brief to its file before moving on.
@@ -47,7 +47,7 @@ Without background research subagents, run the web searches yourself, one unknow
 **MUST:**
 
 1. You **MUST** spawn every explorer with `model: "sonnet"` — never the session model.
-2. You **MUST** spawn `general-purpose` explorers, restricted by prompt to research plus one brief-file write — the built-in `Explore` type cannot write files.
+2. You **MUST** spawn every explorer as the `general-purpose` subagent type, restricted by prompt to research plus one brief-file write — the built-in `Explore` type cannot write files.
 3. You **MUST** ground every explorer with web search.
 4. You **MUST** carry the whole response contract in the spawning prompt — the subagent interface enforces no schema.
 5. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists.
@@ -94,7 +94,7 @@ Constraints:
 
 ## Experiments (NOBODY-owned)
 
-Dispatch the attune experiment skill. Its outcome returns here as evidence; the user still rules on it, and the ruling carries into the task like any other.
+Invoke the attune `experiment` skill through your platform's skill tool. Its outcome returns here as evidence; the user still rules on it, and the ruling carries into the task like any other.
 
 ## Boundaries
 

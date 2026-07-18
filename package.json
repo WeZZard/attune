@@ -1,14 +1,13 @@
 {
   "name": "attune",
-  "version": "0.8.0",
-  "description": "Capture and apply human-ruled knowledge the model cannot internalize — user preferences and output-style rulings, settled by oracle: research the world, ask the human, experiment on the unknown.",
+  "version": "0.9.0",
+  "description": "Capture and apply human-ruled knowledge the model cannot internalize \u2014 user preferences and output-style rulings, settled by oracle: research the world, ask the human, experiment on the unknown.",
   "type": "module",
   "keywords": [
     "pi-package",
     "guidelines",
     "communication-style",
-    "verification",
-    "external-agents"
+    "verification"
   ],
   "author": "WeZZard <me@wezzard.com>",
   "license": "MIT",
@@ -18,7 +17,11 @@
     "url": "https://github.com/WeZZard/attune.git"
   },
   "pi": {
-    "extensions": ["./extensions/attune.js"],
-    "skills": ["./pi/skills"]
+    "extensions": [
+      "./extensions/attune.js"
+    ],
+    "skills": [
+      "./pi/skills"
+    ]
   }
 }

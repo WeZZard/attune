@@ -1,5 +1,5 @@
 {
-  "comment": "Port matrix. Claude Code is not listed: it always ships the full feature set and is the source of truth. Each platform below is a projection: which reference docs inject at session start, which skills ship, and whether the external-agent router ports. utils/generate-platform-assets.sh projects this into codex/, pi/, and the root hooks.json; extensions/attune.js reads it at runtime.",
+  "comment": "Port matrix. Claude Code is not listed: it always ships the full feature set and is the source of truth. Each platform below is a projection: which reference docs inject at session start and which skills ship. utils/generate-platform-assets.sh projects this into codex/, pi/, and the root hooks.json; extensions/attune.js reads it at runtime.",
   "codex": {
     "guidelines": [
       "communication-guidelines.md",
@@ -9,8 +9,7 @@
       "explore",
       "experiment",
       "verification"
-    ],
-    "router": false
+    ]
   },
   "pi": {
     "guidelines": [
@@ -22,7 +21,6 @@
       "experiment",
       "keystone",
       "verification"
-    ],
-    "router": false
+    ]
   }
 }

@@ -1,14 +1,15 @@
 # Attune
 
 Attune injects your standing guidelines into every session — how to write
-to you, when to delegate to external agents, and what counts as verified
-work. One repo ships three plugins: Claude Code, Codex, and Pi, all fed by
-the same `references/*.md` source of truth. Claude Code always carries the
-full feature set; `porting.json` (the port matrix) decides what ships to
-the other platforms — today that keeps the external-agent surface (the
-router and the use-external-agents, audit, and image-generation skills)
-Claude-only, while explore, experiment, and verification port everywhere
-in variants that run without external agents.
+to you and what counts as verified work — and ships the oracle method for
+settling unknowns by evidence. One repo ships three plugins: Claude Code,
+Codex, and Pi, all fed by the same `references/*.md` source of truth.
+Claude Code always carries the full feature set; `porting.json` (the port
+matrix) decides what ships to the other platforms. External-agent
+delegation lives in the sibling
+[dispatch](https://github.com/WeZZard/dispatch) plugin — attune's
+experiment and verification widen through it when it is installed, and
+degrade gracefully without it.
 
 - **Explore** routes every open question in a discussion to the one oracle
   that can settle it: research the world, ask the human, and run an
@@ -23,21 +24,12 @@ in variants that run without external agents.
   it; only you change it.
 - **The verification** redefines done as "survived its use path": design
   the path a human would walk, fork it where mechanisms differ, drive every
-  fork, and report observations. Independent re-checks route to the audit
-  panel.
-- **The audit panel** (Claude Code) sends the same audit brief to Codex
-  and Kimi in parallel — diverse model biases, file-backed reports, and a
-  digest of agreements and disagreements for your ruling.
-- **Image generation** (Claude Code) dispatches one brief concurrently
-  across the image-capable agents for options, and remembers login and
-  quota failures so a failed agent is never retried until you clear it.
+  fork, and report observations. Independent re-checks route through the
+  dispatch plugin's audit panel when it is installed.
 - **The keystone discipline** (Pi only) opens every plan by
   naming the one decision it stands or falls on — the part a sub-frontier
   model most often gets wrong — with its evidence and strongest rejected
   alternative, for your scrutiny before work proceeds.
-- **The external agent router** puts five agents (Codex, Kimi, Antigravity,
-  Cursor, Grok) behind one brief contract: facts probed in one call, agents
-  pinned by the dispatching skill, outputs returned verbatim as evidence.
 
 ## Quick Start
 
@@ -49,10 +41,10 @@ in variants that run without external agents.
 ```
 
 Start a session. Two SessionStart hooks inject the communication and
-writing-style guidelines. The router runs as the `attune:external-agent`
-subagent; the skills are `attune:explore`, `attune:experiment`,
-`attune:verification`, `attune:use-external-agents`, `attune:audit`, and
-`attune:image-generation`.
+writing-style guidelines; the skills are `attune:explore`,
+`attune:experiment`, and `attune:verification`. Install
+`dispatch@wezzard-skills` alongside for the external-agent router, the
+audit panel, and image generation.
 
 ### Codex
 

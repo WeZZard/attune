@@ -50,8 +50,7 @@ test('appends exactly the matrix-selected docs with tokens resolved', async () =
   assert.doesNotMatch(out.systemPrompt, /\{\{ATTUNE_ROOT\}\}|\{\{ROUTER\}\}/);
 });
 
-test('the current matrix keeps the external-agent surface off Pi', async () => {
-  assert.equal(porting.router, false);
+test('injects nothing beyond the matrix-selected documents', async () => {
   const handlers = load();
   await handlers.session_start({}, {});
   const out = await handlers.before_agent_start({ systemPrompt: 'BASE' }, {});

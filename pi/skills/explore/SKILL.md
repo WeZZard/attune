@@ -21,7 +21,7 @@ This skill runs that routing eagerly during any discussion. Until its oracle ans
 
 ## Eager research (WORLD-owned)
 
-The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate. Every researcher writes its full brief to `${TMPDIR}/attune-explore/<topic>/<unknown>.md` — the brief files are the evidence trail the user can check; the thread carries only the compiled digest.
+The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate. Every researcher writes its full brief to `${TMPDIR:-/tmp}/attune-explore/<topic>/<unknown>.md` — the brief files are the evidence trail the user can check; the thread carries only the compiled digest.
 
 Without background research subagents, run the web searches yourself, one unknown at a time, before the discussion continues — and write each unknown's brief to its file before moving on.
 
@@ -69,7 +69,7 @@ Constraints:
 
 ## Experiments (NOBODY-owned)
 
-Dispatch the attune experiment skill. Its outcome returns here as evidence; the user still rules on it, and the ruling carries into the task like any other.
+Invoke the attune `experiment` skill through your platform's skill tool. Its outcome returns here as evidence; the user still rules on it, and the ruling carries into the task like any other.
 
 ## Boundaries
 

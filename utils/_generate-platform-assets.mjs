@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // _generate-platform-assets.mjs — project the port matrix (porting.json)
 // into the platform trees. Claude Code ships the full feature set from the
-// hand-authored sources (skills/, agents/, hooks/hooks.json) and is the
-// source of truth; for each other platform the matrix selects which skills
-// mirror, whether the router ports, and (for Codex) which guideline hooks
-// wire into the generated root hooks.json.
+// hand-authored sources (skills/, hooks/hooks.json) and is the source of
+// truth; for each other platform the matrix selects which skills mirror
+// and (for Codex) which guideline hooks wire into the generated root
+// hooks.json.
 //
 // Generated build products — never hand-edit: codex/, pi/, hooks.json.
-// Edit the sources (skills/, agents/external-agent.md, porting.json) and
+// Edit the sources (skills/, portable-skills/, porting.json) and
 // regenerate.
 //
 // --check: regenerate in memory and fail listing any committed file that
@@ -30,60 +30,13 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (...p) => readFileSync(join(repoRoot, ...p), 'utf8');
 
 const PLATFORMS = ['codex', 'pi'];
-const ROUTER_HANDLE = 'the `external-agent` skill';
-
 const marker = (source) =>
   `<!-- GENERATED from ${source} by utils/generate-platform-assets.sh — edit the source, then regenerate. -->`;
-
-// Resolve the delivery-time tokens the reference docs carry, for platforms
-// where the router is a skill and the plugin root is named by the prologue.
-const resolveTokens = (text) =>
-  text
-    .replaceAll('{{ATTUNE_ROOT}}', '$ATTUNE_ROOT')
-    .replaceAll('{{ROUTER}}', ROUTER_HANDLE);
-
-const ROOT_PROLOGUE = {
-  codex:
-    'Resolve `ATTUNE_ROOT` to the absolute path three directories above this\n' +
-    'SKILL.md file (the installed plugin root) before running any command\n' +
-    'quoted below.',
-  pi:
-    'Resolve `ATTUNE_ROOT` to the absolute path three directories above this\n' +
-    'SKILL.md file (the installed package root) before running any command\n' +
-    'quoted below.',
-};
 
 function splitFrontmatter(text, source) {
   const m = text.match(/^---\n([\s\S]*?)\n---\n/);
   if (!m) throw new Error(`${source}: no frontmatter block`);
   return { frontmatter: m[1], body: text.slice(m[0].length).trim() };
-}
-
-function routerSkill(platform) {
-  const source = 'agents/external-agent.md';
-  const { body } = splitFrontmatter(read(source), source);
-  const description =
-    'Dispatch one task brief to the best-fit external agent CLIs, per the ' +
-    'external agents guidelines. Input is a markdown task brief (## Metadata ' +
-    'with GOAL/TAGS/AGENTS/CAPABILITIES_MARKER, the task prompt in ' +
-    'EXTERNAL_AGENT_TASK_PROMPT tags, ## Response with the report shape). ' +
-    'The router probes all agent facts in one matrix call, selects by task ' +
-    'category, verifies CLI flags against live --help, launches headless ' +
-    'runs, and reports as the brief specifies. It performs no synthesis and ' +
-    'no judgment.';
-  return [
-    '---',
-    'name: external-agent',
-    `description: ${description}`,
-    '---',
-    '',
-    marker(source),
-    '',
-    ROOT_PROLOGUE[platform],
-    '',
-    resolveTokens(body.replaceAll('${CLAUDE_PLUGIN_ROOT}', '$ATTUNE_ROOT')),
-    '',
-  ].join('\n');
 }
 
 // A ported skill's source lives in skills/ (Claude's literal set) or, when
@@ -150,12 +103,6 @@ function generate() {
       files.set(
         `${platform}/skills/${name}/SKILL.md`,
         mirroredSkill(name, platform),
-      );
-    }
-    if (spec.router) {
-      files.set(
-        `${platform}/skills/external-agent/SKILL.md`,
-        routerSkill(platform),
       );
     }
   }

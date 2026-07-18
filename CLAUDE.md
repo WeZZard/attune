@@ -3,7 +3,7 @@
 ## Domain boundary
 
 Attune holds human-ruled subjective knowledge only: communication and
-output-style guidelines, and external agent usage rules. It is fully disjoint
+output-style guidelines. It is fully disjoint
 from every other knowledge system (retrospect, project docs, Claude Code auto
 memory) — no shared vocabulary, no cross-routing. World facts and measured
 lessons are never recorded here.
@@ -11,19 +11,17 @@ lessons are never recorded here.
 ## Source of truth: the Claude Code plugin source
 
 The hand-authored Claude Code plugin source IS the plugin: `references/`,
-`skills/` (Claude's literal text — `@port` blocks stay inert comments
-there), `agents/`, `hooks/hooks.json`, and the hook scripts. Everything
+`skills/` and `portable-skills/` (Claude's literal text — `@port` blocks
+stay inert comments there), `hooks/hooks.json`, and the hook scripts. Everything
 every other platform receives is a projection of that source: `porting.json`
 selects, the generator projects (`codex/`, `pi/`, the root `hooks.json`),
 and the runtime consumers read the matrix. Maintenance therefore always
 edits the Claude source and regenerates — never a generated tree, never a
 platform copy, never a platform-specific fork of content that has a Claude
 home. Even a feature with no Claude runtime surface keeps its source in
-the Claude-side tree: the router ships as a skill on other platforms, yet
-its source stays the Claude subagent `agents/external-agent.md`, and a
-skill Claude itself never runs sources from `portable-skills/<name>/`
-(Claude Code auto-discovers `skills/`, so `skills/` holds exactly what
-Claude runs — nothing more).
+the Claude-side tree: a skill Claude itself never runs sources from
+`portable-skills/<name>/` (Claude Code auto-discovers `skills/`, so
+`skills/` holds exactly what Claude runs — nothing more).
 
 ## The guidelines are the product
 
@@ -55,16 +53,11 @@ key lists `extensions` and `skills`; the `pi-package` keyword is Pi's
 gallery flag). The gate enforces one version across all three; bump them
 together.
 
-**Port matrix.** `porting.json` is the single control for
-what ships where: per platform, which reference docs inject, which skills
-ship, and whether the router ports. Claude Code never appears in it — it
-ships every feature with a Claude surface and its source tree is the
-source of truth; the other platforms are projections. The current ruling
-keeps the external-agent surface (router plus the use-external-agents,
-audit, and image-generation skills) off Codex and Pi: Pi reaches many
-models natively,
-and Codex's own agentic coding, reasoning, and computer use cover what
-the router would delegate. The keystone skill inverts the direction:
+**Port matrix.** `porting.json` is the single control for what ships
+where: per platform, which reference docs inject and which skills ship.
+Claude Code never appears in it — it ships every feature with a Claude
+surface and its source tree is the source of truth; the other platforms
+are projections. The keystone skill inverts the direction:
 it compensates for sub-frontier models that miss a plan's load-bearing
 decision, so it ships to Pi only — Claude Code and Codex run
 frontier-class models and do not carry it. Re-porting any of this is a
@@ -77,27 +70,22 @@ so the DSL is inert there: a visible block (`<!-- @port claude -->` …
 `<!-- @end -->`) is plain text Claude reads anyway and must list `claude`;
 another platform's variant hides inside a comment block
 (`<!-- @port codex pi` … `-->`) Claude never sees and must not list
-`claude` — the parser enforces both. This is how explore, experiment, and
-verification port to Codex and Pi in variants that run without external
-agents (self-run research, self-produced and self-judged candidates with
-the bias named to the user, self-re-checked claims).
+`claude` — the parser enforces both. This is how explore ports to Codex
+and Pi in a variant that runs its research without background subagents.
+Experiment and verification ship one text everywhere: their external
+widening is conditional on the dispatch plugin's presence, which is never
+true off Claude Code.
 
 **Generated trees.** `codex/`, `pi/`, and the root `hooks.json` are build
 products of `utils/generate-platform-assets.sh` — never hand-edit them;
-edit the sources (`skills/`, `agents/external-agent.md`, `porting.json`)
-and regenerate. The pre-commit gate fails on stale, missing, or foreign
+edit the sources (`skills/`, `portable-skills/`, `porting.json`) and
+regenerate. The pre-commit gate fails on stale, missing, or foreign
 files there (and on any resurrected `kimi/` file). Matrix-selected skills
 mirror into `<platform>/skills/`, sourced from `skills/` or
-`portable-skills/` (exactly one home per skill); the router, when ported,
-becomes a generated skill there too (neither Codex nor Pi runs Claude
-subagents from a plugin; the Claude subagent `agents/external-agent.md`
-stays the generation source). A new reference document means a new hook plus a
+`portable-skills/` (exactly one home per skill). A new reference document means a new hook plus a
 `HOOK_BY_DOC` entry in `utils/_porting.mjs` and per-platform `porting.json`
 listings — never a bigger hook. Runtime consumers read the matrix too:
-`extensions/attune.js` injects Pi's selected docs, and `hooks/_lib.mjs`
-resolves `{{ROUTER}}` to the router handle where it ships and to the
-visible name "the `attune:external-agent` router (Claude Code only)" where
-it does not.
+`extensions/attune.js` injects Pi's selected docs.
 
 **Codex facts (verified against codex-cli 0.144.4).** Codex has native
 subagents (TOML files in `~/.codex/agents/`, GA 2026-03-16), but a plugin
@@ -177,66 +165,17 @@ headroom for machine-dependent variation. Two documents inject today
 (communication, writing style); a new reference document means a new
 hook, not a bigger one.
 
-## Task dispatch
+## The dispatch plugin
 
-The dispatch interface is a skill, not standing context:
-`skills/use-external-agents` carries the router handle, the brief
-contract, facts-before-use, write isolation, and conduct — loaded on
-demand, never injected. There is no session-start availability report;
-the matrix call gathers the facts at dispatch. Task-type protocols live
-in dedicated skills that build on it — `skills/audit` (a panel: the same
-audit brief to Codex and Kimi in parallel, for diverse model biases;
-reports saved under `${TMPDIR}/attune-audit/<name>/`, digest compiled with
-paths) and `skills/image-generation` (concurrent generation across `codex`
-and `agy`; a failure record at
-`${TMPDIR}/attune-image-generation/failures.json` blocks re-dispatch to an
-agent after a login or quota failure until the user clears it). Both use
-the router, so they are Claude-only and unlisted in `porting.json`. The
-skills pin agents in the brief's `AGENTS` line; the router
-(`agents/external-agent.md`) dispatches to exactly those agents and never
-chooses on its own. Browser and computer-use delegation was retired in
-0.8.0: the session drives web and GUI flows natively, so the categories,
-their capability probes, the resource locks (`resource-lock.sh`), and
-`references/resource-guidelines.md` are gone.
-
-The router verifies parameters against each CLI's current `--help` before
-every launch (external CLIs update frequently — never invoke from
-memory). When the router reports that a CLI's help contradicts the
-registry, updating `capabilities.json` is the user's editorial act. The
-brief is markdown: `## Metadata` (GOAL/TAGS/AGENTS/CAPABILITIES_MARKER),
-the task prompt inside `<EXTERNAL_AGENT_TASK_PROMPT>` tags, and
-`## Response` — the report shape the router owes the main conversation. A
-Response section that demands artifact paths makes the external agent
-reply with explicit `ARTIFACT_PATH:` lines, which the router passes
-through verbatim.
-
-The router's single probe step is `external-agents.sh matrix` — one call,
-all agents, installed/usable/capable in parallel, memoized in a marker
-(Fable-class turns cost minutes; never design a flow that probes
-layer-by-layer). `capabilities.json` fields:
-
-- `capabilities.<name>` — one probe definition, shared by every agent that
-  lists it: `prompt` (must make the agent exercise the tool, echo
-  tool-derived data back, and offer `CAPABILITY_MISSING` as the honest
-  failure reply), `expect` (the substring proving success; reduction is
-  fail-closed: ok = exit 0, `expect` present, `CAPABILITY_MISSING`
-  absent), and `strength` (what the flag gates). The map is empty today —
-  the machinery stays data-driven for future tool-gated capabilities, and
-  the tests inject fixture registries via `ATTUNE_CAPABILITIES_FILE`.
-- `agents.<agent>.invocation` — argv template for one headless run of this
-  agent; `{prompt}` marks the argument the prompt replaces. Serves the
-  probes AND the router's last-verified launch baseline — the registry is
-  the only place invocations live; never restate them in a guidelines
-  document.
-- `agents.<agent>.prompt_via` — present and `"stdin"` when the CLI takes
-  the prompt on stdin; the argv then carries no `{prompt}`.
-- `agents.<agent>.probe` — the capability names probed for this agent (all
-  empty today; an agent with an empty `probe` list exists for identity and
-  detection alone).
-
-Adding a tool-gated capability = one `capabilities` entry plus the
-capability name in each supporting agent's `probe` list. No script or
-router change either way.
+External-agent delegation left attune in 0.9.0 for the sibling
+WeZZard/dispatch plugin (Claude Code only): the external-agent router, the
+agent registry and probe scripts, and the use-external-agents, audit, and
+image-generation skills. Attune references dispatch only
+presence-conditionally — experiment widens its producers and judges
+through dispatch's skills when they are installed, and verification
+routes independent re-checks through dispatch's `audit` skill when
+present; both degrade to self-run variants otherwise. Attune never
+assumes dispatch exists, and dispatch works without attune.
 
 ## Command naming convention
 
@@ -246,29 +185,11 @@ command carries an underscore prefix (`_*.mjs`) — wrappers are the stable
 surface, underscored internals may be reshaped freely. Hook entry points
 (`hooks/session-start-*.mjs`) are wired in `hooks.json`, not typed by users,
 and keep plain names; their shared internals are underscored
-(`hooks/_lib.mjs`). Placement: `scripts/` holds runtime commands the plugin
-surface calls; `utils/` holds development tooling (the commit gate).
-
-`scripts/external-agents.sh` is the one public command for agent facts —
-subcommands `installed` (free), `usable` (paid), `capable` (paid) mirror the
-guidelines' three fact layers, and `capabilities.json` is the agent registry
-every layer reads (an agent with an empty `probe` list exists for identity
-and detection alone). The free and paid paths stay separate underneath so no
-unconditional caller can drift into paid probes.
-
-## Vendored code (never hand-edit)
-
-- `scripts/probe-external-agents.sh` — from amplify
-  `skills/capability-preflight/probe.sh`, verbatim.
-
-Re-vendor from amplify to update; divergences belong in new files (e.g.
-`scripts/worktree.sh`, `scripts/external-agents.sh` and its underscored
-internals).
+(`hooks/_lib.mjs`). Placement: `utils/` holds development tooling (the
+commit gate); attune ships no runtime commands — they moved to dispatch.
 
 ## Open items
 
-- The vendored probe script still probes `cua-driver` (an amplify concern);
-  harmless, drop on the next vendoring pass if amplify splits it.
 - If the verification skill does not move the model's behavior, escalate
   to a Stop hook that checks for unverified claims before the turn ends.
   The skill is named `verification` (the standard) deliberately: Claude

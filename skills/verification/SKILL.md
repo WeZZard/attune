@@ -35,13 +35,8 @@ description: The standard for calling work done — a result is done only when i
 **MUST:**
 
 1. You **MUST** verify in-session when the session's own tools reach the interface: run the command, read the artifact, call the endpoint.
-<!-- @port claude -->
-2. You **MUST** route an independent re-check of a claim through the attune audit skill — the session drives web and GUI flows itself.
-<!-- @end -->
-<!-- @port codex pi
-2. You **MUST** re-check a disputed claim yourself from fresh evidence — re-derive it from the primary source, never from your earlier conclusion.
--->
-3. You **MUST** invoke the `verify` skill, when one is available in the session, before declaring a nontrivial change done — this skill sets the standard; that one carries the procedure.
+2. You **MUST** route an independent re-check of a claim through the dispatch plugin's `audit` skill when it is installed — invoke it by name; without it, re-check the claim yourself from fresh evidence, re-derived from the primary source, never from your earlier conclusion.
+3. You **MUST** invoke the `verify` skill before declaring a nontrivial change done when the session offers one; when none exists, this standard alone governs. This skill sets the standard; that one carries the procedure.
 
 ## Proportionality
 
