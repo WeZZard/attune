@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 // _matrix.mjs — internal implementation of `external-agents.sh matrix`: the
 // one-shot fact sheet. One command answers installed / usable / capable for
-// every registry agent, plus the lock instructions for any exclusive
-// resource in play (progressive disclosure — the consumer learns the lock
-// protocol exactly when a locked capability concerns it).
+// every registry agent.
 //
 // Paid-prompt economy: a capability probe already proves the whole usable
 // chain (binary, login, network, model) — a CAPABILITY_MISSING reply is a
@@ -17,12 +15,10 @@
 // Usage: _matrix.mjs <marker.json> [--refresh]
 
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import {
   findOnPath,
   lastLine,
   loadConfig,
-  pluginRoot,
   probeOne,
 } from './_agents-core.mjs';
 
@@ -36,8 +32,6 @@ const refresh = process.argv.includes('--refresh');
 const { capabilities, agents } = loadConfig();
 
 function render(data) {
-  const lockScript = join(pluginRoot, 'scripts', 'resource-lock.sh');
-  const resourceLines = [];
   for (const [name, entry] of Object.entries(data.agents)) {
     if (!entry.installed) {
       console.log(`${name}: installed=false`);
@@ -49,20 +43,6 @@ function render(data) {
     console.log(
       `${name}: installed=true usable=${entry.usable}${entry.usable ? '' : ` (${entry.detail})`}${caps}`,
     );
-    for (const [cap, r] of Object.entries(entry.capabilities ?? {})) {
-      const resource = capabilities[cap]?.resource;
-      if (r.ok && resource) {
-        resourceLines.push(
-          `- ${resource} (${name}.${cap}): TOKEN=$(bash "${lockScript}" acquire ${resource} --wait 120); after use: bash "${lockScript}" release ${resource} "$TOKEN"`,
-        );
-      }
-    }
-  }
-  if (resourceLines.length > 0) {
-    console.log(
-      '\nEXCLUSIVE RESOURCES — acquire before any use of the capability, release after (why: references/resource-guidelines.md):',
-    );
-    for (const line of [...new Set(resourceLines)]) console.log(line);
   }
 }
 

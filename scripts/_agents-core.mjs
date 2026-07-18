@@ -11,9 +11,15 @@ export const PROBE_TIMEOUT_MS = 180000;
 
 export const pluginRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 
+// ATTUNE_CAPABILITIES_FILE overrides the registry path — tests inject
+// fixture registries through it; runtime callers never set it.
 export function loadConfig() {
   return JSON.parse(
-    readFileSync(join(pluginRoot, 'capabilities.json'), 'utf8'),
+    readFileSync(
+      process.env.ATTUNE_CAPABILITIES_FILE ??
+        join(pluginRoot, 'capabilities.json'),
+      'utf8',
+    ),
   );
 }
 

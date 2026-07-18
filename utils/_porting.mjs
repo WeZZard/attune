@@ -12,8 +12,6 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 // document means a new hook AND a new entry here.
 export const HOOK_BY_DOC = {
   'communication-guidelines.md': 'session-start-communication.mjs',
-  'external-agents-guidelines.md': 'session-start-external-agents.mjs',
-  'verification-guidelines.md': 'session-start-verification.mjs',
   'writing-style-guidelines.md': 'session-start-writing.mjs',
 };
 

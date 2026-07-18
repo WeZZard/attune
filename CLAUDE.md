@@ -55,26 +55,20 @@ key lists `extensions` and `skills`; the `pi-package` keyword is Pi's
 gallery flag). The gate enforces one version across all three; bump them
 together.
 
-**Delivery tokens.** The injected reference docs carry two delivery-time
-tokens: `{{ATTUNE_ROOT}}` (absolute plugin root) and `{{ROUTER}}` (the
-platform's router handle). `hooks/_lib.mjs` resolves them for the two hook
-platforms (`--platform claude|codex`); `extensions/attune.js` resolves them
-at runtime on Pi. `references/resource-guidelines.md` is never injected, so
-it uses the prose placeholder `<attune plugin root>` instead of a token.
-
 **Port matrix.** `porting.json` is the single control for
 what ships where: per platform, which reference docs inject, which skills
 ship, and whether the router ports. Claude Code never appears in it — it
 ships every feature with a Claude surface and its source tree is the
 source of truth; the other platforms are projections. The current ruling
-keeps the external-agent surface (router, external-agents guidelines,
-availability report) off Codex and Pi: Pi reaches many models natively,
+keeps the external-agent surface (router plus the use-external-agents,
+audit, and image-generation skills) off Codex and Pi: Pi reaches many
+models natively,
 and Codex's own agentic coding, reasoning, and computer use cover what
 the router would delegate. The keystone skill inverts the direction:
-it compensates for sub-frontier models that miss a plan's
-load-bearing decision, so it ships to Codex and Pi only — Claude Code
-runs a frontier-class model and does not carry it. Re-porting any of
-this is a `porting.json` edit plus regeneration, not a code change.
+it compensates for sub-frontier models that miss a plan's load-bearing
+decision, so it ships to Pi only — Claude Code and Codex run
+frontier-class models and do not carry it. Re-porting any of this is a
+`porting.json` edit plus regeneration, not a code change.
 
 **Skill variants (@port DSL).** A source skill that needs per-platform text
 carries `@port` blocks, spliced by the generator (`projectSkill` in
@@ -83,10 +77,10 @@ so the DSL is inert there: a visible block (`<!-- @port claude -->` …
 `<!-- @end -->`) is plain text Claude reads anyway and must list `claude`;
 another platform's variant hides inside a comment block
 (`<!-- @port codex pi` … `-->`) Claude never sees and must not list
-`claude` — the parser enforces both. This is how explore and experiment
-port to Codex and Pi in variants that run without external agents
-(self-run research, self-produced and self-judged candidates with the bias
-named to the user).
+`claude` — the parser enforces both. This is how explore, experiment, and
+verification port to Codex and Pi in variants that run without external
+agents (self-run research, self-produced and self-judged candidates with
+the bias named to the user, self-re-checked claims).
 
 **Generated trees.** `codex/`, `pi/`, and the root `hooks.json` are build
 products of `utils/generate-platform-assets.sh` — never hand-edit them;
@@ -178,69 +172,71 @@ own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
 `hooks/_lib.mjs`, the single source of truth) with a visible warning. The pre-commit gate
 (`utils/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
-that would truncate: it runs each real hook against a fixture PATH with every
-agent installed and requires 300 characters of headroom for machine-dependent
-path lengths. A new reference document means a new hook, not a bigger one —
-or no hook at all when a command's output surfaces it progressively
-(`references/resource-guidelines.md` is the latter: `external-agents.sh
-matrix` prints the lock instructions when they apply and points to the doc
-for the reasons; it is never injected).
+that would truncate: it runs each real hook and requires 300 characters of
+headroom for machine-dependent variation. Two documents inject today
+(communication, writing style); a new reference document means a new
+hook, not a bigger one.
 
-## External agent routing
+## Task dispatch
 
-The task categories in `references/external-agents-guidelines.md` are the
-single source of truth for agent selection; the router
-(`agents/external-agent.md`) reads them at runtime and never restates them.
-Each category lists agents in priority order (Codex before Kimi
-for browser and computer use) — never reshape it back into per-agent
-strength lists, and never list invocations there (they live in the
-registry). The
-router verifies parameters against each CLI's current `--help` before every
-launch (external CLIs update frequently — never invoke from
-memory). When the router reports that a CLI's help contradicts the matrix,
-updating the matrix's last-verified line is the user's editorial act. The
-brief is markdown: `## Metadata` (GOAL/TAGS/AGENTS/CAPABILITIES_MARKER), the
-task prompt inside `<EXTERNAL_AGENT_TASK_PROMPT>` tags, and `## Response` —
-the report shape the router owes the main conversation. A Response section
-that demands artifact paths makes the external agent reply with explicit
-`ARTIFACT_PATH:` lines, which the router passes through verbatim.
+The dispatch interface is a skill, not standing context:
+`skills/use-external-agents` carries the router handle, the brief
+contract, facts-before-use, write isolation, and conduct — loaded on
+demand, never injected. There is no session-start availability report;
+the matrix call gathers the facts at dispatch. Task-type protocols live
+in dedicated skills that build on it — `skills/audit` (a panel: the same
+audit brief to Codex and Kimi in parallel, for diverse model biases;
+reports saved under `${TMPDIR}/attune-audit/<name>/`, digest compiled with
+paths) and `skills/image-generation` (concurrent generation across `codex`
+and `agy`; a failure record at
+`${TMPDIR}/attune-image-generation/failures.json` blocks re-dispatch to an
+agent after a login or quota failure until the user clears it). Both use
+the router, so they are Claude-only and unlisted in `porting.json`. The
+skills pin agents in the brief's `AGENTS` line; the router
+(`agents/external-agent.md`) dispatches to exactly those agents and never
+chooses on its own. Browser and computer-use delegation was retired in
+0.8.0: the session drives web and GUI flows natively, so the categories,
+their capability probes, the resource locks (`resource-lock.sh`), and
+`references/resource-guidelines.md` are gone.
 
-Tool-dependent strengths (MCP-armed: browser use, computer use) are gated by
-capability flags probed behaviorally. The router's single probe step is
-`external-agents.sh matrix` — one call, all agents, installed/usable/capable
-in parallel, memoized in a marker (Fable-class turns cost minutes; never
-design a flow that probes layer-by-layer). The matrix output also carries the
-lock commands for exclusive resources — progressive disclosure: the lock
-protocol reaches an agent exactly when a locked capability concerns it, and
-`references/resource-guidelines.md` (never injected) holds the reasons.
-`capabilities.json` fields:
+The router verifies parameters against each CLI's current `--help` before
+every launch (external CLIs update frequently — never invoke from
+memory). When the router reports that a CLI's help contradicts the
+registry, updating `capabilities.json` is the user's editorial act. The
+brief is markdown: `## Metadata` (GOAL/TAGS/AGENTS/CAPABILITIES_MARKER),
+the task prompt inside `<EXTERNAL_AGENT_TASK_PROMPT>` tags, and
+`## Response` — the report shape the router owes the main conversation. A
+Response section that demands artifact paths makes the external agent
+reply with explicit `ARTIFACT_PATH:` lines, which the router passes
+through verbatim.
+
+The router's single probe step is `external-agents.sh matrix` — one call,
+all agents, installed/usable/capable in parallel, memoized in a marker
+(Fable-class turns cost minutes; never design a flow that probes
+layer-by-layer). `capabilities.json` fields:
 
 - `capabilities.<name>` — one probe definition, shared by every agent that
   lists it: `prompt` (must make the agent exercise the tool, echo
   tool-derived data back, and offer `CAPABILITY_MISSING` as the honest
   failure reply), `expect` (the substring proving success; reduction is
-  fail-closed: ok = exit 0, `expect` present, `CAPABILITY_MISSING` absent),
-  and `strength` (what the flag gates, for the human reading the file).
+  fail-closed: ok = exit 0, `expect` present, `CAPABILITY_MISSING`
+  absent), and `strength` (what the flag gates). The map is empty today —
+  the machinery stays data-driven for future tool-gated capabilities, and
+  the tests inject fixture registries via `ATTUNE_CAPABILITIES_FILE`.
 - `agents.<agent>.invocation` — argv template for one headless run of this
-  agent; `{prompt}` marks the argument the prompt replaces. Serves the probes
-  AND the router's last-verified launch baseline — the registry is the only
-  place invocations live; never restate them in a guidelines document.
-- `agents.<agent>.prompt_via` — present and `"stdin"` when the CLI takes the
-  prompt on stdin; the argv then carries no `{prompt}`.
-- `agents.<agent>.probe` — the capability names probed for this agent; each
-  reduces to the flag `<agent>.<capability>`.
-- `capabilities.<name>.resource` — present when the capability occupies an
-  exclusive machine resource (verified: default-config Chrome DevTools MCP
-  and Playwright MCP each collide on a shared persistent browser profile;
-  the desktop is exclusive by ruling). The router serializes use through
-  `scripts/resource-lock.sh` (mkdir-atomic, token-guarded release, 900 s
-  lease reclaim). Absent when the resource is parallel-safe — remove it when
-  the user's MCP configs run `--isolated`.
+  agent; `{prompt}` marks the argument the prompt replaces. Serves the
+  probes AND the router's last-verified launch baseline — the registry is
+  the only place invocations live; never restate them in a guidelines
+  document.
+- `agents.<agent>.prompt_via` — present and `"stdin"` when the CLI takes
+  the prompt on stdin; the argv then carries no `{prompt}`.
+- `agents.<agent>.probe` — the capability names probed for this agent (all
+  empty today; an agent with an empty `probe` list exists for identity and
+  detection alone).
 
-Adding a tool-dependent strength = one `capabilities` entry plus its
-`requires` note in the matrix; checking whether another agent supports an
-existing tool = adding the capability name to that agent's `probe` list. No
-script or router change either way.
+Adding a tool-gated capability = one `capabilities` entry plus the
+capability name in each supporting agent's `probe` list. No script or
+router change either way.
 
 ## Command naming convention
 
@@ -273,10 +269,11 @@ internals).
 
 - The vendored probe script still probes `cua-driver` (an amplify concern);
   harmless, drop on the next vendoring pass if amplify splits it.
-- If the injected verification guidelines do not move the model's behavior,
-  escalate to a Stop hook that checks for unverified claims before the turn
-  ends; reconsider an attune verify skill only if Claude Code's built-in one
-  proves absent or too shallow — never ship a competing duplicate.
+- If the verification skill does not move the model's behavior, escalate
+  to a Stop hook that checks for unverified claims before the turn ends.
+  The skill is named `verification` (the standard) deliberately: Claude
+  Code's built-in `verify` skill (the procedure) stays unshadowed — never
+  ship a competing duplicate.
 - Amplify injects the same communication guidelines at SessionStart; once
   attune is installed alongside it, that injection is redundant and should be
   retired from amplify.

@@ -1,6 +1,11 @@
-# Verification Guidelines
+---
+name: verification
+description: The standard for calling work done — a result is done only when it has survived its use path, driven the way a human would use it, through its real interface. Use before declaring any nontrivial change done, when reporting results, or when deciding how much verification a change deserves. Complements the verify skill where one exists; this skill sets the standard, that one carries the procedure.
+---
 
-<VERIFICATION_GUIDELINES>
+# Verification — Done Means Survived Its Use Path
+
+**Announce at start:** "Holding this to the verification standard."
 
 ## The Done Rule
 
@@ -30,9 +35,13 @@
 **MUST:**
 
 1. You **MUST** verify in-session when the session's own tools reach the interface: run the command, read the artifact, call the endpoint.
-2. You **MUST** route what the session cannot drive through the external agents: a web flow is a `browser` brief to {{ROUTER}}, a GUI flow is a `computer-use` brief, an independent re-check of a claim is an `auditing` brief.
-3. You **MUST** pin Codex (`AGENTS: codex`) in browser and computer-use verification briefs — verification evidence comes from Codex, never from a fallback agent.
-4. You **MUST** invoke the `verify` skill, when one is available in the session, before declaring a nontrivial change done — these guidelines set the standard; the skill carries the procedure.
+<!-- @port claude -->
+2. You **MUST** route an independent re-check of a claim through the attune audit skill — the session drives web and GUI flows itself.
+<!-- @end -->
+<!-- @port codex pi
+2. You **MUST** re-check a disputed claim yourself from fresh evidence — re-derive it from the primary source, never from your earlier conclusion.
+-->
+3. You **MUST** invoke the `verify` skill, when one is available in the session, before declaring a nontrivial change done — this skill sets the standard; that one carries the procedure.
 
 ## Proportionality
 
@@ -47,5 +56,3 @@
 
 1. You **MUST** report verified and unverified as different things: state what was driven and what was observed, fork by fork.
 2. You **MUST** report a fork you could not drive as unverified, with the reason.
-
-</VERIFICATION_GUIDELINES>

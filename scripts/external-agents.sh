@@ -1,13 +1,13 @@
 #!/bin/bash
 # external-agents.sh — the public command for external agent facts
-# (references/external-agents-guidelines.md):
+# (the attune use-external-agents skill):
 #
 #   external-agents.sh matrix <marker.json> [--refresh]
 #       The one-shot fact sheet: installed / usable / capable for every
 #       registry agent in ONE call (probes run in parallel; PAID — one
-#       prompt per agent×capability, one per capability-less agent), plus
-#       lock instructions for any exclusive resource in play. Memoized in
-#       the marker: existing marker renders free; --refresh re-probes.
+#       prompt per agent×capability, one per capability-less agent).
+#       Memoized in the marker: existing marker renders free; --refresh
+#       re-probes.
 #
 #   external-agents.sh installed [--lines]
 #       Free PATH detection only. No probes, no cost — safe at every

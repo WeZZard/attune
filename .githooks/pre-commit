@@ -8,8 +8,6 @@ cd "$(git rev-parse --show-toplevel)"
 node --check extensions/attune.js
 node --check hooks/_lib.mjs
 node --check hooks/session-start-communication.mjs
-node --check hooks/session-start-external-agents.mjs
-node --check hooks/session-start-verification.mjs
 node --check hooks/session-start-writing.mjs
 node --check scripts/_agents-core.mjs
 node --check scripts/_detect-external-agents.mjs

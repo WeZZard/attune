@@ -10,11 +10,6 @@
           },
           {
             "type": "command",
-            "command": "/bin/sh -c 'for f in \"${CODEX_HOME:-$HOME/.codex}\"/plugins/cache/*/attune/*/hooks/session-start-verification.mjs; do p=\"$f\"; done; exec \"$p\" --platform codex'",
-            "timeout": 10
-          },
-          {
-            "type": "command",
             "command": "/bin/sh -c 'for f in \"${CODEX_HOME:-$HOME/.codex}\"/plugins/cache/*/attune/*/hooks/session-start-writing.mjs; do p=\"$f\"; done; exec \"$p\" --platform codex'",
             "timeout": 10
           }

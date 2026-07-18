@@ -30,10 +30,46 @@ function fixture(fakes) {
   return bin;
 }
 
+// The shipped registry defines no capabilities today; the probe machinery
+// stays data-driven, so the tests exercise it through a fixture registry.
+const REGISTRY = join(
+  mkdtempSync(join(tmpdir(), 'attune-matrix-registry-')),
+  'capabilities.json',
+);
+writeFileSync(
+  REGISTRY,
+  JSON.stringify({
+    capabilities: {
+      playwright: {
+        strength: 'test',
+        prompt: 'probe playwright',
+        expect: 'PLAYWRIGHT_OK',
+      },
+      chrome_devtools: {
+        strength: 'test',
+        prompt: 'probe devtools',
+        expect: 'DEVTOOLS_OK',
+      },
+    },
+    agents: {
+      kimi: {
+        invocation: ['kimi', '-p', '{prompt}'],
+        probe: ['playwright', 'chrome_devtools'],
+      },
+      codex: {
+        invocation: ['codex'],
+        prompt_via: 'stdin',
+        probe: ['playwright'],
+      },
+      grok: { invocation: ['grok', '-p', '{prompt}'], probe: [] },
+    },
+  }),
+);
+
 function run(bin, marker, extra = []) {
   return execFileSync('/bin/bash', [WRAPPER, 'matrix', marker, ...extra], {
     encoding: 'utf8',
-    env: { ...process.env, PATH: bin },
+    env: { ...process.env, PATH: bin, ATTUNE_CAPABILITIES_FILE: REGISTRY },
   });
 }
 
@@ -59,20 +95,6 @@ test('one call yields installed, usable, and capable for every agent', () => {
   assert.equal(data.agents.codex.installed, false);
   assert.match(out, /kimi: installed=true usable=true playwright=true/);
   assert.match(out, /codex: installed=false/);
-});
-
-test('a capable locked capability surfaces its lock instructions', () => {
-  const bin = fixture({ kimi: 'echo "PLAYWRIGHT_OK x"' });
-  const out = run(bin, markerPath());
-  assert.match(out, /EXCLUSIVE RESOURCES/);
-  assert.match(out, /playwright-profile \(kimi\.playwright\)/);
-  assert.match(out, /resource-lock\.sh" acquire playwright-profile/);
-});
-
-test('no capable locked capability, no resource block', () => {
-  const bin = fixture({ grok: 'echo "OK"' });
-  const out = run(bin, markerPath());
-  assert.doesNotMatch(out, /EXCLUSIVE RESOURCES/);
 });
 
 test('CAPABILITY_MISSING proves usable while the flag fails closed', () => {

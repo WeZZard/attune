@@ -34,6 +34,51 @@ function fixture(fakes) {
   return bin;
 }
 
+// The shipped registry defines no capabilities today; the probe machinery
+// stays data-driven, so the tests exercise it through a fixture registry.
+const REGISTRY = join(
+  mkdtempSync(join(tmpdir(), 'attune-cap-registry-')),
+  'capabilities.json',
+);
+writeFileSync(
+  REGISTRY,
+  JSON.stringify({
+    capabilities: {
+      playwright: {
+        strength: 'test',
+        prompt: 'probe playwright',
+        expect: 'PLAYWRIGHT_OK',
+      },
+      chrome_devtools: {
+        strength: 'test',
+        prompt: 'probe devtools',
+        expect: 'DEVTOOLS_OK',
+      },
+      computer_use: {
+        strength: 'test',
+        prompt: 'probe cua',
+        expect: 'CUA_OK',
+      },
+    },
+    agents: {
+      kimi: {
+        invocation: ['kimi', '-p', '{prompt}'],
+        probe: ['playwright', 'chrome_devtools'],
+      },
+      codex: {
+        invocation: ['codex'],
+        prompt_via: 'stdin',
+        probe: ['playwright', 'chrome_devtools', 'computer_use'],
+      },
+      grok: { invocation: ['grok', '-p', '{prompt}'], probe: [] },
+      'cursor-agent': {
+        invocation: ['cursor-agent', '{prompt}'],
+        probe: [],
+      },
+    },
+  }),
+);
+
 function run(bin, extra = []) {
   const marker = join(
     mkdtempSync(join(tmpdir(), 'attune-cap-out-')),
@@ -41,7 +86,7 @@ function run(bin, extra = []) {
   );
   execFileSync('/bin/bash', [WRAPPER, 'capable', marker, ...extra], {
     encoding: 'utf8',
-    env: { ...process.env, PATH: bin },
+    env: { ...process.env, PATH: bin, ATTUNE_CAPABILITIES_FILE: REGISTRY },
   });
   return JSON.parse(readFileSync(marker, 'utf8')).flags;
 }

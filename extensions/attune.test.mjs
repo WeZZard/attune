@@ -52,14 +52,9 @@ test('appends exactly the matrix-selected docs with tokens resolved', async () =
 
 test('the current matrix keeps the external-agent surface off Pi', async () => {
   assert.equal(porting.router, false);
-  assert.ok(!porting.guidelines.includes('external-agents-guidelines.md'));
   const handlers = load();
   await handlers.session_start({}, {});
   const out = await handlers.before_agent_start({ systemPrompt: 'BASE' }, {});
-  assert.doesNotMatch(out.systemPrompt, /# External Agents Guidelines/);
+  assert.doesNotMatch(out.systemPrompt, /Task Dispatch/);
   assert.doesNotMatch(out.systemPrompt, /External Agent Availability/);
-  assert.match(
-    out.systemPrompt,
-    /the `attune:external-agent` router \(Claude Code only\)/,
-  );
 });
