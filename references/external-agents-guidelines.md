@@ -39,7 +39,7 @@ One path delegates work to an external agent: the router, **{{ROUTER}}**. It sel
 
 ## Task Categories
 
-Category names double as `TAGS` vocabulary. Within a category, agents stand in priority order (human ruled):
+Category names double as `TAGS` vocabulary. Within a category, agents stand in priority order:
 
 - **browser** — 1. Codex (requires `codex.playwright` or `codex.chrome_devtools`); 2. Kimi (requires `kimi.playwright` or `kimi.chrome_devtools`).
 - **computer-use** — 1. Codex (requires `codex.computer_use`).

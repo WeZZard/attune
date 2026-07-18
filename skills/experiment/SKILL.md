@@ -22,13 +22,13 @@ A question neither the world nor the user can answer until it is tried: "does th
 -->
 3. **Blind.** Copy the candidates to letter names (`A.md`, `B.md`, …) in shuffled order (use `$RANDOM`), stripping every provenance hint from the content. Write the letter-to-producer mapping to `mapping.txt`; never show it to a judge and never quote it before the ruling.
 <!-- @port claude -->
-4. **Judge.** Send each judge the letter-named candidates and the criterion: one external-agent router brief per judge (`TAGS: auditing`, `AGENTS: <agent>` to pin it), 2–3 different agents, in parallel. Design each brief's `## Response` section per **Designing Spawning Prompts** below.
+4. **Judge.** Send each judge the letter-named candidates and the criterion: one external-agent router brief per judge (`TAGS: auditing`, `AGENTS: <agent>` to pin it), 2–3 different agents, in parallel. Design each brief's `## Response` section per **Designing Spawning Prompts** below. Save each returned verdict verbatim to `verdicts/<judge>.md` in the experiment directory.
 <!-- @end -->
 <!-- @port codex pi
-4. **Judge.** Judge the letter-named candidates yourself against the criterion alone: read them in letter order, one fresh pass per candidate, and write each verdict in the template below before reading on. You produced these candidates, so the panel shares your biases — say so when you present the verdicts.
+4. **Judge.** Judge the letter-named candidates yourself against the criterion alone: read them in letter order, one fresh pass per candidate, and write each verdict to `verdicts/` in the experiment directory, in the template below, before reading on. You produced these candidates, so the panel shares your biases — say so when you present the verdicts.
 -->
-5. **Rule.** Present the candidates and the anonymized verdicts to the user — each verdict verbatim as the judge returned it; never compile or reshape a judge's report in the main thread. The user rules. Reveal the mapping only after the ruling.
-6. **Conclude.** Report the ruling as the experiment's outcome to the task that dispatched it, then delete the experiment directory — its artifacts are evidence, never design artifacts.
+5. **Rule.** Present a compiled comparison to the user: each candidate's path, the rankings across judges, and each verdict's file path so the user can check the reasoning — never quote a verdict partially in a way that reshapes it. The user rules. Reveal the mapping only after the ruling.
+6. **Conclude.** Report the ruling as the experiment's outcome to the task that dispatched it. Leave the experiment directory in place — candidates, mapping, and verdicts are the experiment's backtrace; never reuse them as design artifacts.
 
 <!-- @port claude -->
 **Designing Spawning Prompts:**

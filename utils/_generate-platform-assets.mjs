@@ -184,7 +184,7 @@ let failed = false;
 
 if (checking) {
   // kimi/ stays in the walk so a resurrected Kimi tree fails the gate:
-  // the Kimi packaging was dropped in 0.5.0 (human ruled).
+  // the Kimi packaging was dropped in 0.5.0.
   const onDisk = PLATFORMS.concat('kimi').flatMap((dir) => walk(dir));
   for (const [rel, content] of files) {
     let disk = null;

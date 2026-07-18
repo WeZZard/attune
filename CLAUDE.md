@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-## Domain boundary (human ruled)
+## Domain boundary
 
 Attune holds human-ruled subjective knowledge only: communication and
 output-style guidelines, and external agent usage rules. It is fully disjoint
@@ -8,7 +8,7 @@ from every other knowledge system (retrospect, project docs, Claude Code auto
 memory) — no shared vocabulary, no cross-routing. World facts and measured
 lessons are never recorded here.
 
-## Source of truth: the Claude Code plugin source (human ruled)
+## Source of truth: the Claude Code plugin source
 
 The hand-authored Claude Code plugin source IS the plugin: `references/`,
 `skills/` (Claude's literal text — `@port` blocks stay inert comments
@@ -38,7 +38,7 @@ research- or experiment-informed rules in, inline provenance marks
 `references/communication-style-guidelines.md` and diverges as the user
 maintains it — it is NOT vendored-frozen.
 
-**Guidelines authoring style (human ruled):** principles are numbered
+**Guidelines authoring style:** principles are numbered
 **MUST:** / **MUST NOT:** lists ("1. You **MUST** …"). Each principle
 carries one idea — decompose a compound rule into separate numbered items.
 Factual material — contract templates, category tables, findings, command
@@ -62,7 +62,7 @@ platforms (`--platform claude|codex`); `extensions/attune.js` resolves them
 at runtime on Pi. `references/resource-guidelines.md` is never injected, so
 it uses the prose placeholder `<attune plugin root>` instead of a token.
 
-**Port matrix.** `porting.json` (human ruled) is the single control for
+**Port matrix.** `porting.json` is the single control for
 what ships where: per platform, which reference docs inject, which skills
 ship, and whether the router ports. Claude Code never appears in it — it
 ships every feature with a Claude surface and its source tree is the
@@ -70,8 +70,8 @@ source of truth; the other platforms are projections. The current ruling
 keeps the external-agent surface (router, external-agents guidelines,
 availability report) off Codex and Pi: Pi reaches many models natively,
 and Codex's own agentic coding, reasoning, and computer use cover what
-the router would delegate. The keystone skill inverts the direction
-(human ruled): it compensates for sub-frontier models that miss a plan's
+the router would delegate. The keystone skill inverts the direction:
+it compensates for sub-frontier models that miss a plan's
 load-bearing decision, so it ships to Codex and Pi only — Claude Code
 runs a frontier-class model and does not carry it. Re-porting any of
 this is a `porting.json` edit plus regeneration, not a code change.
@@ -134,7 +134,7 @@ port matrix. RPC mode (`pi --mode rpc`) is the headless path that actually
 loads package extensions and reports load errors at startup
 (`pi --list-models` does not) — the gate's load check relies on that.
 
-**Kimi Code (dropped in 0.5.0, human ruled).** kimi-code (verified 0.26.0)
+**Kimi Code (dropped in 0.5.0).** kimi-code (verified 0.26.0)
 offers no plugin- or user-defined subagents and no context-injecting
 session-start hook (`sessionStart.skill` injects skill text only; its lone
 injecting hook, `UserPromptSubmit`, fires per prompt), and installs GitHub
@@ -142,7 +142,7 @@ plugins from zipballs. Kimi models stay reachable through Pi's `kimi-coding`
 provider. `kimi/`, `kimi.plugin.json`, and the guidelines-concatenation
 generator path were removed with the 0.5.0 bump.
 
-**Distribution (human ruled).** `wezzard/skills` is the unique marketplace
+**Distribution.** `wezzard/skills` is the unique marketplace
 for every coding agent: the Claude catalog lives there today and the Codex
 catalog (`.agents/plugins/marketplace.json`) is filed as a handoff in that
 repo — attune itself carries no marketplace catalog. Pi installs straight
@@ -191,12 +191,12 @@ for the reasons; it is never injected).
 The task categories in `references/external-agents-guidelines.md` are the
 single source of truth for agent selection; the router
 (`agents/external-agent.md`) reads them at runtime and never restates them.
-Each category lists agents in priority order (human ruled: Codex before Kimi
+Each category lists agents in priority order (Codex before Kimi
 for browser and computer use) — never reshape it back into per-agent
 strength lists, and never list invocations there (they live in the
 registry). The
 router verifies parameters against each CLI's current `--help` before every
-launch (human ruled: external CLIs update frequently — never invoke from
+launch (external CLIs update frequently — never invoke from
 memory). When the router reports that a CLI's help contradicts the matrix,
 updating the matrix's last-verified line is the user's editorial act. The
 brief is markdown: `## Metadata` (GOAL/TAGS/AGENTS/CAPABILITIES_MARKER), the
@@ -242,7 +242,7 @@ Adding a tool-dependent strength = one `capabilities` entry plus its
 existing tool = adding the capability name to that agent's `probe` list. No
 script or router change either way.
 
-## Command naming convention (human ruled)
+## Command naming convention
 
 Every public command is a shell script; when the implementation is
 JavaScript, the wrapper just `exec`s node on it. JavaScript not exposed as a

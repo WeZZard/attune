@@ -18,9 +18,9 @@ A question neither the world nor the user can answer until it is tried: "does th
 1. **Frame.** Name the experiment (kebab-case) and write the single criterion the candidates compete on. A candidate set without a criterion is taste-polling, not an experiment.
 2. **Produce.** Render 2–4 candidates of the same content into `${TMPDIR}/attune-experiments/<name>/`, yourself, each committed to a genuinely different approach (structure, register, length — name each approach before writing) so the set spans real alternatives rather than one draft re-worded.
 3. **Blind.** Copy the candidates to letter names (`A.md`, `B.md`, …) in shuffled order (use `$RANDOM`), stripping every provenance hint from the content. Write the letter-to-producer mapping to `mapping.txt`; never show it to a judge and never quote it before the ruling.
-4. **Judge.** Judge the letter-named candidates yourself against the criterion alone: read them in letter order, one fresh pass per candidate, and write each verdict in the template below before reading on. You produced these candidates, so the panel shares your biases — say so when you present the verdicts.
-5. **Rule.** Present the candidates and the anonymized verdicts to the user — each verdict verbatim as the judge returned it; never compile or reshape a judge's report in the main thread. The user rules. Reveal the mapping only after the ruling.
-6. **Conclude.** Report the ruling as the experiment's outcome to the task that dispatched it, then delete the experiment directory — its artifacts are evidence, never design artifacts.
+4. **Judge.** Judge the letter-named candidates yourself against the criterion alone: read them in letter order, one fresh pass per candidate, and write each verdict to `verdicts/` in the experiment directory, in the template below, before reading on. You produced these candidates, so the panel shares your biases — say so when you present the verdicts.
+5. **Rule.** Present a compiled comparison to the user: each candidate's path, the rankings across judges, and each verdict's file path so the user can check the reasoning — never quote a verdict partially in a way that reshapes it. The user rules. Reveal the mapping only after the ruling.
+6. **Conclude.** Report the ruling as the experiment's outcome to the task that dispatched it. Leave the experiment directory in place — candidates, mapping, and verdicts are the experiment's backtrace; never reuse them as design artifacts.
 
 **Writing verdicts:**
 

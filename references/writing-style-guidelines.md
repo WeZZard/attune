@@ -4,13 +4,15 @@
 
 ## Scope
 
-These rules govern authored prose artifacts: design documents, specifications, READMEs, and reports (human ruled). Replies in conversation follow the communication style guidelines instead. Each medium's own conventions — citation formats, schema blocks, diagrams — layer on top; these rules govern the prose between them.
+These rules govern authored prose artifacts: design documents, specifications, READMEs, and reports. Replies in conversation follow the communication style guidelines instead. Each medium's own conventions — citation formats, schema blocks, diagrams — layer on top; these rules govern the prose between them.
 
 ## Principles
 
 **MUST:**
 
-1. You **MUST** make the main character of each sentence its grammatical subject (per Williams, *Style: Toward Clarity and Grace*).
+1. You **MUST** open a document with its conclusion — the finding, decision, or recommendation — before the material that supports it.
+2. You **MUST** open each paragraph with its point; the sentences that follow support it.
+3. You **MUST** make the main character of each sentence its grammatical subject (per Williams, *Style: Toward Clarity and Grace*).
 
 <EXAMPLE>
 
@@ -19,7 +21,7 @@ These rules govern authored prose artifacts: design documents, specifications, R
 
 </EXAMPLE>
 
-2. You **MUST** express each action as a verb, not a nominalization (per Williams).
+4. You **MUST** express each action as a verb, not a nominalization (per Williams).
 
 <EXAMPLE>
 
@@ -31,9 +33,9 @@ These rules govern authored prose artifacts: design documents, specifications, R
 
 </EXAMPLE>
 
-3. You **MUST** open each sentence with information the reader already has (per Williams).
-4. You **MUST** place the newest or most complex information at the end of the sentence (per Williams).
-5. You **MUST** keep each subject close to its verb (per Williams).
+5. You **MUST** open each sentence with information the reader already has (per Williams).
+6. You **MUST** place the newest or most complex information at the end of the sentence (per Williams).
+7. You **MUST** keep each subject close to its verb (per Williams).
 
 <EXAMPLE>
 
@@ -42,11 +44,11 @@ These rules govern authored prose artifacts: design documents, specifications, R
 
 </EXAMPLE>
 
-6. You **MUST** name the doer of every action, and restore it where a draft omits it (per Williams).
-7. You **MUST** cut words that carry no meaning, and never cut meaning (per Williams).
-8. You **MUST** pair each verb with its standard object — English conducts investigations, justifies verdicts, and draws distinctions.
-9. You **MUST** attach each modifier to the noun it literally describes — a paper is peer-reviewed; the distinction it draws is not.
-10. You **MUST** attribute an idea to its source by making the source the subject.
+8. You **MUST** name the doer of every action, and restore it where a draft omits it (per Williams).
+9. You **MUST** cut words that carry no meaning, and never cut meaning (per Williams).
+10. You **MUST** pair each verb with its standard object — English conducts investigations, justifies verdicts, and draws distinctions.
+11. You **MUST** attach each modifier to the noun it literally describes — a paper is peer-reviewed; the distinction it draws is not.
+12. You **MUST** attribute an idea to its source by making the source the subject.
 
 <EXAMPLE>
 
@@ -54,7 +56,7 @@ These rules govern authored prose artifacts: design documents, specifications, R
 **Good:** the paper draws this distinction
 
 </EXAMPLE>
-11. You **MUST** name a concept by its standard, established term when one exists — the term the field's documentation would use.
+13. You **MUST** name a concept by its standard, established term when one exists — the term the field's documentation would use.
 
 <EXAMPLE>
 

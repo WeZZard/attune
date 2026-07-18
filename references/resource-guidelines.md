@@ -6,7 +6,7 @@ Not injected at session start — `external-agents.sh matrix` surfaces the lock 
 
 ## Exclusive Resources
 
-- **`desktop`** (computer use) — cua itself is concurrency-safe by design: its No-Foreground Contract keeps the real cursor and frontmost app untouched, accessibility-element actions work on backgrounded windows, and per-agent app instances avoid same-app contention (per amplify `agents/computer-use-cua.md`, verified against cua.ai/docs). Attune serializes anyway because it cannot verify an external agent honors that discipline or avoids the app the human is using — a policy choice, not a technical necessity (human ruled).
+- **`desktop`** (computer use) — cua itself is concurrency-safe by design: its No-Foreground Contract keeps the real cursor and frontmost app untouched, accessibility-element actions work on backgrounded windows, and per-agent app instances avoid same-app contention (per amplify `agents/computer-use-cua.md`, verified against cua.ai/docs). Attune serializes anyway because it cannot verify an external agent honors that discipline or avoids the app the human is using — a policy choice, not a technical necessity.
 - **`chrome-devtools-profile`** — default-config Chrome DevTools MCP instances share one persistent Chrome profile (`~/.cache/chrome-devtools-mcp/`); a second concurrent launch fails with "The browser is already running… Use --isolated" (github.com/ChromeDevTools/chrome-devtools-mcp issues #224, #292).
 - **`playwright-profile`** — default-config Playwright MCP instances use a persistent profile guarded by the browser's own singleton lock; a concurrent second instance fails with "Browser is already in use… use --isolated" (microsoft/playwright-mcp README and issues #769, #891).
 

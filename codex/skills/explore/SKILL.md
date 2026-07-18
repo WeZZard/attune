@@ -21,17 +21,15 @@ This skill runs that routing eagerly during any discussion. Until its oracle ans
 
 ## Eager research (WORLD-owned)
 
-The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate.
+The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate. Every researcher writes its full brief to `${TMPDIR}/attune-explore/<topic>/<unknown>.md` — the brief files are the evidence trail the user can check; the thread carries only the compiled digest.
 
-Without background research subagents, run the web searches yourself, one unknown at a time, before the discussion continues — and still write up each unknown's findings as its own brief in the response template below.
-
-Keep only compact briefs in this thread, never the raw research.
+Without background research subagents, run the web searches yourself, one unknown at a time, before the discussion continues — and write each unknown's brief to its file before moving on.
 
 **Writing briefs:**
 
 **MUST:**
 
-1. You **MUST** write each unknown's brief in the template below.
+1. You **MUST** write each unknown's brief file in the template below.
 2. You **MUST** give a dated source for every claim.
 3. You **MUST** keep every field fail-open — "none" is a valid entry.
 
@@ -40,7 +38,7 @@ Keep only compact briefs in this thread, never the raw research.
 1. You **MUST NOT** let the template pressure a fabricated source, conflict, or confidence.
 2. You **MUST NOT** use all-caps section titles or labels in the template.
 
-Required response template:
+Required brief template:
 
 ```markdown
 ## Findings
@@ -56,9 +54,7 @@ Required response template:
 <one line: how settled this is, and what would change it>
 ```
 
-Relay each brief to the user in full, and keep the template's discipline even though you authored it: every claim carries its dated source, and an empty field stays visibly empty rather than filled by guesswork.
-
-Validate every brief against its fields: check source credibility; check dates and discard stale facts; resolve conflicts by source authority and recency; never conclude without validation. Validation is a judgment passed on the brief, not a rewrite of it.
+**Compiling the digest:** read every brief file and validate it — check source credibility, check dates and discard stale facts, resolve conflicts by source authority and recency; never conclude without validation, and never rewrite a brief file while validating it. Then report one digest: for each unknown, the settled answer in one or two sentences, the confidence, any conflict worth surfacing, and the brief's file path so the user can check the facts.
 
 ## The interview (HUMAN-owned)
 

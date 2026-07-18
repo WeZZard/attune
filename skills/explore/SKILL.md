@@ -19,40 +19,19 @@ This skill runs that routing eagerly during any discussion. Until its oracle ans
 
 ## Eager research (WORLD-owned)
 
-The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate.
+The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate. Every researcher writes its full brief to `${TMPDIR}/attune-explore/<topic>/<unknown>.md` — the brief files are the evidence trail the user can check; the thread carries only the compiled digest.
 
 <!-- @port claude -->
-Launch the researchers as background `Explore` subagents with `WebSearch`, in parallel (one message, multiple tool calls), each spawned with `model: "sonnet"` (human ruled) — an explorer never runs on the session model. The conversation continues while they run, but the report back does not: wait for every spawned explorer to complete, then report once, carrying every brief — never a partial report as briefs land.
+Launch the researchers as background subagents, in parallel (one message, multiple tool calls). The conversation continues while they run, but the digest does not: wait for every spawned explorer to complete — never a partial digest as briefs land.
 <!-- @end -->
 <!-- @port codex pi
-Without background research subagents, run the web searches yourself, one unknown at a time, before the discussion continues — and still write up each unknown's findings as its own brief in the response template below.
--->
+Without background research subagents, run the web searches yourself, one unknown at a time, before the discussion continues — and write each unknown's brief to its file before moving on.
 
-Keep only compact briefs in this thread, never the raw research.
-
-<!-- @port claude -->
-**Designing Spawning Prompts:**
-
-**MUST:**
-
-1. You **MUST** carry the whole response contract in the spawning prompt — the subagent interface enforces no schema.
-2. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists.
-3. You **MUST** require the explorer's response to take the template below.
-4. You **MUST** require a dated source for every claim.
-5. You **MUST** keep every field fail-open — "none" is a valid entry.
-
-**MUST NOT:**
-
-1. You **MUST NOT** let the template bind the research behind the response — it binds only the returned brief.
-2. You **MUST NOT** let the template pressure a fabricated source, conflict, or confidence.
-3. You **MUST NOT** use all-caps section titles or labels in the template.
-<!-- @end -->
-<!-- @port codex pi
 **Writing briefs:**
 
 **MUST:**
 
-1. You **MUST** write each unknown's brief in the template below.
+1. You **MUST** write each unknown's brief file in the template below.
 2. You **MUST** give a dated source for every claim.
 3. You **MUST** keep every field fail-open — "none" is a valid entry.
 
@@ -62,7 +41,29 @@ Keep only compact briefs in this thread, never the raw research.
 2. You **MUST NOT** use all-caps section titles or labels in the template.
 -->
 
-Required response template:
+<!-- @port claude -->
+**Spawning explorers:**
+
+**MUST:**
+
+1. You **MUST** spawn every explorer with `model: "sonnet"` — never the session model.
+2. You **MUST** spawn `general-purpose` explorers, restricted by prompt to research plus one brief-file write — the built-in `Explore` type cannot write files.
+3. You **MUST** ground every explorer with web search.
+4. You **MUST** carry the whole response contract in the spawning prompt — the subagent interface enforces no schema.
+5. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists.
+6. You **MUST** require the brief file to take the template below.
+7. You **MUST** require a dated source for every claim.
+8. You **MUST** keep every field fail-open — "none" is a valid entry.
+9. You **MUST** require the explorer's reply to carry only the brief's file path and an abstract of at most three sentences.
+
+**MUST NOT:**
+
+1. You **MUST NOT** let the template bind the research behind the brief — it binds only the written brief.
+2. You **MUST NOT** let the template pressure a fabricated source, conflict, or confidence.
+3. You **MUST NOT** use all-caps section titles or labels in the template.
+4. You **MUST NOT** let a full brief travel back through an explorer's reply — it lives in the file.
+<!-- @end -->
+Required brief template:
 
 ```markdown
 ## Findings
@@ -78,14 +79,7 @@ Required response template:
 <one line: how settled this is, and what would change it>
 ```
 
-<!-- @port claude -->
-The shape is the explorer's duty alone: relay its brief to the user verbatim, and never compile or reshape subagent output into the template in the main thread.
-<!-- @end -->
-<!-- @port codex pi
-Relay each brief to the user in full, and keep the template's discipline even though you authored it: every claim carries its dated source, and an empty field stays visibly empty rather than filled by guesswork.
--->
-
-Validate every brief against its fields: check source credibility; check dates and discard stale facts; resolve conflicts by source authority and recency; never conclude without validation. Validation is a judgment passed on the brief, not a rewrite of it.
+**Compiling the digest:** read every brief file and validate it — check source credibility, check dates and discard stale facts, resolve conflicts by source authority and recency; never conclude without validation, and never rewrite a brief file while validating it. Then report one digest: for each unknown, the settled answer in one or two sentences, the confidence, any conflict worth surfacing, and the brief's file path so the user can check the facts.
 
 ## The interview (HUMAN-owned)
 
