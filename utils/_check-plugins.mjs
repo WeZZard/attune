@@ -179,12 +179,12 @@ const codexHooks = readJson('hooks.json');
 for (const group of Object.values(codexHooks?.hooks ?? {})) {
   for (const entry of group) {
     for (const hook of entry.hooks ?? []) {
-      const m = hook.command.match(/session-start-[a-z-]+\.mjs/);
+      const m = hook.command.match(/hooks\/([a-z][a-z-]*\.mjs)/);
       if (!m) {
-        fail(`hooks.json: no hooks/session-start-*.mjs reference in: ${hook.command}`);
+        fail(`hooks.json: no hooks/*.mjs reference in: ${hook.command}`);
         continue;
       }
-      const rel = join('hooks', m[0]);
+      const rel = join('hooks', m[1]);
       const abs = join(repoRoot, rel);
       if (!existsSync(abs)) {
         fail(`hooks.json: ${rel} does not exist`);

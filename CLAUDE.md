@@ -3,7 +3,9 @@
 ## Domain boundary
 
 Attune holds human-ruled subjective knowledge only: communication and
-output-style guidelines. It is fully disjoint
+output-style guidelines, plus operational rulings on how the agent executes
+and delegates work (subagent model selection is the first — Claude-only,
+since its model names are Claude's). It is fully disjoint
 from every other knowledge system (retrospect, project docs, Claude Code auto
 memory) — no shared vocabulary, no cross-routing. World facts and measured
 lessons are never recorded here.
@@ -42,6 +44,45 @@ carries one idea — decompose a compound rule into separate numbered items.
 Factual material — contract templates, category tables, findings, command
 blocks — stays structural; only the rules take the list form.
 
+## The feedback loop
+
+The `ask-wezzard` skill (ported to every platform) is the failure channel
+for everything attune ships. A communication failure — the first fully
+supported type — files under `communication-failure`; any other skill or
+guideline failure files under `skill-failure` with the skill named,
+accumulating until it gets a loop of its own. A communication issue
+carries: the agent's
+offending passage verbatim, the reader's reaction paraphrased, the
+violated rule, a proposed repair, and the session's language, platform,
+and model — each platform has a verified authoritative source, always
+per-session rather than global config (Claude Code: the system prompt's
+exact model ID; Codex and Pi: the session-model store,
+`${TMPDIR}/attune-session-model/` — one JSON entry per session holding
+`{model, cwd, at}`, written only when ask-wezzard triggers — an unmatchered PreToolUse
+hook on Codex that sees every tool call and self-filters to
+ask-wezzard-related ones (the payload carries the exact model; a matcher
+would sever the fetch-command trigger, so filtering lives in the script
+alone) and a filtered `tool_call` handler on Pi reading `ctx.model`; the
+skill's own fetch command primes the store, since both fire before the
+tool executes. The skill fetches
+the newest cwd-matching entry, falling back to the Codex rollout file,
+then `unknown`). Two sessions sharing one directory race on the store — the
+newest prompt wins; the Codex entry's `session_id` keeps the ambiguity
+auditable. Plain-prompt self-report hallucinates on Pi and Codex
+(observed 2026-07-18): mechanical sources only, deliberately kept out of
+context. The
+`collect-feedback-and-improve` skill — a project-level skill in
+`.claude/skills/`, active only in this working copy and never shipped
+with the plugin — drafts one contrastive pair per issue, takes the user's
+ruling pair by pair, folds accepted pairs under their rule with
+`(per issue #N)` provenance and scope tags (language, plus platform or
+model when the failure is specific to one), closes the issues, and
+reports two tallies: rules that keep failing despite examples are
+Stop-hook escalation candidates, and rules that never fail are prune
+candidates. The hook budget gate guards the guidelines' growth; near the
+cap, shard examples by language rather than trim rules — the user rules
+on that too.
+
 ## Multi-platform packaging
 
 One repo ships three plugins; `references/*.md` stays the single hand-edited
@@ -72,7 +113,7 @@ another platform's variant hides inside a comment block
 (`<!-- @port codex pi` … `-->`) Claude never sees and must not list
 `claude` — the parser enforces both. This is how explore ports to Codex
 and Pi in a variant that runs its research without background subagents.
-Experiment and verification ship one text everywhere: their external
+Experiment and definition-of-done ship one text everywhere: their external
 widening is conditional on the dispatch plugin's presence, which is never
 true off Claude Code.
 
@@ -82,9 +123,16 @@ edit the sources (`skills/`, `portable-skills/`, `porting.json`) and
 regenerate. The pre-commit gate fails on stale, missing, or foreign
 files there (and on any resurrected `kimi/` file). Matrix-selected skills
 mirror into `<platform>/skills/`, sourced from `skills/` or
-`portable-skills/` (exactly one home per skill). A new reference document means a new hook plus a
-`HOOK_BY_DOC` entry in `utils/_porting.mjs` and per-platform `porting.json`
-listings — never a bigger hook. Runtime consumers read the matrix too:
+`portable-skills/` (exactly one home per skill). A skill mirrors as its
+whole directory: SKILL.md carries the `@port` splice, and every sibling
+file (e.g. definition-of-done's `references/use-paths/*.md` playbooks) is
+copied verbatim so progressive-disclosure references travel with the skill
+to every platform — verified that Codex, Pi, and Claude Code all load
+skill-local `references/` files. A new reference document means a new hook plus a
+`HOOK_BY_DOC` entry in `utils/_porting.mjs`, and — when the doc ships beyond
+Claude Code — per-platform `porting.json` listings, never a bigger hook. A
+Claude-only doc (execution) takes the hook and the `HOOK_BY_DOC` entry but no
+`porting.json` listing. Runtime consumers read the matrix too:
 `extensions/attune.js` injects Pi's selected docs.
 
 **Codex facts (verified against codex-cli 0.144.4).** Codex has native
@@ -99,6 +147,15 @@ Non-managed hooks require one-time user trust (startup dialog or `/hooks`,
 `t`), stored as definition hashes under `[hooks.state]` in
 `~/.codex/config.toml` — any change to a hook definition re-triggers review.
 SessionStart hooks fire on the first turn of a session, in `codex exec` too.
+Hooks span 11 events (per codex-rs `hooks/src/schema.rs`, commit
+56395bdd) including per-prompt `UserPromptSubmit`; every event's stdin
+payload carries `model` (exact id), `session_id`, `transcript_path`, and
+`cwd`; `additionalContext` injection works only at SessionStart,
+SubagentStart, and UserPromptSubmit — PreToolUse outputs permission
+decisions alone, so just-in-time injection at a tool call is impossible.
+There is no model-change event. Codex plugins can also ship MCP servers
+(manifest `mcpServers` → a Claude-style `.mcp.json`) — unused by attune;
+the session-model store covers the need without one.
 Skills are namespaced `attune:*`. Codex also installs Claude-format plugins
 (falls back to `.claude-plugin/plugin.json`), which is why the native
 manifest must stay present and correct.
@@ -115,6 +172,9 @@ Skills standard as Claude Code (SKILL.md frontmatter), mirrored per the
 port matrix. RPC mode (`pi --mode rpc`) is the headless path that actually
 loads package extensions and reports load errors at startup
 (`pi --list-models` does not) — the gate's load check relies on that.
+`ctx.model` is `{ id, name, provider, … }` (empirically probed); a
+`model_select` event exists; the extension writes the session-model
+store from `ctx.model` each turn rather than injecting context.
 
 **Kimi Code (dropped in 0.5.0).** kimi-code (verified 0.26.0)
 offers no plugin- or user-defined subagents and no context-injecting
@@ -161,9 +221,11 @@ own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
 (`utils/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
 that would truncate: it runs each real hook and requires 300 characters of
-headroom for machine-dependent variation. Two documents inject today
-(communication, writing style); a new reference document means a new
-hook, not a bigger one.
+headroom for machine-dependent variation. Three documents inject today
+(communication, writing style, execution) — but execution is Claude-only:
+it is wired in the hand-authored `hooks/hooks.json` and left out of
+`porting.json`, so it never reaches Codex or Pi. A new reference document
+means a new hook, not a bigger one.
 
 ## The dispatch plugin
 
@@ -172,7 +234,7 @@ WeZZard/dispatch plugin (Claude Code only): the external-agent router, the
 agent registry and probe scripts, and the use-external-agents, audit, and
 image-generation skills. Attune references dispatch only
 presence-conditionally — experiment widens its producers and judges
-through dispatch's skills when they are installed, and verification
+through dispatch's skills when they are installed, and definition-of-done
 routes independent re-checks through dispatch's `audit` skill when
 present; both degrade to self-run variants otherwise. Attune never
 assumes dispatch exists, and dispatch works without attune.
@@ -182,19 +244,26 @@ assumes dispatch exists, and dispatch works without attune.
 Every public command is a shell script; when the implementation is
 JavaScript, the wrapper just `exec`s node on it. JavaScript not exposed as a
 command carries an underscore prefix (`_*.mjs`) — wrappers are the stable
-surface, underscored internals may be reshaped freely. Hook entry points
-(`hooks/session-start-*.mjs`) are wired in `hooks.json`, not typed by users,
-and keep plain names; their shared internals are underscored
-(`hooks/_lib.mjs`). Placement: `utils/` holds development tooling (the
+surface, underscored internals may be reshaped freely. Hook entry points are wired in `hooks.json`, never typed by users, and
+follow one event-prefixed convention — `hooks/<event>-<function>.mjs`,
+e.g. `session-start-communication.mjs` (SessionStart) and
+`pre-tool-use-session-model.mjs` (PreToolUse) — with no shell wrappers:
+their caller is generated in lockstep, so there is no typed surface to
+stabilize. Shared internals are underscored (`hooks/_lib.mjs`). Placement: `utils/` holds development tooling (the
 commit gate); attune ships no runtime commands — they moved to dispatch.
 
 ## Open items
 
-- If the verification skill does not move the model's behavior, escalate
-  to a Stop hook that checks for unverified claims before the turn ends.
-  The skill is named `verification` (the standard) deliberately: Claude
-  Code's built-in `verify` skill (the procedure) stays unshadowed — never
-  ship a competing duplicate.
+- If the definition-of-done skill does not move the model's behavior,
+  escalate to a Stop hook that checks for unverified claims before the turn
+  ends. The skill is named `definition-of-done` (the moment, not the
+  activity): it fires when the agent is about to call work done, the
+  trigger point an activity-noun like `verification` matches worst; and it
+  leaves Claude Code's built-in `verify` skill (the procedure) unshadowed —
+  never ship a competing duplicate. It carries a growing store of
+  per-domain use-path playbooks under `references/use-paths/`; a domain no
+  playbook covers is driven best-effort and leaves a drafted playbook for
+  the user to fold in (source growth, git-tracked — never a runtime write).
 - Amplify injects the same communication guidelines at SessionStart; once
   attune is installed alongside it, that injection is redundant and should be
   retired from amplify.

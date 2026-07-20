@@ -13,6 +13,7 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const HOOK_BY_DOC = {
   'communication-guidelines.md': 'session-start-communication.mjs',
   'writing-style-guidelines.md': 'session-start-writing.mjs',
+  'execution-guidelines.md': 'session-start-execution.mjs',
 };
 
 // Platform-conditional blocks in skill sources. skills/*.md is Claude

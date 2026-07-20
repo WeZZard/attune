@@ -15,6 +15,17 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh -c 'for f in \"${CODEX_HOME:-$HOME/.codex}\"/plugins/cache/*/attune/*/hooks/pre-tool-use-session-model.mjs; do p=\"$f\"; done; exec \"$p\" --platform codex'",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }

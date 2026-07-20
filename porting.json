@@ -8,7 +8,8 @@
     "skills": [
       "explore",
       "experiment",
-      "verification"
+      "definition-of-done",
+      "ask-wezzard"
     ]
   },
   "pi": {
@@ -20,7 +21,8 @@
       "explore",
       "experiment",
       "keystone",
-      "verification"
+      "definition-of-done",
+      "ask-wezzard"
     ]
   }
 }

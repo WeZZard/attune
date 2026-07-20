@@ -1,6 +1,6 @@
 ---
 name: keystone
-description: When explaining a solution or plan, identify its keystone — the one decision the whole design rests on, such as an algorithm, an architecture, or a subsystem boundary — flag it before the details, and present it for the user's scrutiny. Use whenever presenting a plan, a design, or a nontrivial solution.
+description: <EXTREMELY_IMPORTANT>When explaining a solution or plan, identify its keystone — the one decision the whole design rests on, such as an algorithm, an architecture, or a subsystem boundary — flag it before the details, and present it for the user's scrutiny. Use whenever presenting a plan, a design, or a nontrivial solution.</EXTREMELY_IMPORTANT>
 ---
 
 <!-- GENERATED from portable-skills/keystone/SKILL.md by utils/generate-platform-assets.sh — edit the source, then regenerate. -->

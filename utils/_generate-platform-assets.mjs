@@ -73,7 +73,8 @@ function mirroredSkill(name, platform) {
 }
 
 // The Codex hook wiring: one self-locating command per ported guideline
-// doc. Codex hook commands get neither a plugin-root cwd nor a plugin-root
+// doc, plus the session-model store writer at PreToolUse. Codex hook
+// commands get neither a plugin-root cwd nor a plugin-root
 // variable (verified against codex-cli 0.144.4), hence the glob.
 function codexHooksJson(docs) {
   const command = (hook) =>
@@ -87,6 +88,23 @@ function codexHooksJson(docs) {
             command: command(HOOK_BY_DOC[doc]),
             timeout: 10,
           })),
+        },
+      ],
+      // The session-model store, written only when ask-wezzard triggers.
+      // No matcher: the hook sees every PreToolUse and self-filters to
+      // ask-wezzard-related tool calls — the skill invocation, whatever
+      // Codex names its skill tool, and the skill's own store-fetch
+      // command, which primes the store because PreToolUse fires before
+      // the tool executes. A matcher would sever the fetch-command path.
+      PreToolUse: [
+        {
+          hooks: [
+            {
+              type: 'command',
+              command: command('pre-tool-use-session-model.mjs'),
+              timeout: 10,
+            },
+          ],
         },
       ],
     },
@@ -104,6 +122,14 @@ function generate() {
         `${platform}/skills/${name}/SKILL.md`,
         mirroredSkill(name, platform),
       );
+      // Mirror the skill's sibling files (references/, etc.) verbatim, so
+      // progressive-disclosure playbooks travel with the skill to every
+      // platform. Only SKILL.md carries @port splicing; the rest are copies.
+      const home = dirname(skillSource(name));
+      for (const rel of walk(home)) {
+        if (rel === join(home, 'SKILL.md')) continue;
+        files.set(`${platform}/skills/${name}/${rel.slice(home.length + 1)}`, read(rel));
+      }
     }
   }
   files.set('hooks.json', codexHooksJson(porting.codex?.guidelines ?? []));

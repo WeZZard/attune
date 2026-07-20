@@ -1,75 +1,116 @@
 ---
 name: explore
-description: <EXTREMELY_IMPORTANT>You MUST use explore when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It routes every open unknown to its oracle — research the world, ask the human, experiment on the unknown — so discussions settle on evidence and rulings instead of assumptions.</EXTREMELY_IMPORTANT>
+description: "<EXTREMELY_IMPORTANT>You MUST use explore when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It plays four moves, each firing when its condition arises: Ask — raise the purpose, alternative, and shortcut questions aimed at yourself, and put sorted questions to the user well-shaped; Sort — world fact, user-held fact, or judgment; Research — settle world facts through the cheapest sufficient source; Experiment — create the answer nothing existing holds. The model drives; the user spends judgment, never legwork.</EXTREMELY_IMPORTANT>"
 ---
 
-# Explore — Settle Unknowns by Oracle
+# Explore — Ask, Sort, Research, Experiment
 
-**Announce at start:** "I'm using the attune explore skill to route unknowns by oracle."
+**Announce at start:** "I'm using the attune explore skill."
 
-## Overview
+## Goal
 
-Knowledge has three sources, and each source settles a question in exactly one way:
+A design discussion where the model drives: the model raises the hard questions itself — purpose, alternatives, shortcuts — answers everything its own instruments can reach, and brings the user only what only the user can supply: their facts (deadlines, constraints, context) and their rulings (taste, priorities, risk). The discussion ends with decisions resting on evidence and rulings, never on assumptions. Every rule below serves this goal. A rule that stops serving it is a defect — report it to the user for repair in this document, never waive it at runtime: no move or rule may be skipped by appeal to the goal.
 
-- **WORLD-owned** — feasibility, prior art, API truth, current fact. The world holds the answer. Settle by research; never ask the user.
-- **HUMAN-owned** — preference, taste, budget, tacit constraints, output style. Only the user's head holds the answer. Settle by asking; never assume.
-- **NOBODY-owned** — no one knows until it is tried. Settle by experiment (the attune experiment skill); never ask, never assume.
+## Potential Move: Ask
 
-This skill runs that routing eagerly during any discussion. Until its oracle answers, a question stays open, no matter what is already written down.
+**When to use:**
 
-## Eager research (WORLD-owned)
+1. Aimed at yourself: a design-shaped idea enters the discussion; a solution is proposed whose purpose has not been stated; a decision nears with only one candidate on the table; new evidence contradicts the current understanding.
+2. Aimed at the user: sorted user-bound questions have accumulated to fill one question call; one alone blocks a pending decision; or the pass is about to present with user-bound questions still open — none survives to the presentation unasked unless parked there by name.
 
-The moment you classify an unknown as WORLD-owned, settle it by grounded web research, one researcher per unknown or candidate. Every researcher writes its full brief to `${TMPDIR:-/tmp}/attune-explore/<topic>/<unknown>.md` — the brief files are the evidence trail the user can check; the thread carries only the compiled digest.
+**MUST:**
+
+1. You **MUST** investigate what the user is ultimately trying to make happen: why it matters, who it serves, and what observable change would count as success — treating the stated request as an entry point, not a specification.
+2. You **MUST** climb the request's five levels: purpose (why it matters), intent (what the user is trying to make happen), outcome (the observable change), approach (a class of interventions), solution (one concrete implementation) — better options become visible at higher levels.
+3. You **MUST** generate alternatives that differ in mechanism, not in wording: reframe the problem at a different level, remove or reverse an assumption, change the audience, reorder or delete steps, move work between people and systems, borrow a pattern from another domain, reach the outcome without the requested artifact, or build nothing.
+4. You **MUST** seek a shorter path — a shortcut that reaches the outcome with less work, cost, delay, or risk — with the sources already in reach, memory and this machine (the web-wide hunt is Research's gated scouting pass), and compare a found one against the original proposal on outcome, complexity, risk, and reversibility.
+5. You **MUST** keep a short written summary of the current best guess — purpose, desired outcomes, affected people, constraints, open tensions — and revise it whenever an alternative, a finding, or a ruling moves it.
+6. You **MUST** add every question this move raises to the discussion's open list — kept as visible text in the thread, never only in your head.
+7. You **MUST** put to the user only questions Sort has marked user-bound, each in its shape: a user-held fact asked plainly; an intent or context question carrying your current best reading ("I take the goal to be X — correct me"); a judgment prepared — relevant facts settled where they already exist, tradeoffs laid out with fact separated from judgment, a recommendation carried with its reason.
+8. You **MUST** ask one question call at a time — a call is one use of the question tool, or one direct question in conversation where none exists; a call may batch up to four independent, related forks — parallel questions carried in one call — each in its kind's shape.
+9. You **MUST** state the settled ruling explicitly before the next question call, and carry it into the work at hand.
+10. You **MUST** route a fact held by a third party — a teammate, a platform owner — or an environment only the user can grant through the user: ask who can answer it or how to reach it. A routing request is not a judgment question; it needs no recommended answer.
+11. You **MUST**, when a judgment blocks a decision, ask regardless of pacing — or park the decision by recording it in the presentation as open, with what blocks it.
+
+**MUST NOT:**
+
+1. You **MUST NOT** confuse the requested artifact with the purpose behind it.
+2. You **MUST NOT** present cosmetic variations of one mechanism as different alternatives.
+3. You **MUST NOT** call an approach a shortcut when it moves hidden cost, risk, or effort onto another person.
+4. You **MUST NOT** restate the request at a higher level of abstraction and present it as insight.
+5. You **MUST NOT** keep interrogating once answers stop changing the decision — when the last two answers moved nothing, move on.
+6. You **MUST NOT** present a judgment's outcome as an objective conclusion — when the user wants blind evidence, the Experiment move prepares it, and the user still rules.
+7. You **MUST NOT** outsource the generation of alternatives to the user under the pretense of asking for clarification.
+8. You **MUST NOT** let question pacing license assuming: roughly 4–6 question calls per pass is the comfortable rhythm, a guide and never a cap.
+9. You **MUST NOT** offer a menu for a decision you can settle yourself.
+
+## Potential Move: Sort
+
+**When to use:**
+
+1. The open list holds an unsorted question — always, before any work proceeds on that question. This is the one unconditional move in this skill, and the gate between Ask's two aims.
+
+**MUST:**
+
+1. You **MUST** classify each question once: a world fact (evidence anyone can gather settles it), a user-held fact (only the user's own world holds it — a deadline, a constraint, what their team runs), or a judgment (the user's answer is the answer — taste, priorities, risk tolerance, what matters most).
+2. You **MUST** mark user-held facts and judgments user-bound — the mark Ask's user aim consumes; a world fact stays unmarked unless it is held by a third party or behind access only the user can grant, in which case it keeps its kind and is marked user-bound as a routing request: the user is asked for the route, never the answer.
+3. You **MUST** sort by whether answering requires deciding: an answer the user could recite without deciding anything — a recorded fact, an observable state, an already-set policy — is a fact; an answer that requires deciding, here and now, is a judgment. When you cannot tell which, shape it as a judgment — over-preparing a fact is safe; under-preparing a judgment is not. This tie-break chooses the shape of a question already the user's; it never moves a question you can settle to the user.
+4. You **MUST** decompose a compound question into its parts and route each on its own: a forecast, or a prediction about an unbuilt thing, is evidence parts plus a risk ruling — and a risk the user would plainly accept is recorded as a visible assumption in the presentation instead of asked.
+
+**MUST NOT:**
+
+1. You **MUST NOT** let any question reach the user unsorted.
+
+## Potential Move: Research
+
+**When to use:**
+
+1. A sorted world fact blocks a pending decision, or its answer would change which option wins.
+
+**MUST:**
+
+1. You **MUST** settle it through the source order — memory, this machine, the web — taking the cheapest source that can settle it; most research ends at memory or this machine without touching the web.
+2. You **MUST** escalate when a source cannot settle the question, and skip a source only when it obviously cannot hold the answer — your unpublished design is not on the web — saying so when you skip.
+3. You **MUST** keep the recalled facts the design leans on listed in the thread — in the research digest when one exists, otherwise in the pass's presentation; a fact is load-bearing when the design changes if it is wrong, and when unsure, it is.
+4. You **MUST** verify each load-bearing recall against its source before the pass presents its recommendation — once, batched, only for the load-bearing survivors, never a research pass per question; recall stays the cheap path because the checks run at the end. When the discussion becomes built work, the attune definition-of-done skill re-checks them as part of calling that work done.
+5. You **MUST** offer one scouting pass once the user's intent is settled — at most one per settled intent — and run it only on the user's go-ahead.
+
+**MUST NOT:**
+
+1. You **MUST NOT** answer from beliefs about an artifact in reach — this repository, an installed library, a running service — when observation can settle it, nor with code that restates beliefs: code that answers for an artifact runs against that artifact.
+
+**Source 1 — memory.** Settle in-thread what the model already holds, when the fact is stable, pre-cutoff, and not about this machine, this repository, or this user — stating it plainly as recalled. Treat prices, defaults, versions, deprecations, and anything a release note could change as volatile, never stable. Stable, documented behavior of a widely known artifact beyond reach ("does Python's sort guarantee stability?") is ordinary memory, subject to the load-bearing list. Derivation counts as memory's strong form: for a question about a mathematical or algorithmic object, reason it out or write and run code that computes it, and show the work.
+
+**Source 2 — this machine.** When the answer lives here — the repository, a running process, an installed tool — observe it: read the code, run the command, or run a small probe against the local artifact ("does this regex backtrack on our inputs?" is a one-line probe, not a research task). Observation settles what an artifact *does*; documentation research settles what it *promises*; a question that spans both splits.
+
+**Source 3 — the web.** For answers recorded outside the session's reach, run grounded research, one researcher per question. Every researcher writes its full brief to `${TMPDIR:-/tmp}/attune-explore/<topic>/<question>.md` (`<topic>`: the kebab-case name of the discussion's subject) — the brief files are the evidence trail; the thread carries only the compiled digest. A brief written before this pass began is history, not current evidence — re-validate before reusing it.
 
 <!-- @port claude -->
-Launch the researchers as background subagents with the Agent tool, in parallel (one message, multiple Agent calls). The conversation continues while they run, but the digest does not: wait for every spawned explorer to complete — never a partial digest as briefs land.
+Launch the researchers as background subagents with the Agent tool, in parallel (one message, multiple Agent calls) — at most six per pass without the user's go-ahead; when more questions wait, run the six highest-priority and ask before a second fan-out. Wait for every researcher to finish or fail — when the platform reports one hung, when one stays silent long after all its siblings returned, or when one passes ten minutes with no result, count it failed and move on; one researcher never holds the pass hostage — then compile once, naming every gap; never report results while researchers still run.
+
+**Spawning researchers:**
+
+**MUST:**
+
+1. You **MUST** spawn every researcher with `model: "sonnet"` — never the session model.
+2. You **MUST** spawn every researcher as the `general-purpose` subagent type, restricted by prompt to research plus one brief-file write.
+3. You **MUST** ground every researcher with web search, carry the whole response contract in its prompt as **MUST:** / **MUST NOT:** lists, and require the brief file to take the template below.
+4. You **MUST** require a dated source for every claim, and keep every field fail-open — "none" is a valid entry.
+5. You **MUST** require the researcher's reply to carry only the brief's file path and an abstract of at most three sentences — the full brief lives in the file.
 <!-- @end -->
 <!-- @port codex pi
-Without background research subagents, run the web searches yourself, one unknown at a time, before the discussion continues — and write each unknown's brief to its file before moving on.
-
-**Writing briefs:**
-
-**MUST:**
-
-1. You **MUST** write each unknown's brief file in the template below.
-2. You **MUST** give a dated source for every claim.
-3. You **MUST** keep every field fail-open — "none" is a valid entry.
-
-**MUST NOT:**
-
-1. You **MUST NOT** let the template pressure a fabricated source, conflict, or confidence.
-2. You **MUST NOT** use all-caps section titles or labels in the template.
+Without background subagents, run the web searches yourself, one question at a time, and write each question's brief to its file in the template below — a dated source for every claim, every field fail-open ("none" is valid). Your own reading is the digest's source-check — do not re-open sources you just read.
 -->
 
-<!-- @port claude -->
-**Spawning explorers:**
-
-**MUST:**
-
-1. You **MUST** spawn every explorer with `model: "sonnet"` — never the session model.
-2. You **MUST** spawn every explorer as the `general-purpose` subagent type, restricted by prompt to research plus one brief-file write — the built-in `Explore` type cannot write files.
-3. You **MUST** ground every explorer with web search.
-4. You **MUST** carry the whole response contract in the spawning prompt — the subagent interface enforces no schema.
-5. You **MUST** state the response requirements as **MUST:** / **MUST NOT:** lists.
-6. You **MUST** require the brief file to take the template below.
-7. You **MUST** require a dated source for every claim.
-8. You **MUST** keep every field fail-open — "none" is a valid entry.
-9. You **MUST** require the explorer's reply to carry only the brief's file path and an abstract of at most three sentences.
-
-**MUST NOT:**
-
-1. You **MUST NOT** let the template bind the research behind the brief — it binds only the written brief.
-2. You **MUST NOT** let the template pressure a fabricated source, conflict, or confidence.
-3. You **MUST NOT** use all-caps section titles or labels in the template.
-4. You **MUST NOT** let a full brief travel back through an explorer's reply — it lives in the file.
-<!-- @end -->
 Required brief template:
 
 ```markdown
 ## Findings
-- Claim: <one sentence>
-  Evidence: <what supports it>
-  Source: <name or URL, date>
+
+1. **Claim:** <one sentence>
+  - **Evidence:** <what supports it>
+  - **Source:** <name or URL, date>
+
 (one entry per claim)
 
 ## Conflicts
@@ -79,23 +120,76 @@ Required brief template:
 <one line: how settled this is, and what would change it>
 ```
 
-**Compiling the digest:** read every brief file and validate it — check source credibility, check dates and discard stale facts, resolve conflicts by source authority and recency; never conclude without validation, and never rewrite a brief file while validating it. Then report one digest: for each unknown, the settled answer in one or two sentences, the confidence, any conflict worth surfacing, and the brief's file path so the user can check the facts.
+**Compiling the digest:** read every brief file and validate it — open the sources behind the load-bearing claims and check them; a claim whose source cannot be opened is marked unverified in the digest, never silently promoted. Resolve conflicts by source authority and recency. Then report one digest: per question, the settled answer in one or two sentences, the confidence, any conflict worth surfacing, and the brief's file path — and quote a brief's relevant lines whenever the user asks; the files are theirs to read. A researcher that fails is reported, and the digest compiles from the briefs that landed, naming the gap. A conflict the sources cannot settle routes by its subject: observable claims fall to Experiment; the rest is surfaced to the user in the digest with your best-supported reading — informing them of a conflict is not asking them a fact.
 
-## The interview (HUMAN-owned)
+**Scouting.** The scouting pass is the web-wide arm of Ask's shortcut duty: research whether a shortcut to the goal exists, even one that breaks settled design. Surface a found shortcut as a proposal with its evidence — the user rules; never silently displace settled design.
 
-1. Pick the single most decision-changing open HUMAN-owned unknown.
-2. Ask exactly one question via your platform's structured question tool (`AskUserQuestion` on Claude Code), or directly in conversation when none exists, carrying your recommended answer and the reason for it — never a bare open prompt, and never a menu for a decision you can reason out yourself.
-3. Before the next question, state the settled ruling explicitly and carry it into the work at hand — the decision it unblocks, the artifact the current task owns (the active plan, the document under discussion, the code). A ruling left implicit is not settled.
+## Potential Move: Experiment
 
-Constraints:
+**When to use:**
 
-- The interview belongs to the main thread. Never delegate it to a subagent.
-- A session tolerates roughly 4–6 question calls. Ration them: ask only the unknowns that change decisions, and batch up to 4 related forks into one call when they are independent.
+1. Research finds that nothing existing holds a world fact's answer and no local probe can reach it.
+2. Sources conflict on an observable claim the digest cannot settle — a trial settles what documents dispute.
+3. The user wants a judgment informed by blind evidence — candidates compared without their identities attached.
 
-## Experiments (NOBODY-owned)
+**MUST:**
 
-Invoke the attune `experiment` skill through your platform's skill tool. Its outcome returns here as evidence; the user still rules on it, and the ruling carries into the task like any other.
+1. You **MUST** invoke the `/attune:experiment` skill (it ships beside this one) for comparable candidates — blind candidates, blind verdicts, the user rules. (The skill shares this move's name: it is the move's blind-comparison branch, not a different thing.)
+2. You **MUST** build, for a measurement needing setup beyond a quick local probe, the smallest rig that yields the observation.
+3. You **MUST** run every probe, trial, and candidate against the real artifact — never a stub built from memory.
+4. You **MUST** record every trial's command and output beside the research briefs — created evidence is evidence, and the files are the user's to check.
+5. You **MUST** get the user's go-ahead before a trial that would spend real money or touch systems beyond this machine.
 
-## Boundaries
+**MUST NOT:**
 
-Never ask the user a WORLD-owned question; never silently assume a HUMAN-owned answer; never guess a NOBODY-owned one.
+1. You **MUST NOT** experiment on what research already settled — creation is the last source, not a shortcut around reading.
+
+## The Pass
+
+A pass is one design discussion's exploration, from the first move that fires to the last; it is over when no move's condition holds.
+A move's output scales with what it finds:
+- Ask on a well-framed question may add a single entry to the open list, and that is a completed move, not a skipped one.
+- A user preference surfacing outside any open question is recorded as a ruling in Ask's written summary and applied where it bears.
+  - The recording is the whole pass; no other move fires for it.
+
+Worked examples:
+
+<PASS_EXAMPLES>
+- "What is 2^20?" — memory's strong form: derive it in-thread.
+- "Does the installed v3 of library X preserve order?" — its behavior: this machine; its documented promise: the web.
+- "Two docs disagree on the API's rename semantics." — observable: a trial settles it, not the user.
+- "Which error message reads better?" — judgment: the user rules; an experiment prepares blind evidence when they want it.
+- "Which browsers must we support?" — a user-held fact when the policy is already set (the user recites it); a judgment when it is being decided now (prepare it); when unsure which, prepare it.
+- "What is p95 latency on staging?" — an environment only the user can grant: ask for access, then observe.
+- "How much launch traffic should we provision for?" — split: research the base rates; the user rules the risk.
+</PASS_EXAMPLES>
+
+## Presenting
+
+At the end of a full pass, present:
+- The current understanding of purpose and intent;
+- The alternatives explored and what each revealed;
+- The strongest shortcut found;
+- The recommendation and its rationale;
+- What remains unverified, assumed, or parked
+  - Facts, evidence, judgments, assumptions, and recommendations each labeled as what they are.
+
+**MUST NOT:**
+
+1. You **MUST NOT** preserve an earlier conclusion out of politeness, consistency, or sunk cost.
+2. You **MUST NOT** let skepticism become endless doubt: when the evidence suffices, decide.
+3. You **MUST NOT** hide evidence that weakens the recommendation.
+
+## Invariants
+
+**MUST:**
+- You **MUST** ask a user-held fact plainly instead of researching around it;
+- You **MUST** state every skipped source;
+- You **MUST** verify load-bearing recalls before the recommendation rests on them.
+
+**MUST NOT:**
+- You **MUST NOT** ask the user a world fact — at most ask them to route one;
+- You **MUST NOT** silently assume a judgment;
+- You **MUST NOT** put an unsorted question to the user;
+- You **MUST NOT** answer for an artifact in reach from beliefs when it can be observed;
+- You **MUST NOT** spend the web or an experiment on what memory, this machine, or one sentence from the user settles — except the verification a load-bearing recalled fact is owed, which is always permitted.

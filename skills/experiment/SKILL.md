@@ -1,6 +1,6 @@
 ---
 name: experiment
-description: Settle a question that only trying can answer — an output-style comparison, a prompt phrasing, an error message, any unknown with comparable candidates — by a blind comparison. Produce candidates, strip provenance, collect blind verdicts against one stated criterion, then present everything to the user for the ruling. Use when the attune explore skill classifies an unknown as NOBODY-owned, or when the user asks to settle a question by evidence.
+description: <EXTREMELY_IMPORTANT>Settle a question that only trying can answer — an output-style comparison, a prompt phrasing, an error message, any unknown with comparable candidates — by a blind comparison. Produce candidates, strip provenance, collect blind verdicts against one stated criterion, then present everything to the user for the ruling. Use when the attune explore skill's Experiment move fires — a fact nothing existing holds, or a judgment the user wants informed by blind evidence — or when the user asks to settle a question by evidence.</EXTREMELY_IMPORTANT>
 ---
 
 # Experiment — Settle by Evidence
@@ -9,7 +9,7 @@ description: Settle a question that only trying can answer — an output-style c
 
 ## When
 
-A question neither the world nor the user can answer until it is tried: "does the shorter opening actually read better?", "does this voice survive the blog medium?". If the user can answer it directly, it is HUMAN-owned — explore instead. If the web can answer it, it is WORLD-owned — research instead.
+A question only new experience can answer — nothing recorded holds it yet: "does the shorter opening actually read better?", "does this voice survive the blog medium?". If it is subjective taste, the user rules directly — explore's Ask move puts the judgment to them prepared; run the experiment when they want that ruling informed by blind evidence. If the web already holds the answer, research settles it — no experiment. An experiment runs only after research comes back empty.
 
 ## External widening
 
