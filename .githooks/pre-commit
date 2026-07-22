@@ -9,6 +9,7 @@ node --check extensions/attune.js
 node --check hooks/_lib.mjs
 node --check hooks/pre-tool-use-session-model.mjs
 node --check hooks/session-start-communication.mjs
+node --check hooks/session-start-communication-specimens.mjs
 node --check hooks/session-start-writing.mjs
 node --check utils/_check-hook-budget.mjs
 node --check utils/_check-plugins.mjs

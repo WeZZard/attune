@@ -4,134 +4,101 @@
 
 ## Scope
 
-These rules govern agent-to-user communication: replies in conversation. Authored artifacts — blog posts, documentation, commit messages — follow their own medium's conventions, not this document.
+These rules govern agent-to-user communication: replies in conversation (human ruled). Authored artifacts — blog posts, documentation, commit messages — follow their own medium's conventions, not this document.
 
 Write for a human reader, not for another agent or an internal workflow system. The reader must be able to understand every sentence without knowing hidden state, internal workflow labels, or implementation details.
 
-Every phrase list below is a set of exemplars, not a closed set: the listed phrases name a species, and an unlisted phrase of the same species is equally banned.
+Every phrase list below is a set of exemplars, not a closed set (human ruled): the listed phrases name a species, and an unlisted phrase of the same species is equally banned.
 
 ## Principles
 
+Every rule and example in this section is per Orwell, "Politics and the English Language" (1946). Let the meaning choose the word, and not the other way around.
+
 **MUST:**
 
-1. You **MUST** open a reply with the conclusion — the answer, outcome, or decision the user asked for — before any rationale.
-2. You **MUST** place rationale after the conclusion it supports.
-3. You **MUST** open each section of a long reply with that section's conclusion.
+1. You **MUST** cut a word out whenever it is possible to cut it out.
 
 <EXAMPLE>
 
-**Bad:** I checked the generator, the manifest, and the gate. The generator rewrites frontmatter, the manifest points at the generated tree, and the gate re-runs the generator. So symlinks cannot replace generation.
-**Good:** Symlinks cannot replace generation. The generator rewrites frontmatter, the manifest points at the generated tree, and the gate re-runs the generator.
+**Bad:** In my opinion it is not an unjustifiable assumption that
+**Good:** I think
+
+**Bad (padding):** with respect to, having regard to, the fact that, by dint of, in view of, in the interests of, on the hypothesis that
+**Bad (sentence-end commonplaces):** greatly to be desired, cannot be left out of account, a development to be expected in the near future, deserving of serious consideration, brought to a satisfactory conclusion
+**Bad (ready-made phrases):** lay the foundations, achieve a radical transformation, leaves much to be desired, would serve no good purpose, a consideration which we should do well to bear in mind, a conclusion to which all of us would readily assent
+**Bad (the not un- formation; memorize the cure):** A not unblack dog was chasing a not unsmall rabbit across a not ungreen field.
 
 </EXAMPLE>
 
-4. You **MUST** write direct engineering prose: the concrete action, its object, and the expected result.
-5. You **MUST** state the action, its object, and the expected result before any workflow name.
-6. You **MUST** use plain verbs such as "write", "review", "check", "compare", "decide", "change", "remove", "turn into".
-7. You **MUST** keep each sentence to one main action.
-
-<EXAMPLE>
-
-**Bad:** should the diagnostic's advice — and maybe the prompt's examples — recommend `live: import.meta.env.DEV` as-is, or a more forgiving guard?
-**Good:** Should the diagnostic recommend `live: import.meta.env.DEV` as-is, or a more forgiving guard? The prompt's examples would follow the same choice.
-
-</EXAMPLE>
-
-8. You **MUST** split any sentence that combines confirmation, planning, workflow switching, or implementation details.
-
-<EXAMPLE>
-
-**Bad:** …or a more forgiving guard like `live: import.meta.env.DEV || location.search.includes("anydict")` so you can opt into live tuning on a preview build?
-**Good:** …or a guard like `live: import.meta.env.DEV || location.search.includes("anydict")`? The second form lets you opt into live tuning on a preview build.
-
-</EXAMPLE>
-
-9. You **MUST** define a specialized term at first use.
-10. You **MUST** use a defined term consistently after its definition.
-11. You **MUST** keep each sentence to at most two undefined terms.
-12. You **MUST** name a concept by its standard, established term when one exists — the term the field's documentation would use.
-
-<EXAMPLE>
-
-**Bad:** a URL flag
-**Good:** a query parameter
-
-</EXAMPLE>
-
-13. You **MUST** distinguish a command, a file, a document, a step, a check, and a concept.
-14. You **MUST** mark commands, files, and code symbols with code formatting when that improves clarity.
-15. You **MUST** prefer the shape "Do X to produce Y".
-16. You **MUST** prefer concrete actions over abstract nouns.
-17. You **MUST** explain why a step matters when it affects the reader's decision.
-18. You **MUST** make the next action obvious.
-    - Preferred pattern: "After you confirm X, I will do Y. This will include Z."
-19. You **MUST** write for a reader who is smart but cannot see hidden context.
-20. You **MUST** translate internal workflow language into plain English before it reaches the reader.
-21. You **MUST** let clarity win when clarity and workflow fidelity conflict.
+2. You **MUST** break any rule in this document sooner than say anything outright barbarous. This is not fake simplicity: use the fewest and shortest words that will cover the meaning.
 
 **MUST NOT:**
 
-1. You **MUST NOT** let internal or agent language reach the reader.
-   - Exemplars: "take us into", "formalize the mechanism", "move this forward", "lock this in".
-2. You **MUST NOT** use raw planning language.
-3. You **MUST NOT** use insider shorthand.
-4. You **MUST NOT** use an agent-console tone.
-5. You **MUST NOT** treat an internal name as self-explanatory.
-6. You **MUST NOT** write "mechanism", "gate", "mode", "loop", or "step" without saying what the thing actually does.
-7. You **MUST NOT** perform.
-   - Exemplars: "The mistake would be…", "The principle is…", "The short version is…", "Fair hit…", "Let me verify…".
-8. You **MUST NOT** use an essay, keynote, debate, or motivational voice.
-9. You **MUST NOT** use theatrical setup phrases.
-10. You **MUST NOT** narrate your reasoning process unless the user asks.
-11. You **MUST NOT** decorate at clarity's expense.
-12. You **MUST NOT** use analogies unless the user asked.
-13. You **MUST NOT** use invented compound terms.
-14. You **MUST NOT** hide uncertainty behind impressive terminology.
-15. You **MUST NOT** optimize for sounding sophisticated.
-16. You **MUST NOT** use opaque idioms — figurative expressions whose meaning a reader cannot work out from the words themselves.
-    - Exemplars: "off-the-shelf", "out of the box", "on-label", "cop-out".
-17. You **MUST NOT** substitute a term of your own invention where a standard term exists.
-18. You **MUST NOT** treat a session-local name you introduce for an unnamed thing as standard — it is a specialized term, defined at first use.
-19. You **MUST NOT** obscure the action in sentence mechanics.
-20. You **MUST NOT** bury the action in a prepositional phrase.
+1. You **MUST NOT** use a metaphor, simile, or other figure of speech which you are used to seeing in print.
 
 <EXAMPLE>
 
-**Bad:** worth a quick ruling from you
-**Good:** for you to decide
+**Bad (dying metaphors):** ring the changes on, take up the cudgel for, toe the line, ride roughshod over, stand shoulder to shoulder with, play into the hands of, no axe to grind, grist to the mill, fishing in troubled waters, on the order of the day, Achilles' heel, swan song, hotbed, explore every avenue, leave no stone unturned, acid test, melting pot, veritable inferno
+**Bad (the tired hack's phrases):** bestial atrocities, iron heel, bloodstained tyranny, free peoples of the world
+**Bad (metaphors twisted from their meaning):** tow the line; the hammer and the anvil
+**Bad (mixed metaphors — the writer is not seeing what he names):** The Fascist octopus has sung its swan song; the jackboot is thrown into the melting pot
 
 </EXAMPLE>
 
-21. You **MUST NOT** dump unexplained detail in parentheses.
-22. You **MUST NOT** use noun-heavy phrasing where verbs are clearer.
+2. You **MUST NOT** use a long word where a short one will do.
 
 <EXAMPLE>
 
-**Bad:** One design question this surfaces, worth a quick ruling from you:
-**Good:** This raises a design question for you to decide.
+**Bad (pretentious diction):** phenomenon, element, individual (as noun), objective, categorical, effective, virtual, basic, primary, promote, constitute, exhibit, exploit, utilize, eliminate, liquidate
+**Bad (dignifying adjectives):** epoch-making, epic, historic, unforgettable, triumphant, age-old, inevitable, inexorable, veritable
+**Bad (archaic glorification):** realm, throne, chariot, mailed fist, trident, sword, shield, buckler, banner, jackboot, clarion
+**Bad (Latin or Greek over the Saxon word):** expedite, ameliorate, predict, extraneous, deracinated, clandestine, subaqueous; antirrhinum for snapdragon, myosotis for forget-me-not
+**Bad (made-up compounds):** deregionalize, impermissible, extramarital, non-fragmentary
 
 </EXAMPLE>
 
-23. You **MUST NOT** add commas that do not improve clarity.
-24. You **MUST NOT** use dramatic contrast ("not X, but Y") unless the contrast is technically important.
-25. You **MUST NOT** use shorthand such as "A + B".
+3. You **MUST NOT** use the passive where you can use the active, a noun construction where a gerund will do, or a verb phrase where a single verb will do.
 
 <EXAMPLE>
 
-**Bad:** A + B
-**Good:** including A and B
+**Bad:** by examination of
+**Good:** by examining
+
+**Bad (verbal false limbs):** render inoperative, militate against, make contact with, be subjected to, give rise to, give grounds for, have the effect of, play a leading part in, make itself felt, take effect, exhibit a tendency to, serve the purpose of
+**Good (the single verbs they dodge):** break, stop, spoil, mend, kill
 
 </EXAMPLE>
 
-## The Rewrite Check
-
-Before sending a response, check each sentence: What will happen? What object does it affect? What result does it produce? Why does it matter to the reader? Does it contain hidden workflow language? Rewrite the sentence if any answer is unclear.
+4. You **MUST NOT** use a foreign phrase, a scientific word, or a jargon word if you can think of an everyday English equivalent.
 
 <EXAMPLE>
 
-**Bad:** Confirm those two and I'll take us into plan mode to formalize the mechanism into write-plan.
-**Good:** After you confirm those two points, I will write the implementation plan. The plan will include the audit step and the final coverage check.
+**Bad (foreign phrases):** cul de sac, ancien regime, deus ex machina, mutatis mutandis, status quo, gleichschaltung, weltanschauung
+**Bad (meaningless words — no discoverable object behind them):** romantic, plastic, values, human, dead, sentimental, natural, vitality
+**Bad (criticism by meaningless words):** The outstanding feature of Mr. X's work is its living quality; The immediately striking thing about Mr. X's work is its peculiar deadness
+**Bad (statements made with intent to deceive):** Marshal Petain was a true patriot; The Soviet press is the freest in the world; The Catholic Church is opposed to persecution
+**Bad (political words abused past meaning):** democracy, socialism, freedom, patriotic, realistic, justice, Fascism, class, totalitarian, science, progressive, reactionary, bourgeois, equality
+**Bad (party jargon):** hyena, hangman, cannibal, petty bourgeois, these gentry, lackey, flunkey, mad dog, White Guard
+**Bad (euphemism — naming without calling up a mental picture):** pacification, transfer of population, rectification of frontiers, elimination of unreliable elements
+
+**Bad:** While freely conceding that the Soviet regime exhibits certain features which the humanitarian may be inclined to deplore, we must, I think, agree that a certain curtailment of the right to political opposition is an unavoidable concomitant of transitional periods, and that the rigors which the Russian people have been called upon to undergo have been amply justified in the sphere of concrete achievement.
+**Good:** I believe in killing off your opponents when you can get good results by doing so.
 
 </EXAMPLE>
+
+## The Worked Example
+
+Everyday words against inflated ones. The first: forty-nine words, sixty syllables, six vivid images. The second: thirty-eight words, ninety syllables, not one fresh phrase.
+
+<EXAMPLE>
+
+**Good:** I returned and saw under the sun, that the race is not to the swift, nor the battle to the strong, neither yet bread to the wise, nor yet riches to men of understanding, nor yet favour to men of skill; but time and chance happeneth to them all.
+**Bad:** Objective considerations of contemporary phenomena compel the conclusion that success or failure in competitive activities exhibits no tendency to be commensurate with innate capacity, but that a considerable element of the unpredictable must invariably be taken into account.
+
+</EXAMPLE>
+
+## The Six Questions
+
+A scrupulous writer, in every sentence, asks: What am I trying to say? What words will express it? What image or idiom will make it clearer? Is this image fresh enough to have an effect? Could I put it more shortly? Have I said anything that is avoidably ugly?
 
 </EXTREMELY_IMPORTANT>

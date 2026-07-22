@@ -221,11 +221,14 @@ own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
 (`utils/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
 that would truncate: it runs each real hook and requires 300 characters of
-headroom for machine-dependent variation. Three documents inject today
-(communication, writing style, execution) — but execution is Claude-only:
-it is wired in the hand-authored `hooks/hooks.json` and left out of
-`porting.json`, so it never reaches Codex or Pi. A new reference document
-means a new hook, not a bigger one.
+headroom for machine-dependent variation. Four documents inject today
+(communication, communication specimens, writing style, execution) — but
+execution and the specimens are Claude-only: each is wired in the
+hand-authored `hooks/hooks.json` and left out of `porting.json`, so
+neither reaches Codex or Pi. The specimens document carries the
+whole-passage bad examples backing the communication guidelines — split
+out because both documents together would overrun one hook's cap. A new
+reference document means a new hook, not a bigger one.
 
 ## The dispatch plugin
 

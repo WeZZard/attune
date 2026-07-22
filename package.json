@@ -1,6 +1,6 @@
 {
   "name": "attune",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Capture and apply human-ruled knowledge the model cannot internalize \u2014 user preferences and output-style rulings, settled by the right instrument: derive the derivable, research the world, experiment when no answer exists yet, and ask the human for the rulings only their judgment can make.",
   "type": "module",
   "keywords": [
