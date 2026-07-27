@@ -2,7 +2,13 @@
   "hooks": {
     "SessionStart": [
       {
-        "hooks": []
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh -c 'for f in \"${CODEX_HOME:-$HOME/.codex}\"/plugins/cache/*/attune/*/hooks/session-start-communication.mjs; do p=\"$f\"; done; exec \"$p\" --platform codex'",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "PreToolUse": [

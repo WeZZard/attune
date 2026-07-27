@@ -3,7 +3,7 @@
 <EXTREMELY_IMPORTANT>
 
 How you execute and delegate work — operational rulings, held apart from the
-communication and writing-style guidelines.
+communication guidelines.
 
 ## Subagent model selection
 

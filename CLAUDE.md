@@ -34,9 +34,10 @@ attune skill — and git history is the review trail. When the user does fold
 research- or experiment-informed rules in, inline provenance marks
 (`(per <source>)`, `(per experiment <name>)`) carry the evidence.
 
-`references/communication-guidelines.md` was seeded from amplify's
-`references/communication-style-guidelines.md` and diverges as the user
-maintains it — it is NOT vendored-frozen.
+`references/communication-guidelines.md` is a single set covering
+conversation replies and authored prose artifacts (rebuilt 2026-07-28; it
+replaced the amplify-seeded communication guidelines and the separate
+writing-style document).
 
 **Guidelines authoring style:** principles are numbered
 **MUST:** / **MUST NOT:** lists ("1. You **MUST** …"). Each principle
@@ -221,8 +222,8 @@ own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
 (`utils/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
 that would truncate: it runs each real hook and requires 300 characters of
-headroom for machine-dependent variation. Four documents inject today
-(communication, communication specimens, writing style, execution) — but
+headroom for machine-dependent variation. Three documents inject today
+(communication, communication specimens, execution) — but
 execution and the specimens are Claude-only: each is wired in the
 hand-authored `hooks/hooks.json` and left out of `porting.json`, so
 neither reaches Codex or Pi. The specimens document carries the
@@ -267,6 +268,6 @@ commit gate); attune ships no runtime commands — they moved to dispatch.
   per-domain use-path playbooks under `references/use-paths/`; a domain no
   playbook covers is driven best-effort and leaves a drafted playbook for
   the user to fold in (source growth, git-tracked — never a runtime write).
-- Amplify injects the same communication guidelines at SessionStart; once
-  attune is installed alongside it, that injection is redundant and should be
-  retired from amplify.
+- Amplify injects its own communication guidelines at SessionStart; attune's
+  rebuilt set differs, so alongside attune that injection now conflicts and
+  should be retired from amplify.
