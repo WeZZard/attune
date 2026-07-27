@@ -11,9 +11,6 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 // Which SessionStart hook injects which reference doc. A new reference
 // document means a new hook AND a new entry here.
 export const HOOK_BY_DOC = {
-  'communication-guidelines.md': 'session-start-communication.mjs',
-  'communication-specimens.md': 'session-start-communication-specimens.mjs',
-  'writing-style-guidelines.md': 'session-start-writing.mjs',
   'execution-guidelines.md': 'session-start-execution.mjs',
 };
 

@@ -65,6 +65,11 @@ test('appends exactly the matrix-selected docs with tokens resolved', async () =
   const { handlers } = load();
   await handlers.session_start({}, {});
   const out = await handlers.before_agent_start({ systemPrompt: 'BASE' }, {});
+  // An empty matrix selection is legitimate: the extension injects nothing.
+  if (porting.guidelines.length === 0) {
+    assert.equal(out, undefined);
+    return;
+  }
   assert.ok(out.systemPrompt.startsWith('BASE\n\n'));
   for (const doc of porting.guidelines) {
     const heading = readFileSync(
@@ -83,6 +88,7 @@ test('injects nothing beyond the matrix-selected documents', async () => {
   const { handlers } = load();
   await handlers.session_start({}, {});
   const out = await handlers.before_agent_start({ systemPrompt: 'BASE' }, {});
-  assert.doesNotMatch(out.systemPrompt, /Task Dispatch/);
-  assert.doesNotMatch(out.systemPrompt, /External Agent Availability/);
+  const prompt = out?.systemPrompt ?? 'BASE';
+  assert.doesNotMatch(prompt, /Task Dispatch/);
+  assert.doesNotMatch(prompt, /External Agent Availability/);
 });
