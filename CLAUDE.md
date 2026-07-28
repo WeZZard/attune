@@ -34,10 +34,16 @@ attune skill — and git history is the review trail. When the user does fold
 research- or experiment-informed rules in, inline provenance marks
 (`(per <source>)`, `(per experiment <name>)`) carry the evidence.
 
-`references/communication-guidelines.md` is a single set covering
-conversation replies and authored prose artifacts (rebuilt 2026-07-28; it
-replaced the amplify-seeded communication guidelines and the separate
-writing-style document).
+The communication documents are a single set covering conversation replies
+and authored prose artifacts alike (rebuilt 2026-07-28, replacing the
+amplify-seeded communication guidelines and the separate writing-style
+document). They distill a controlled-language specification: every rule and
+every example is drawn from it, and the set was verified against the source
+by blind word-by-word and completeness audits until both reported full
+alignment and zero missing rules. The source is never named in the documents
+and rule numbers are never cited — the rules stand as our own. When editing,
+keep every example verbatim from the source: an invented example is the
+failure mode this rebuild exists to correct.
 
 **Guidelines authoring style:** principles are numbered
 **MUST:** / **MUST NOT:** lists ("1. You **MUST** …"). Each principle
@@ -222,14 +228,17 @@ own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
 (`utils/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
 that would truncate: it runs each real hook and requires 300 characters of
-headroom for machine-dependent variation. Three documents inject today
-(communication, communication specimens, execution) — but
-execution and the specimens are Claude-only: each is wired in the
-hand-authored `hooks/hooks.json` and left out of `porting.json`, so
-neither reaches Codex or Pi. The specimens document carries the
-whole-passage bad examples backing the communication guidelines — split
-out because both documents together would overrun one hook's cap. A new
-reference document means a new hook, not a bigger one.
+headroom for machine-dependent variation. Fourteen documents inject today:
+eleven rule documents (word choice, technical names, technical verbs, noun
+clusters, verbs, sentences, instructions, descriptions, punctuation and word
+count, writing practices, general recommendations), three specimen documents,
+and execution. The cap is what drives the sharding — the rule set is far
+larger than one hook holds, so it is split by topic rather than trimmed.
+Execution and the three specimen documents are Claude-only: each is wired in
+the hand-authored `hooks/hooks.json` and left out of `porting.json`, so none
+reaches Codex or Pi. A new reference document means a new hook, not a bigger
+one, plus a `HOOK_BY_DOC` entry and (when it ships beyond Claude Code) a
+`porting.json` listing.
 
 ## The dispatch plugin
 

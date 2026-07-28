@@ -12,7 +12,19 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 // document means a new hook AND a new entry here.
 export const HOOK_BY_DOC = {
   'communication-guidelines.md': 'session-start-communication.mjs',
+  'communication-technical-names.md': 'session-start-communication-technical-names.mjs',
+  'communication-technical-verbs.md': 'session-start-communication-technical-verbs.mjs',
+  'communication-clusters.md': 'session-start-communication-clusters.mjs',
+  'communication-verbs.md': 'session-start-communication-verbs.mjs',
+  'communication-sentences.md': 'session-start-communication-sentences.mjs',
+  'communication-instructions.md': 'session-start-communication-instructions.mjs',
+  'communication-descriptions.md': 'session-start-communication-descriptions.mjs',
+  'communication-punctuation.md': 'session-start-communication-punctuation.mjs',
+  'communication-practices.md': 'session-start-communication-practices.mjs',
+  'communication-recommendations.md': 'session-start-communication-recommendations.mjs',
   'communication-specimens.md': 'session-start-communication-specimens.mjs',
+  'communication-specimens-lists.md': 'session-start-communication-specimens-lists.mjs',
+  'communication-specimens-descriptive.md': 'session-start-communication-specimens-descriptive.mjs',
   'execution-guidelines.md': 'session-start-execution.mjs',
 };
 

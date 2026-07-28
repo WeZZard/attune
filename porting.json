@@ -2,7 +2,17 @@
   "comment": "Port matrix. Claude Code is not listed: it always ships the full feature set and is the source of truth. Each platform below is a projection: which reference docs inject at session start and which skills ship. utils/generate-platform-assets.sh projects this into codex/, pi/, and the root hooks.json; extensions/attune.js reads it at runtime.",
   "codex": {
     "guidelines": [
-      "communication-guidelines.md"
+      "communication-guidelines.md",
+      "communication-technical-names.md",
+      "communication-technical-verbs.md",
+      "communication-clusters.md",
+      "communication-verbs.md",
+      "communication-sentences.md",
+      "communication-instructions.md",
+      "communication-descriptions.md",
+      "communication-punctuation.md",
+      "communication-practices.md",
+      "communication-recommendations.md"
     ],
     "skills": [
       "explore",
@@ -13,7 +23,17 @@
   },
   "pi": {
     "guidelines": [
-      "communication-guidelines.md"
+      "communication-guidelines.md",
+      "communication-technical-names.md",
+      "communication-technical-verbs.md",
+      "communication-clusters.md",
+      "communication-verbs.md",
+      "communication-sentences.md",
+      "communication-instructions.md",
+      "communication-descriptions.md",
+      "communication-punctuation.md",
+      "communication-practices.md",
+      "communication-recommendations.md"
     ],
     "skills": [
       "explore",

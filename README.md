@@ -45,9 +45,9 @@ degrade gracefully without it.
 /plugin install attune@wezzard-skills
 ```
 
-Start a session. Three SessionStart hooks inject the communication
-guidelines, the communication specimens, and the execution guidelines;
-the skills are `attune:explore`,
+Start a session. Fourteen SessionStart hooks inject the communication
+guidelines — eleven rule documents and three specimen documents — plus the
+execution guidelines; the skills are `attune:explore`,
 `attune:experiment`, and `attune:definition-of-done`. Install
 `dispatch@wezzard-skills` alongside for the external-agent router, the
 audit panel, and image generation.
@@ -62,7 +62,7 @@ codex plugin add attune@wezzard-skills
 Then one one-time step: hooks need your review before they run. Start
 `codex`, and in the "Hooks need review" dialog choose **Trust all and
 continue** (or run `/hooks` and press `t`). From the next session on, the
-ported hook injects the communication guidelines. The
+ported hooks inject the eleven communication guideline documents. The
 ported skills are `attune:explore`, `attune:experiment`, and
 `attune:definition-of-done` (in variants that run without external agents —
 see `/skills`); the external-agent router stays Claude-only per
@@ -74,8 +74,8 @@ see `/skills`); the external-agent router stays Claude-only per
 pi install https://github.com/WeZZard/attune
 ```
 
-Start a session. The attune extension appends the ported communication
-guidelines to the system prompt at session start. The
+Start a session. The attune extension appends the eleven ported
+communication guideline documents to the system prompt at session start. The
 ported skills are `explore`, `experiment`, `definition-of-done` (in
 variants that run without external agents), and `keystone`; the
 external-agent router stays Claude-only per `porting.json`.

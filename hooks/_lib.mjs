@@ -5,7 +5,22 @@
 // CONTEXT_LIMIT to leave margin for the JSON envelope, and Codex inherits
 // the same budget.
 
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 export const CONTEXT_LIMIT = 9500;
+
+// Inject one reference document. Never fails the session: on any error it
+// prints nothing and exits 0, so a broken document cannot break startup.
+export function emitDoc(hookUrl, doc) {
+  try {
+    const pluginRoot = join(dirname(fileURLToPath(hookUrl)), '..');
+    emitContext(readFileSync(join(pluginRoot, 'references', doc), 'utf8').trim());
+  } catch {
+    // stay silent — broken guidelines must not break session start
+  }
+}
 
 export function emitContext(context) {
   const warn =
