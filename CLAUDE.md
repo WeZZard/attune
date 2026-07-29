@@ -2,13 +2,21 @@
 
 ## Domain boundary
 
-Attune holds human-ruled subjective knowledge only: communication and
-output-style guidelines, plus operational rulings on how the agent executes
-and delegates work (subagent model selection is the first — Claude-only,
-since its model names are Claude's). It is fully disjoint
-from every other knowledge system (retrospect, project docs, Claude Code auto
-memory) — no shared vocabulary, no cross-routing. World facts and measured
-lessons are never recorded here.
+Attune holds human-ruled subjective knowledge only: operational rulings
+on how the agent executes and delegates work (subagent model selection is
+the first — Claude-only, since its model names are Claude's). It is
+fully disjoint from every other knowledge system (retrospect, project
+docs, Claude Code auto memory) — no shared vocabulary, no cross-routing.
+World facts and measured lessons are never recorded here.
+
+The standing communication and output-style guidelines that lived here
+through 0.12.0 — `references/communication-*.md`, their fourteen
+SessionStart hooks, the pi extension that injected them, the `ask-wezzard`
+feedback skill, and the session-model store that stamped its issues —
+moved to the sibling [additive](https://github.com/WeZZard/additive)
+plugin 2026-07-30, because they govern documents additive already owns
+the lifecycle of. Nothing here reads additive, and nothing there reads
+this.
 
 ## Source of truth: the Claude Code plugin source
 
@@ -25,70 +33,9 @@ the Claude-side tree: a skill Claude itself never runs sources from
 `portable-skills/<name>/` (Claude Code auto-discovers `skills/`, so
 `skills/` holds exactly what Claude runs — nothing more).
 
-## The guidelines are the product
-
-`references/*.md` is what the plugin exists to deliver: the user's standing
-rulings, injected at session start. They change solely by the user's explicit
-editorial decision — an ordinary edit the user makes or directs, outside any
-attune skill — and git history is the review trail. When the user does fold
-research- or experiment-informed rules in, inline provenance marks
-(`(per <source>)`, `(per experiment <name>)`) carry the evidence.
-
-The communication documents are a single set covering conversation replies
-and authored prose artifacts alike (rebuilt 2026-07-28, replacing the
-amplify-seeded communication guidelines and the separate writing-style
-document). They distill a controlled-language specification: every rule and
-every example is drawn from it, and the set was verified against the source
-by blind word-by-word and completeness audits until both reported full
-alignment and zero missing rules. The source is never named in the documents
-and rule numbers are never cited — the rules stand as our own. When editing,
-keep every example verbatim from the source: an invented example is the
-failure mode this rebuild exists to correct.
-
-**Guidelines authoring style:** principles are numbered
-**MUST:** / **MUST NOT:** lists ("1. You **MUST** …"). Each principle
-carries one idea — decompose a compound rule into separate numbered items.
-Factual material — contract templates, category tables, findings, command
-blocks — stays structural; only the rules take the list form.
-
-## The feedback loop
-
-The `ask-wezzard` skill (ported to every platform) is the failure channel
-for everything attune ships. A communication failure — the first fully
-supported type — files under `communication-failure`; any other skill or
-guideline failure files under `skill-failure` with the skill named,
-accumulating until it gets a loop of its own. A communication issue
-carries: the agent's
-offending passage verbatim, the reader's reaction paraphrased, the
-violated rule, a proposed repair, and the session's language, platform,
-and model — each platform has a verified authoritative source, always
-per-session rather than global config (Claude Code: the system prompt's
-exact model ID; Codex and Pi: the session-model store,
-`${TMPDIR}/attune-session-model/` — one JSON entry per session holding
-`{model, cwd, at}`, written only when ask-wezzard triggers — an unmatchered PreToolUse
-hook on Codex that sees every tool call and self-filters to
-ask-wezzard-related ones (the payload carries the exact model; a matcher
-would sever the fetch-command trigger, so filtering lives in the script
-alone) and a filtered `tool_call` handler on Pi reading `ctx.model`; the
-skill's own fetch command primes the store, since both fire before the
-tool executes. The skill fetches
-the newest cwd-matching entry, falling back to the Codex rollout file,
-then `unknown`). Two sessions sharing one directory race on the store — the
-newest prompt wins; the Codex entry's `session_id` keeps the ambiguity
-auditable. Plain-prompt self-report hallucinates on Pi and Codex
-(observed 2026-07-18): mechanical sources only, deliberately kept out of
-context. The
-`collect-feedback-and-improve` skill — a project-level skill in
-`.claude/skills/`, active only in this working copy and never shipped
-with the plugin — drafts one contrastive pair per issue, takes the user's
-ruling pair by pair, folds accepted pairs under their rule with
-`(per issue #N)` provenance and scope tags (language, plus platform or
-model when the failure is specific to one), closes the issues, and
-reports two tallies: rules that keep failing despite examples are
-Stop-hook escalation candidates, and rules that never fail are prune
-candidates. The hook budget gate guards the guidelines' growth; near the
-cap, shard examples by language rather than trim rules — the user rules
-on that too.
+`references/execution-guidelines.md` is the one document left here. It is
+Claude-only (wired directly in `hooks/hooks.json`) and carries no
+`porting.json` listing.
 
 ## Multi-platform packaging
 
@@ -97,9 +44,9 @@ source. Three manifests coexist: `.claude-plugin/plugin.json` (Claude Code),
 `.codex-plugin/plugin.json` (Codex — its `hooks` pointer to the root
 `hooks.json` is REQUIRED: without it Codex would auto-discover
 `hooks/hooks.json`, which is Claude's), and `package.json` (Pi — the `pi`
-key lists `extensions` and `skills`; the `pi-package` keyword is Pi's
-gallery flag). The gate enforces one version across all three; bump them
-together.
+key lists `skills`; the `pi-package` keyword is Pi's gallery flag; attune
+ships no pi extension). The gate enforces one version across all three;
+bump them together.
 
 **Port matrix.** `porting.json` is the single control for what ships
 where: per platform, which reference docs inject and which skills ship.
@@ -125,22 +72,22 @@ widening is conditional on the dispatch plugin's presence, which is never
 true off Claude Code.
 
 **Generated trees.** `codex/`, `pi/`, and the root `hooks.json` are build
-products of `utils/generate-platform-assets.sh` — never hand-edit them;
-edit the sources (`skills/`, `portable-skills/`, `porting.json`) and
-regenerate. The pre-commit gate fails on stale, missing, or foreign
-files there (and on any resurrected `kimi/` file). Matrix-selected skills
-mirror into `<platform>/skills/`, sourced from `skills/` or
-`portable-skills/` (exactly one home per skill). A skill mirrors as its
-whole directory: SKILL.md carries the `@port` splice, and every sibling
-file (e.g. definition-of-done's `references/use-paths/*.md` playbooks) is
-copied verbatim so progressive-disclosure references travel with the skill
-to every platform — verified that Codex, Pi, and Claude Code all load
-skill-local `references/` files. A new reference document means a new hook plus a
-`HOOK_BY_DOC` entry in `utils/_porting.mjs`, and — when the doc ships beyond
-Claude Code — per-platform `porting.json` listings, never a bigger hook. A
-Claude-only doc (execution) takes the hook and the `HOOK_BY_DOC` entry but no
-`porting.json` listing. Runtime consumers read the matrix too:
-`extensions/attune.js` injects Pi's selected docs.
+products of `utils/generate-platform-assets.sh` — never hand-edit them; edit
+the sources (`skills/`, `portable-skills/`, `porting.json`) and regenerate.
+The pre-commit gate fails on stale, missing, or foreign files there (and on
+any resurrected `kimi/` file). Matrix-selected skills mirror into
+`<platform>/skills/`, sourced from `skills/` or `portable-skills/` (exactly
+one home per skill). A skill mirrors as its whole directory: SKILL.md
+carries the `@port` splice, and every sibling file (e.g.
+definition-of-done's `references/use-paths/*.md` playbooks) is copied
+verbatim so progressive-disclosure references travel with the skill to
+every platform — verified that Codex, Pi, and Claude Code all load
+skill-local `references/` files. A new reference document means a new hook
+plus a `HOOK_BY_DOC` entry in `utils/_porting.mjs`, and — when the doc
+ships beyond Claude Code — per-platform `porting.json` listings, never a
+bigger hook. `execution-guidelines.md` takes the hook and the `HOOK_BY_DOC`
+entry but no `porting.json` listing, which is why the generated root
+`hooks.json` is `{"hooks":{}}` today — nothing is ported to Codex.
 
 **Codex facts (verified against codex-cli 0.144.4).** Codex has native
 subagents (TOML files in `~/.codex/agents/`, GA 2026-03-16), but a plugin
@@ -161,8 +108,7 @@ payload carries `model` (exact id), `session_id`, `transcript_path`, and
 SubagentStart, and UserPromptSubmit — PreToolUse outputs permission
 decisions alone, so just-in-time injection at a tool call is impossible.
 There is no model-change event. Codex plugins can also ship MCP servers
-(manifest `mcpServers` → a Claude-style `.mcp.json`) — unused by attune;
-the session-model store covers the need without one.
+(manifest `mcpServers` → a Claude-style `.mcp.json`) — unused by attune.
 Skills are namespaced `attune:*`. Codex also installs Claude-format plugins
 (falls back to `.claude-plugin/plugin.json`), which is why the native
 manifest must stay present and correct.
@@ -170,8 +116,8 @@ manifest must stay present and correct.
 **Pi facts (verified against pi 0.80.10).** Extensions are TS/JS
 default-export factories loaded by jiti; `before_agent_start` returns a
 chained `systemPrompt` (the injection path — no documented cap; re-verify
-after sizeable growth) and `session_start` is where the extension reads
-`references/` and runs the availability probe, fail-open. `pi install`
+after sizeable growth), which is how a Pi extension would inject context
+if attune shipped one — it does not today. `pi install`
 accepts a GitHub URL (full git clone into `~/.pi/agent/git/<host>/<path>`,
 `npm install` run when package.json exists) or a local path (referenced in
 place, stored relative to the settings file). Skills follow the same Agent
@@ -179,9 +125,6 @@ Skills standard as Claude Code (SKILL.md frontmatter), mirrored per the
 port matrix. RPC mode (`pi --mode rpc`) is the headless path that actually
 loads package extensions and reports load errors at startup
 (`pi --list-models` does not) — the gate's load check relies on that.
-`ctx.model` is `{ id, name, provider, … }` (empirically probed); a
-`model_select` event exists; the extension writes the session-model
-store from `ctx.model` each turn rather than injecting context.
 
 **Kimi Code (dropped in 0.5.0).** kimi-code (verified 0.26.0)
 offers no plugin- or user-defined subagents and no context-injecting
@@ -205,8 +148,6 @@ from the GitHub URL (`pi install https://github.com/WeZZard/attune`).
 - `utils/generate-platform-assets.sh --check` — staleness of the generated
   trees and the generated root `hooks.json`, all projected from
   `porting.json`.
-- `utils/check-hook-budget.sh` — per-hook injection budget, for
-  `--platform claude` and `codex` both (see "Injection budget").
 - `utils/check-plugins.sh` — the three-packaging gate: structural checks
   (manifest schemas, version equality, referenced paths, SKILL.md
   frontmatter, hook-command targets), then official validators when the CLI
@@ -217,28 +158,6 @@ from the GitHub URL (`pi install https://github.com/WeZZard/attune`).
   `PI_CODING_AGENT_DIR`: local-path install of the staged tree, then an
   RPC-startup extension load check). A missing CLI prints SKIPPED, never a
   silent pass.
-
-## Injection budget
-
-Hook output is capped at 10,000 characters per command
-(code.claude.com/docs/en/hooks). Injection is split into one hook per
-guidelines document (`hooks/session-start-*.mjs`) so each document has its
-own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
-`hooks/_lib.mjs`, the single source of truth) with a visible warning. The pre-commit gate
-(`utils/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
-enable per clone with `git config core.hooksPath .githooks`) fails any commit
-that would truncate: it runs each real hook and requires 300 characters of
-headroom for machine-dependent variation. Fifteen documents inject today:
-eleven rule documents (word choice, technical names, technical verbs, noun
-clusters, verbs, sentences, instructions, descriptions, punctuation and word
-count, writing practices, general recommendations), three specimen documents,
-and execution. The cap is what drives the sharding — the rule set is far
-larger than one hook holds, so it is split by topic rather than trimmed.
-Execution and the three specimen documents are Claude-only: each is wired in
-the hand-authored `hooks/hooks.json` and left out of `porting.json`, so none
-reaches Codex or Pi. A new reference document means a new hook, not a bigger
-one, plus a `HOOK_BY_DOC` entry and (when it ships beyond Claude Code) a
-`porting.json` listing.
 
 ## The dispatch plugin
 
@@ -259,10 +178,9 @@ JavaScript, the wrapper just `exec`s node on it. JavaScript not exposed as a
 command carries an underscore prefix (`_*.mjs`) — wrappers are the stable
 surface, underscored internals may be reshaped freely. Hook entry points are wired in `hooks.json`, never typed by users, and
 follow one event-prefixed convention — `hooks/<event>-<function>.mjs`,
-e.g. `session-start-communication.mjs` (SessionStart) and
-`pre-tool-use-session-model.mjs` (PreToolUse) — with no shell wrappers:
-their caller is generated in lockstep, so there is no typed surface to
-stabilize. Shared internals are underscored (`hooks/_lib.mjs`). Placement: `utils/` holds development tooling (the
+e.g. `session-start-execution.mjs` (SessionStart) — with no shell
+wrappers: their caller is generated in lockstep, so there is no typed
+surface to stabilize. Shared internals are underscored (`hooks/_lib.mjs`). Placement: `utils/` holds development tooling (the
 commit gate); attune ships no runtime commands — they moved to dispatch.
 
 ## Open items
@@ -277,6 +195,3 @@ commit gate); attune ships no runtime commands — they moved to dispatch.
   per-domain use-path playbooks under `references/use-paths/`; a domain no
   playbook covers is driven best-effort and leaves a drafted playbook for
   the user to fold in (source growth, git-tracked — never a runtime write).
-- Amplify injects its own communication guidelines at SessionStart; attune's
-  rebuilt set differs, so alongside attune that injection now conflicts and
-  should be retired from amplify.

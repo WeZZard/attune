@@ -1,7 +1,7 @@
 {
   "name": "attune",
-  "version": "0.12.0",
-  "description": "Capture and apply human-ruled knowledge the model cannot internalize \u2014 user preferences and output-style rulings, settled by the right instrument: derive the derivable, research the world, experiment when no answer exists yet, and ask the human for the rulings only their judgment can make.",
+  "version": "0.13.0",
+  "description": "Capture and apply human-ruled knowledge the model cannot internalize \u2014 operational rulings on how the agent executes and delegates work, settled by the right instrument: derive the derivable, research the world, experiment when no answer exists yet, and ask the human for the rulings only their judgment can make.",
   "author": {
     "name": "WeZZard",
     "email": "me@wezzard.com"
@@ -10,15 +10,15 @@
   "repository": "https://github.com/WeZZard/attune",
   "license": "MIT",
   "keywords": [
-    "guidelines",
-    "communication-style",
-    "verification"
+    "execution",
+    "verification",
+    "delegation"
   ],
   "skills": "./codex/skills/",
   "hooks": "./hooks.json",
   "interface": {
     "displayName": "Attune",
-    "shortDescription": "Standing guidelines, a verification standard, and the oracle method",
+    "shortDescription": "A verification standard and the oracle method",
     "developerName": "WeZZard",
     "websiteURL": "https://github.com/WeZZard/attune"
   }

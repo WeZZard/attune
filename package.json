@@ -1,13 +1,13 @@
 {
   "name": "attune",
-  "version": "0.12.0",
-  "description": "Capture and apply human-ruled knowledge the model cannot internalize \u2014 user preferences and output-style rulings, settled by the right instrument: derive the derivable, research the world, experiment when no answer exists yet, and ask the human for the rulings only their judgment can make.",
+  "version": "0.13.0",
+  "description": "Capture and apply human-ruled knowledge the model cannot internalize \u2014 operational rulings on how the agent executes and delegates work, settled by the right instrument: derive the derivable, research the world, experiment when no answer exists yet, and ask the human for the rulings only their judgment can make.",
   "type": "module",
   "keywords": [
     "pi-package",
-    "guidelines",
-    "communication-style",
-    "verification"
+    "execution",
+    "verification",
+    "delegation"
   ],
   "author": "WeZZard <me@wezzard.com>",
   "license": "MIT",
@@ -17,9 +17,6 @@
     "url": "https://github.com/WeZZard/attune.git"
   },
   "pi": {
-    "extensions": [
-      "./extensions/attune.js"
-    ],
     "skills": [
       "./pi/skills"
     ]

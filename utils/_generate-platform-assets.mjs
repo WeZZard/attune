@@ -73,41 +73,29 @@ function mirroredSkill(name, platform) {
 }
 
 // The Codex hook wiring: one self-locating command per ported guideline
-// doc, plus the session-model store writer at PreToolUse. Codex hook
-// commands get neither a plugin-root cwd nor a plugin-root
-// variable (verified against codex-cli 0.144.4), hence the glob.
+// doc. Codex hook commands get neither a plugin-root cwd nor a
+// plugin-root variable (verified against codex-cli 0.144.4), hence the
+// glob. Nothing is ported to Codex today — execution-guidelines.md is
+// Claude-only — so this produces an empty wiring; kept generated rather
+// than hand-written so a future guideline doc that does port to Codex
+// needs only a porting.json edit.
 function codexHooksJson(docs) {
   const command = (hook) =>
     `/bin/sh -c 'for f in "\${CODEX_HOME:-$HOME/.codex}"/plugins/cache/*/attune/*/hooks/${hook}; do p="$f"; done; exec "$p" --platform codex'`;
   const wiring = {
-    hooks: {
-      SessionStart: [
-        {
-          hooks: docs.map((doc) => ({
-            type: 'command',
-            command: command(HOOK_BY_DOC[doc]),
-            timeout: 10,
-          })),
-        },
-      ],
-      // The session-model store, written only when ask-wezzard triggers.
-      // No matcher: the hook sees every PreToolUse and self-filters to
-      // ask-wezzard-related tool calls — the skill invocation, whatever
-      // Codex names its skill tool, and the skill's own store-fetch
-      // command, which primes the store because PreToolUse fires before
-      // the tool executes. A matcher would sever the fetch-command path.
-      PreToolUse: [
-        {
-          hooks: [
+    hooks: docs.length
+      ? {
+          SessionStart: [
             {
-              type: 'command',
-              command: command('pre-tool-use-session-model.mjs'),
-              timeout: 10,
+              hooks: docs.map((doc) => ({
+                type: 'command',
+                command: command(HOOK_BY_DOC[doc]),
+                timeout: 10,
+              })),
             },
           ],
-        },
-      ],
-    },
+        }
+      : {},
   };
   return `${JSON.stringify(wiring, null, 2)}\n`;
 }

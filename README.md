@@ -1,15 +1,17 @@
 # Attune
 
-Attune injects your standing guidelines into every session — how to write
-to you and what counts as verified work — and ships the oracle method for
-settling unknowns by evidence. One repo ships three plugins: Claude Code,
-Codex, and Pi, all fed by the same `references/*.md` source of truth.
-Claude Code always carries the full feature set; `porting.json` (the port
-matrix) decides what ships to the other platforms. External-agent
-delegation lives in the sibling
+Attune captures your standing operational rulings — what counts as
+verified work, how the agent executes and delegates — and ships the
+oracle method for settling unknowns by evidence. One repo ships three
+plugins: Claude Code, Codex, and Pi, all fed by the same `references/*.md`
+and `skills/*` source of truth. Claude Code always carries the full
+feature set; `porting.json` (the port matrix) decides what ships to the
+other platforms. External-agent delegation lives in the sibling
 [dispatch](https://github.com/WeZZard/dispatch) plugin — attune's
 experiment and definition-of-done widen through it when it is installed, and
-degrade gracefully without it.
+degrade gracefully without it. The standing communication guidelines that
+attune carried through 0.12.0 moved to the sibling
+[additive](https://github.com/WeZZard/additive) plugin.
 
 - **Explore** routes every open question in a discussion to the instrument
   that settles it: derive what reasoning alone can settle, research the
@@ -20,9 +22,6 @@ degrade gracefully without it.
   versions, blinds them, has external models rank them against one
   criterion stated up front, and hands you the verdicts. You make the
   ruling.
-- **The communication style** governs how replies read: direct engineering
-  prose, one action per sentence, no internal workflow language. You author
-  it; only you change it.
 - **The definition of done** redefines done as "survived its use path":
   size the change by blast radius, design the path its real consumer would
   walk, fork it where mechanisms differ, drive every fork, and report
@@ -45,12 +44,10 @@ degrade gracefully without it.
 /plugin install attune@wezzard-skills
 ```
 
-Start a session. Fourteen SessionStart hooks inject the communication
-guidelines — eleven rule documents and three specimen documents — plus the
-execution guidelines; the skills are `attune:explore`,
-`attune:experiment`, and `attune:definition-of-done`. Install
-`dispatch@wezzard-skills` alongside for the external-agent router, the
-audit panel, and image generation.
+Start a session. One SessionStart hook injects the execution guidelines;
+the skills are `attune:explore`, `attune:experiment`, and
+`attune:definition-of-done`. Install `dispatch@wezzard-skills` alongside
+for the external-agent router, the audit panel, and image generation.
 
 ### Codex
 
@@ -59,14 +56,11 @@ codex plugin marketplace add WeZZard/skills
 codex plugin add attune@wezzard-skills
 ```
 
-Then one one-time step: hooks need your review before they run. Start
-`codex`, and in the "Hooks need review" dialog choose **Trust all and
-continue** (or run `/hooks` and press `t`). From the next session on, the
-ported hooks inject the eleven communication guideline documents. The
-ported skills are `attune:explore`, `attune:experiment`, and
+The ported skills are `attune:explore`, `attune:experiment`, and
 `attune:definition-of-done` (in variants that run without external agents —
 see `/skills`); the external-agent router stays Claude-only per
-`porting.json`.
+`porting.json`. Attune ships no Codex hooks — the execution guidelines are
+Claude-only.
 
 ### Pi
 
@@ -74,11 +68,10 @@ see `/skills`); the external-agent router stays Claude-only per
 pi install https://github.com/WeZZard/attune
 ```
 
-Start a session. The attune extension appends the eleven ported
-communication guideline documents to the system prompt at session start. The
-ported skills are `explore`, `experiment`, `definition-of-done` (in
+The ported skills are `explore`, `experiment`, `definition-of-done` (in
 variants that run without external agents), and `keystone`; the
-external-agent router stays Claude-only per `porting.json`.
+external-agent router stays Claude-only per `porting.json`. Attune ships
+no Pi extension.
 
 ## License
 

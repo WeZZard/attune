@@ -83,8 +83,10 @@ if (versions.size > 1) {
   ok(`all manifests at version ${[...versions][0]}`);
 }
 
-// The pi manifest key: extensions and skills paths must exist, and the
-// pi-package keyword keeps the package discoverable on pi.dev/packages.
+// The pi manifest key: any extensions/skills paths it lists must exist, and
+// the pi-package keyword keeps the package discoverable on pi.dev/packages.
+// extensions is optional — attune ships none since the pi extension that
+// carried the communication guidelines left for WeZZard/additive.
 const piManifest = manifests.pi?.pi;
 if (!piManifest) {
   fail('package.json: missing "pi" manifest key');
@@ -94,9 +96,6 @@ if (!piManifest) {
     if (!existsSync(join(repoRoot, clean))) {
       fail(`package.json: pi.extensions entry ${rel} does not exist`);
     }
-  }
-  if (!(piManifest.extensions ?? []).length) {
-    fail('package.json: pi.extensions is empty');
   }
 }
 if (!(manifests.pi?.keywords ?? []).includes('pi-package')) {
