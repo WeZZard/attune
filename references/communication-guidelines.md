@@ -20,12 +20,8 @@ This document gives the scope and the rules for word choice. Ten companion docum
 
 <EXAMPLE>
 
-**Bad:** Follow the safety instructions.
-**Good:** Obey the safety instructions.
-
 But you can write:
 **Good:** Do the instructions that follow:
-**Good:** Follow the green lights to the nearest staircase.
 
 </EXAMPLE>
 
@@ -33,15 +29,7 @@ But you can write:
 
 <EXAMPLE>
 
-**Good:** Test B is an alternative to test A.
-**Bad:** Test the system for leaks.
-**Good:** Do the leak test of the system.
-or
-**Good:** Do a test for leaks in the system.
-
 **Good:** A dim light comes on.
-**Bad:** Dim the lights.
-**Good:** Set the lights to the dim position.
 
 </EXAMPLE>
 
@@ -49,7 +37,6 @@ or
 
 <EXAMPLE>
 
-**Good:** Clean the inner surface of the container. ("Clean" is a verb here.)
 **Good:** Make sure that the area is clean. ("Clean" is an adjective here.)
 
 </EXAMPLE>
@@ -88,9 +75,6 @@ or
 12. You **MUST** use American English spelling. Use a different spelling only where other technical publication specifications, style guides, contracts, or other official directives apply.
 
 <EXAMPLE>
-
-**Bad:** The door is made of carbon fibre reinforced plastic. ("Fibre" is British English spelling.)
-**Good:** The door is made of carbon-fiber-reinforced plastic. ("Fiber" is American English spelling.)
 
 **Bad:** Change the colour of the display.
 **Good:** Change the color of the display.

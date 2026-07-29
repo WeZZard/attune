@@ -16,9 +16,6 @@ Correct punctuation shows how the parts of a text relate and prevents ambiguity.
 **Bad:** (1) Examine the removed parts; replace the damaged ones.
 **Good:** (1) Examine the removed parts for damage. (2) Replace the damaged part(s).
 
-**Bad:** The battery is not user-replaceable; it can only be replaced by an approved service provider.
-**Good:** Do not replace the battery. Only an approved service provider can replace it.
-
 </EXAMPLE>
 
 3. You **MUST** use a hyphen to show that two or more words are closely related. These examples show how.
@@ -66,11 +63,7 @@ You can use parentheses in these seven ways.
 
 <EXAMPLE>
 
-**Good:** Make sure that the EMER pushbutton switch is released (the EMER legend is off.) (This sentence has 10 words, because the text in parentheses counts as one word. The sentence in parentheses has 5 words and counts as a different sentence.)
-
 **Good:** Remove the safety pin (10). (5 words)
-**Good:** Installation of a Business Class (B/C) Seat (7 words)
-**Good:** Hardware and Software Configuration Check of the In-Flight Entertainment (IFE) System (11 words)
 
 </EXAMPLE>
 
@@ -78,7 +71,6 @@ You can use parentheses in these seven ways.
 
 <EXAMPLE>
 
-**Good:** Do steps 13 thru 16 a minimum of three times. (10 words)
 **Good:** The spar box has twenty-one ribs. (6 words)
 
 </EXAMPLE>
@@ -87,12 +79,7 @@ You can use parentheses in these seven ways.
 
 <EXAMPLE>
 
-**Good:** Make sure that the temperature in the room is 10 °C. (10 words)
-**Good:** Make sure that the temperature in the room is 10 degrees Celsius. (12 words)
 **Good:** The unit weighs 20 kg. (4 words)
-**Good:** The unit weighs 20 kilograms. (5 words)
-**Good:** The resistance must be 10 Ω. (5 words)
-**Good:** The resistance must be 10 ohms. (6 words)
 
 </EXAMPLE>
 
@@ -100,7 +87,6 @@ You can use parentheses in these seven ways.
 
 <EXAMPLE>
 
-**Good:** We do a test of this system each day at 10 a.m. (12 words)
 **Good:** Make sure that the unit has the NATO code. (9 words)
 
 </EXAMPLE>
@@ -109,7 +95,6 @@ You can use parentheses in these seven ways.
 
 <EXAMPLE>
 
-**Good:** Examine the No. 1 bearing installation. (5 words)
 **Good:** Tag circuit breaker 36L7. (4 words)
 
 </EXAMPLE>
@@ -118,8 +103,6 @@ You can use parentheses in these seven ways.
 
 <EXAMPLE>
 
-**Good:** Touch the “Service Overview” arrow to select the function page. (9 words)
-**Good:** Release the SHORT-CIRCUIT TEST switch. (4 words)
 **Good:** C = (A - B) - 0.063 mm. (1 word)
 
 </EXAMPLE>
@@ -128,10 +111,6 @@ You can use parentheses in these seven ways.
 
 <EXAMPLE>
 
-**Good:** Refer to Testing and Fault Isolation, page block 1001. (6 words)
-**Good:** Refer to Requirements after Job Completion for the applicable procedures. (7 words)
-**Good:** This procedure is for the inspection of SSI No. 57-21-16, “Outer wing bottom skin lower surface spanwise skin joints at stringer 13 and stringer 20 between Rib 12 and Rib 27 excluding areas covered by flap track fairings 3, 4, and 5.” (9 words)
-**Good:** “Interior hazards exist to such a degree that interior operations may be conducted only after full examination, and with extreme caution.” (1 word)
 **Good:** “FRAGILE - Please handle with care.” (1 word)
 
 </EXAMPLE>
@@ -140,7 +119,6 @@ You can use parentheses in these seven ways.
 
 <EXAMPLE>
 
-**Good:** Clean the surface with a soap-and-water solution. (7 words)
 **Good:** Use the trial-and-error method. (4 words)
 
 </EXAMPLE>
@@ -150,7 +128,6 @@ You can use parentheses in these seven ways.
 <EXAMPLE>
 
 **Good:** Cutoff-switch power connection (3 words)
-**Good:** Main-gear-door retraction-winch handle (3 words)
 
 </EXAMPLE>
 

@@ -22,9 +22,6 @@ The basic principle is to make text easy to read and understand. Thus you must w
 **Bad:** No leaks permitted. (This sentence is not very helpful. It does not tell the reader what to do.)
 **Good:** Make sure that there are no leaks. (This sentence directly tells the reader what to do.)
 
-**Bad:** Different temperatures will change the cure time. (This is an abstract sentence because it contains no information on how the cure time decreases.)
-**Good:** When the temperature increases, the cure time will decrease. (To make your writing more accurate, give the specified temperatures and the related cure times.)
-
 </EXAMPLE>
 
 ## Complete sentences
@@ -59,9 +56,6 @@ The basic principle is to make text easy to read and understand. Thus you must w
 
 **Bad:** If installed, remove the shims.
 **Good:** If shims are installed, remove them.
-
-**Bad:** WARNING: MAKE SURE THAT THE POTABLE WATER SYSTEM IS NOT PRESSURIZED. IF NOT, THIS CAN CAUSE INJURY TO PERSONS.
-**Good:** WARNING: MAKE SURE THAT THE POTABLE WATER SYSTEM IS NOT PRESSURIZED. A PRESSURIZED SYSTEM CAN CAUSE INJURY TO PERSONS.
 
 </EXAMPLE>
 
@@ -115,9 +109,6 @@ A connecting word joins a topic in one sentence to an idea in the sentence that 
 <EXAMPLE>
 
 **Good:** The localizer course aligns with the centerline of the runway. And the glideslope path is at a constant angle to the threshold of the runway.
-**Good:** These safety precautions are the minimum necessary for work in the pit lane. But the local regulations can give other necessary safety precautions.
-**Good:** If the pressure increases, it changes the electrical currents in the transmitter. Thus, the power unit supplies currents to the indicator on the related panel.
-**Good:** When the hydraulic pressure is released, the sequence valve moves to the open position. As a result, the actuators are connected to the hydraulic return.
 
 </EXAMPLE>
 
@@ -126,7 +117,6 @@ You can also use pronouns and demonstrative adjectives to connect ideas in relat
 <EXAMPLE>
 
 **Good:** Identify the disassembled parts with tags. This method will help you during the subsequent assembly procedures.
-**Good:** CAUTION: WHEN YOU REMOVE THE PROBES, DO NOT LET THEM TOUCH EACH OTHER. IF THE PROBES TOUCH, THEY CAN BECOME DEMAGNETIZED.
 
 </EXAMPLE>
 

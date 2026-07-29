@@ -22,8 +22,6 @@ A word is both a technical name and a technical verb when you can put it in a te
 
 <EXAMPLE>
 
-**Bad:** If you detect broken wires, repair them.
-**Good:** If you find broken wires, repair them.
 But you can write:
 **Good:** The security scanner detects metallic objects.
 
@@ -42,14 +40,8 @@ But you can write:
 
 <EXAMPLE>
 
-**Bad:** Clamp the cable in position.
-**Good:** Put clamps on the cable to hold it in position.
-
 **Bad:** Grease the fasteners.
 **Good:** Apply grease to the fasteners.
-
-**Bad:** Wire the cable to the structure.
-**Good:** Attach the cable to the structure with wire.
 
 </EXAMPLE>
 
@@ -58,12 +50,6 @@ But you can write:
 <EXAMPLE>
 
 **Good:** Enter your password. ("Enter" is a computer-process technical verb.)
-**Bad:** Do not enter the engine test area without approval.
-**Good:** Do not go into the engine test area without approval.
-
-**Good:** If the tower does not respond, use a different channel. ("Respond" is an operational technical verb.)
-**Bad:** If the instrument fails to respond, do a test.
-**Good:** If the instrument does not operate correctly, do a test.
 
 </EXAMPLE>
 
@@ -73,8 +59,6 @@ But you can write:
 
 <EXAMPLE>
 
-**Bad:** Give the hole 0.20-inch over-ream.
-**Good:** Ream the hole 0.20 inch larger than the standard.
 **Good:** Lubricate the reamed hole.
 
 </EXAMPLE>

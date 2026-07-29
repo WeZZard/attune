@@ -24,9 +24,6 @@ You can also use connecting words and phrases to help the reader follow the prog
 
 **Good:** During the approach to the runway, deviation pointers in the course indicators show the pilot in which direction the aircraft must go. (22 words)
 
-**Bad:** A smartphone is a cellular telephone that has an integrated computer and many other functions, such as an operating system, internet browsing as well as the ability to run software applications. (31 words)
-**Good:** A smartphone is a cellular telephone that has an integrated computer and many other functions. (15 words) It includes an operating system and an internet browser, and it can also operate software applications. (16 words)
-
 </EXAMPLE>
 
 2. You **MUST** separate two topics that share one sentence, usually joined by "and". You can write a new sentence for each topic.

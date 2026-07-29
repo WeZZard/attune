@@ -18,28 +18,12 @@ A noun cluster is a group of words that works as one part of speech in a sentenc
 **Bad:** Runway light connection resistance calibration.
 **Good:** Calibration of the resistance of the runway light connection.
 
-**Bad:** Install the forward turbine overheat thermocouple terminal tags.
-**Good:** Install the terminal tags on the forward overheat thermocouple of the turbine.
-
-**Bad:** Remove the engine transmission housing attachment bolts.
-**Good:** Remove the bolts that attach the transmission housing to the engine.
-
-**Bad:** Adjust to obtain door operating rod alignment with the attachment point.
-**Good:** Adjust the door operating rod until it aligns with the attachment point.
-
 </EXAMPLE>
 
 3. You **MUST** write a technical name of more than three words in full the first time it occurs. Then, if possible, use a shorter name or its established abbreviation in the rest of the document, or hyphenate the words that work as one unit.
 
 <EXAMPLE>
 
-**Good:** Before you do this procedure, engage the ramp service door safety connector pin (the pin that holds the ramp service door, referred to in this procedure as the “safety connector pin”).
-(The full name occurs first. After the explanation, the shorter name "safety connector pin" has three words.)
-
-**Good:** The Main Fuel Metering Unit (MFMU) is an aluminum alloy unit that includes a Main Engine Control Unit (MECU) and a Distribution Block (DB). The MFMU is installed in the engine bypass duct and operates in the engine fuel system. The function of the MFMU is to meter and distribute the fuel from the Main Engine Fuel Pump (MEFP) to the fuel manifolds and the starter jets. The Digital Engine Control Unit (DECU) sends electrical signals to operate the MFMU.
-(No explanation is necessary here, because the text gives all the necessary information. Every official name of more than three nouns is written in full the first time, and the related abbreviations are used after that.)
-
-**Good:** Make sure that the cutoff-switch power connection is safe.
 **Good:** Inspection of the lavatory rapid-decompression device.
 
 </EXAMPLE>
@@ -72,9 +56,6 @@ Articles and demonstrative adjectives show the reader where nouns and noun clust
 **Bad:** Turn shaft assembly.
 **Good:** Turn the shaft assembly.
 
-**Bad:** Data module tells you how to operate unit.
-**Good:** This data module tells you how to operate the unit.
-
 </EXAMPLE>
 
 2. You **MUST** omit the article in a general statement, and you **MUST** omit the definite article before a noun that an alphanumeric identifier follows. In a short sentence it can be clearer to use articles before all nouns. A sentence that contains a long series of items is clearer when you do not repeat the articles.
@@ -82,11 +63,6 @@ Articles and demonstrative adjectives show the reader where nouns and noun clust
 <EXAMPLE>
 
 **Good:** Solvents can cause damage to paint.
-**Good:** Install the nuts (2) and the bolts (3).
-**Good:** Discard the O-rings (3), gaskets (4), seals (7), and washers (9).
-
-**Incorrect:** Tag the circuit breaker 36L7.
-**CORRECT:** Tag circuit breaker 36L7.
 
 </EXAMPLE>
 

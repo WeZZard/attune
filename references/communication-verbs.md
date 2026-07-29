@@ -35,7 +35,6 @@ Rules for the form, tense, and voice of verbs. The passage-length before-and-aft
 <EXAMPLE>
 
 **Good:** Connect the disconnected wires. ("Disconnected" is an adjective before the noun "wires.")
-**Good:** The wires are disconnected. ("Disconnected" is an adjective after the verb "to be" that shows the condition of the wires.)
 
 </EXAMPLE>
 
@@ -44,9 +43,6 @@ Rules for the form, tense, and voice of verbs. The passage-length before-and-aft
 <EXAMPLE>
 
 **Good:** These areas have the specified damage limits.
-**Good:** Do not put more than the permitted weight on the trolley.
-**Good:** Send the completed report to the supervisor for approval.
-**Good:** Make sure that the mating surfaces are not damaged.
 
 </EXAMPLE>
 
@@ -65,17 +61,8 @@ Rules for the form, tense, and voice of verbs. The passage-length before-and-aft
 
 <EXAMPLE>
 
-**Bad:** The volume control can be adjusted.
-**Good:** You can adjust the volume control.
-
-**Bad:** The temperature must be adjusted.
-**Good:** Adjust the temperature.
-
 **Bad:** The sleeve will be adjusted.
 **Good:** You will adjust the sleeve.
-
-**Bad:** The seat is to be installed before you install the cushion.
-**Good:** Before you install the cushion, install the seat.
 
 </EXAMPLE>
 
@@ -108,25 +95,8 @@ In the active voice the subject does the action: A does B. In the passive voice 
 
 <EXAMPLE>
 
-**Bad:** The circuits are connected by a switching relay. (Passive)
-**Good:** A switching relay connects the circuits. (Active)
-
-**Bad:** These values are used by the computer to calculate the energy consumption. (Passive)
-**Good:** The computer calculates the energy consumption from these values. (Active)
-
 **Bad:** The test can be continued by the operator. (Passive)
 **Good:** Continue the test. (Active)
-
-**Bad:** Oil and grease are to be removed with a degreasing agent. (Passive)
-**Good:** Remove oil and grease with a degreasing agent. (Active)
-
-**Bad:** On the ground, the valve can be opened with the override handle. (Passive)
-**Good:** On the ground, you can open the valve with the override handle. (Active)
-
-**Bad:** Additives are not used in this product. (Passive)
-**Good:** We do not use additives in this product. (Active)
-or
-**Good:** This product does not contain additives.
 
 </EXAMPLE>
 

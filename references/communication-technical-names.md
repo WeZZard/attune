@@ -34,19 +34,7 @@ A technical name is a word from the subject's own vocabulary, outside the common
 
 <EXAMPLE>
 
-**Good:** The base of the triangle is 5 cm. ("Base" is a mathematical, scientific, or engineering term.)
-**Bad:** Make sure that the two spigots at the base of the unit engage. ("Base" here is not available, because it is related to a surface.)
-**Good:** Make sure that the two spigots at the bottom of the unit engage.
-**Good:** Access to the base is permitted between 9 a.m. and 6 p.m. ("Base" is a name of a facility.)
-
-**Good:** Do the backup of the computer at regular intervals.
 **Good:** Keep the backup file in a safe area.
-**Bad:** For this procedure, make sure that one person is available as backup. ("Backup" is not available here and you cannot use it.)
-**Good:** Two persons are necessary to do this procedure.
-
-**Bad:** The laptop has these main parts: ("Main part" is not a technical name, and it is correct to replace "main" with "primary".)
-**Good:** The laptop has these primary parts:
-**Good:** Retract the main landing gear. ("Main landing gear" is a technical name. Do not replace "main" with "primary" here, because "primary landing gear" is not the official name given.)
 
 </EXAMPLE>
 
@@ -79,17 +67,11 @@ A technical name is a word from the subject's own vocabulary, outside the common
 **Bad:** Oil the steel surfaces.
 **Good:** Apply oil to the steel surfaces.
 
-**Bad:** If you think it will snow, make sure that the vehicle is in the applicable configuration.
-**Good:** If you think that snow will fall, make sure that the vehicle is in the applicable configuration.
-
 </EXAMPLE>
 
 2. You **MUST NOT** use slang or jargon as a technical name. A word used in one geographical area, or understood by very few people in one technical area, will cause confusion.
 
 <EXAMPLE>
-
-**Bad:** Make a sandwich with two washers and the spacer.
-**Good:** Install the spacer between the two washers.
 
 **Bad:** Remove your gear from the work area.
 **Good:** Remove your tools and equipment from the work area.
