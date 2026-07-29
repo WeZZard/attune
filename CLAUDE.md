@@ -228,7 +228,7 @@ own cap. All truncate past 9,500 characters (`CONTEXT_LIMIT` in
 (`utils/check-hook-budget.sh`, wired through `.githooks/pre-commit`;
 enable per clone with `git config core.hooksPath .githooks`) fails any commit
 that would truncate: it runs each real hook and requires 300 characters of
-headroom for machine-dependent variation. Fourteen documents inject today:
+headroom for machine-dependent variation. Fifteen documents inject today:
 eleven rule documents (word choice, technical names, technical verbs, noun
 clusters, verbs, sentences, instructions, descriptions, punctuation and word
 count, writing practices, general recommendations), three specimen documents,
