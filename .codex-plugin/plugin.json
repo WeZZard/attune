@@ -1,7 +1,7 @@
 {
   "name": "attune",
   "version": "0.13.0",
-  "description": "Capture and apply human-ruled knowledge the model cannot internalize \u2014 operational rulings on how the agent executes and delegates work, settled by the right instrument: derive the derivable, research the world, experiment when no answer exists yet, and ask the human for the rulings only their judgment can make.",
+  "description": "George Orwell's rules on writing well, injected at session start to govern every reply and every document the agent writes, plus two user-invoked skills for the questions a discussion turns on: explore drives the design conversation and brings the user only what only they can settle; experiment settles by blind comparison.",
   "author": {
     "name": "WeZZard",
     "email": "me@wezzard.com"
@@ -10,15 +10,16 @@
   "repository": "https://github.com/WeZZard/attune",
   "license": "MIT",
   "keywords": [
+    "communication",
+    "writing",
     "execution",
-    "verification",
-    "delegation"
+    "verification"
   ],
   "skills": "./codex/skills/",
   "hooks": "./hooks.json",
   "interface": {
     "displayName": "Attune",
-    "shortDescription": "A verification standard and the oracle method",
+    "shortDescription": "Orwell on writing, plus explore and experiment",
     "developerName": "WeZZard",
     "websiteURL": "https://github.com/WeZZard/attune"
   }

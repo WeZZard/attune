@@ -1,6 +1,6 @@
 ---
 name: explore
-description: "<EXTREMELY_IMPORTANT>You MUST use explore when discussing solutions, designs, or approaches with the user, and whenever a user preference or output-style judgment surfaces. It plays four moves, each firing when its condition arises: Ask — raise the purpose, alternative, and shortcut questions aimed at yourself, and put sorted questions to the user well-shaped; Sort — world fact, user-held fact, or judgment; Research — settle world facts through the cheapest sufficient source; Experiment — create the answer nothing existing holds. The model drives; the user spends judgment, never legwork.</EXTREMELY_IMPORTANT>"
+description: "Drive a design discussion by four moves: Ask — raise the purpose, alternative, and shortcut questions at yourself first, then put what is left to the user well-shaped; Sort — split every open point into world fact, user-held fact, or judgment; Research — settle world facts through the cheapest sufficient source; Experiment — create the answer nothing existing holds. The model drives; the user spends judgment, never legwork."
 ---
 
 <!-- GENERATED from skills/explore/SKILL.md by utils/generate-platform-assets.sh — edit the source, then regenerate. -->

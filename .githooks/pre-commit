@@ -5,12 +5,18 @@ set -e
 
 cd "$(git rev-parse --show-toplevel)"
 
+node --check extensions/attune.js
 node --check hooks/_lib.mjs
+node --check hooks/session-start-communication.mjs
+node --check hooks/session-start-communication-specimens.mjs
 node --check hooks/session-start-execution.mjs
+node --check hooks/user-prompt-submit-plain-language.mjs
+node --check utils/_check-hook-budget.mjs
 node --check utils/_check-plugins.mjs
 node --check utils/_generate-platform-assets.mjs
 node --check utils/_porting.mjs
 node -e "JSON.parse(require('fs').readFileSync('porting.json','utf8'))"
-node --test --test-reporter=dot utils/*.test.mjs
+node --test --test-reporter=dot extensions/*.test.mjs utils/*.test.mjs
 sh utils/generate-platform-assets.sh --check
+sh utils/check-hook-budget.sh
 sh utils/check-plugins.sh

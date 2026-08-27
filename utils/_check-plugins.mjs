@@ -85,8 +85,8 @@ if (versions.size > 1) {
 
 // The pi manifest key: any extensions/skills paths it lists must exist, and
 // the pi-package keyword keeps the package discoverable on pi.dev/packages.
-// extensions is optional — attune ships none since the pi extension that
-// carried the communication guidelines left for WeZZard/additive.
+// extensions carries attune.js, Pi's counterpart to the SessionStart hooks
+// the other two platforms run.
 const piManifest = manifests.pi?.pi;
 if (!piManifest) {
   fail('package.json: missing "pi" manifest key');

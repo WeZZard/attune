@@ -1,6 +1,7 @@
 ---
 name: experiment
-description: <EXTREMELY_IMPORTANT>Settle a question that only trying can answer — an output-style comparison, a prompt phrasing, an error message, any unknown with comparable candidates — by a blind comparison. Produce candidates, strip provenance, collect blind verdicts against one stated criterion, then present everything to the user for the ruling. Use when the attune explore skill's Experiment move fires — a fact nothing existing holds, or a judgment the user wants informed by blind evidence — or when the user asks to settle a question by evidence.</EXTREMELY_IMPORTANT>
+description: "Settle a question only trying can answer — an output-style comparison, a prompt phrasing, an error message, any unknown with comparable candidates — by blind comparison: produce candidates, strip provenance, collect blind verdicts against one stated criterion, then present everything to the user for the ruling."
+disable-model-invocation: true
 ---
 
 # Experiment — Settle by Evidence

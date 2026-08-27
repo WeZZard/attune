@@ -55,11 +55,37 @@ function skillSource(name) {
   return `${homes[0]}/${name}/SKILL.md`;
 }
 
+// Both skills are user-invoked only. Claude Code and Pi read that from
+// SKILL.md frontmatter — `disable-model-invocation: true`, honored by
+// Claude Code and by pi 0.84.3 (dist/core/skills.js drops such a skill
+// from the prompt, leaving only /skill:name). Codex has no frontmatter
+// switch for it: its control is `policy.allow_implicit_invocation` in the
+// skill's agents/openai.yaml — "When false, the skill is not injected into
+// the model context by default, but can still be invoked explicitly via
+// $skill" (codex-cli 0.149.1 bundled skill docs) — and its own skill
+// validator rejects a `disable-model-invocation` that is not false. So the
+// Codex projection TRANSLATES the key rather than copying it: the line
+// comes out of the mirrored frontmatter, and the policy file goes in.
+const MODEL_INVOCATION_OFF = /^disable-model-invocation:\s*true\s*$/m;
+
+function userInvokedOnly(frontmatter) {
+  return MODEL_INVOCATION_OFF.test(frontmatter);
+}
+
+const codexPolicy = () =>
+  ['policy:', '  allow_implicit_invocation: false', ''].join('\n');
+
 // Mirror a source skill for one platform, splicing its @port blocks —
 // skills/*.md is Claude's literal version; the DSL carries the variants.
 function mirroredSkill(name, platform) {
   const source = skillSource(name);
-  const { frontmatter, body } = splitFrontmatter(read(source), source);
+  let { frontmatter, body } = splitFrontmatter(read(source), source);
+  if (platform === 'codex') {
+    frontmatter = frontmatter
+      .split('\n')
+      .filter((line) => !/^disable-model-invocation:/.test(line))
+      .join('\n');
+  }
   return [
     '---',
     frontmatter,
@@ -75,10 +101,9 @@ function mirroredSkill(name, platform) {
 // The Codex hook wiring: one self-locating command per ported guideline
 // doc. Codex hook commands get neither a plugin-root cwd nor a
 // plugin-root variable (verified against codex-cli 0.144.4), hence the
-// glob. Nothing is ported to Codex today — execution-guidelines.md is
-// Claude-only — so this produces an empty wiring; kept generated rather
-// than hand-written so a future guideline doc that does port to Codex
-// needs only a porting.json edit.
+// glob. The two communication documents port; execution-guidelines.md is
+// Claude-only and does not. An empty list still generates a valid empty
+// wiring, so a doc that stops porting needs only a porting.json edit.
 function codexHooksJson(docs) {
   const command = (hook) =>
     `/bin/sh -c 'for f in "\${CODEX_HOME:-$HOME/.codex}"/plugins/cache/*/attune/*/hooks/${hook}; do p="$f"; done; exec "$p" --platform codex'`;
@@ -110,6 +135,13 @@ function generate() {
         `${platform}/skills/${name}/SKILL.md`,
         mirroredSkill(name, platform),
       );
+      const source = skillSource(name);
+      if (
+        platform === 'codex' &&
+        userInvokedOnly(splitFrontmatter(read(source), source).frontmatter)
+      ) {
+        files.set(`${platform}/skills/${name}/agents/openai.yaml`, codexPolicy());
+      }
       // Mirror the skill's sibling files (references/, etc.) verbatim, so
       // progressive-disclosure playbooks travel with the skill to every
       // platform. Only SKILL.md carries @port splicing; the rest are copies.

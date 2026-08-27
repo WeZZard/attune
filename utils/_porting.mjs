@@ -8,13 +8,18 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-// Which SessionStart hook injects which reference doc. A new reference
-// document means a new hook AND a new entry here. execution-guidelines.md
-// is Claude-only (wired directly in hooks/hooks.json) and carries no
-// porting.json listing, so it needs no entry that loadPorting() checks —
-// kept here anyway as the single source of the hook filename.
+// Which hook injects which reference doc. A new reference document means a
+// new hook AND a new entry here. The two communication documents port to
+// Codex and Pi and are listed in porting.json; execution-guidelines.md and
+// plain-language.md are Claude-only (wired directly in hooks/hooks.json)
+// and carry no porting.json listing, so they need no entry that
+// loadPorting() checks — kept here anyway as the single source of the hook
+// filename, and so the budget gate runs them.
 export const HOOK_BY_DOC = {
+  'communication-guidelines.md': 'session-start-communication.mjs',
+  'communication-specimens.md': 'session-start-communication-specimens.mjs',
   'execution-guidelines.md': 'session-start-execution.mjs',
+  'plain-language.md': 'user-prompt-submit-plain-language.mjs',
 };
 
 // Platform-conditional blocks in skill sources. skills/*.md is Claude

@@ -1,18 +1,23 @@
 {
-  "comment": "Port matrix. Claude Code is not listed: it always ships the full feature set and is the source of truth. Each platform below is a projection: which reference docs inject at session start and which skills ship. utils/generate-platform-assets.sh projects this into codex/, pi/, and the root hooks.json. The communication guidelines and the pi extension that carried them left for the sibling WeZZard/additive plugin 2026-07-30; attune injects execution-guidelines.md only, Claude-only (see hooks/hooks.json), so neither platform lists a guidelines key.",
+  "comment": "Port matrix. Claude Code is not listed: it always ships the full feature set and is the source of truth. Each platform below is a projection: which reference docs inject at session start and which skills ship. utils/generate-platform-assets.sh projects this into codex/, pi/, and the root hooks.json. The communication guidelines inject on every platform — Claude Code and Codex through SessionStart hooks, Pi through the extension, which reads the same list. Two documents are listed nowhere here and are Claude-only by ruling: execution-guidelines.md, and plain-language.md, which repeats on every prompt and would cost a small context window more than it buys. Both skills are user-invoked only, never model-triggered; the generator projects that per platform.",
   "codex": {
     "skills": [
       "explore",
-      "experiment",
-      "definition-of-done"
+      "experiment"
+    ],
+    "guidelines": [
+      "communication-guidelines.md",
+      "communication-specimens.md"
     ]
   },
   "pi": {
     "skills": [
       "explore",
-      "experiment",
-      "keystone",
-      "definition-of-done"
+      "experiment"
+    ],
+    "guidelines": [
+      "communication-guidelines.md",
+      "communication-specimens.md"
     ]
   }
 }

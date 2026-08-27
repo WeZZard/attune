@@ -2,21 +2,33 @@
 
 ## Domain boundary
 
-Attune holds human-ruled subjective knowledge only: operational rulings
-on how the agent executes and delegates work (subagent model selection is
-the first — Claude-only, since its model names are Claude's). It is
-fully disjoint from every other knowledge system (retrospect, project
-docs, Claude Code auto memory) — no shared vocabulary, no cross-routing.
-World facts and measured lessons are never recorded here.
+Attune holds human-ruled subjective knowledge only, of two kinds:
 
-The standing communication and output-style guidelines that lived here
-through 0.12.0 — `references/communication-*.md`, their fourteen
-SessionStart hooks, the pi extension that injected them, the `ask-wezzard`
-feedback skill, and the session-model store that stamped its issues —
-moved to the sibling [additive](https://github.com/WeZZard/additive)
-plugin 2026-07-30, because they govern documents additive already owns
-the lifecycle of. Nothing here reads additive, and nothing there reads
-this.
+- **How the agent writes and speaks.** `references/communication-guidelines.md`
+  and `references/communication-specimens.md` — Orwell, "Politics and the
+  English Language" (1946). They are the whole of the communication
+  guideline (ruled 2026-08-27): by their own scope paragraph they govern
+  replies in conversation and authored prose artifacts alike, and nothing
+  else here rules prose. Every rule and every example is the source's own;
+  an invented example is the failure this set exists to avoid.
+  `references/plain-language.md` sits beside them: one paragraph, repeated
+  on every prompt rather than read once at session start, because the rule
+  it carries — plain words, an area's own standard terms, no jargon
+  invented on the fly — is the one that decays first as a conversation
+  grows. It is Claude Code only (ruled 2026-08-27): repeating it costs a
+  small context window more than it buys.
+- **How the agent executes work.** `references/execution-guidelines.md`
+  (subagent model selection — Claude-only, since its model names are
+  Claude's), plus the two skills that settle open questions, `explore` and
+  `experiment`.
+
+It is fully disjoint from every other knowledge system (retrospect,
+project docs, Claude Code auto memory) — no shared vocabulary, no
+cross-routing. World facts and measured lessons are never recorded here.
+
+The guidelines are a product, not a workflow. `references/*.md` changes
+only by the user's explicit editorial decision; git history is the review
+trail, and no skill here rewrites a rule.
 
 ## Source of truth: the Claude Code plugin source
 
@@ -33,9 +45,17 @@ the Claude-side tree: a skill Claude itself never runs sources from
 `portable-skills/<name>/` (Claude Code auto-discovers `skills/`, so
 `skills/` holds exactly what Claude runs — nothing more).
 
-`references/execution-guidelines.md` is the one document left here. It is
-Claude-only (wired directly in `hooks/hooks.json`) and carries no
-`porting.json` listing.
+Four documents live in `references/`. The two communication documents
+port everywhere. `execution-guidelines.md` and `plain-language.md` are
+Claude-only — wired in `hooks/hooks.json` like the others, but carrying no
+`porting.json` listing, so neither the generated root `hooks.json` nor the
+Pi extension picks either up. `plain-language.md` is also the only
+document injected at a per-turn event; every other one injects once at
+session start.
+
+`portable-skills/` holds nothing today — the one skill that lived there,
+`keystone`, was removed 2026-08-27 — and the mechanism above stays for the
+next skill Claude itself never runs.
 
 ## Multi-platform packaging
 
@@ -44,19 +64,30 @@ source. Three manifests coexist: `.claude-plugin/plugin.json` (Claude Code),
 `.codex-plugin/plugin.json` (Codex — its `hooks` pointer to the root
 `hooks.json` is REQUIRED: without it Codex would auto-discover
 `hooks/hooks.json`, which is Claude's), and `package.json` (Pi — the `pi`
-key lists `skills`; the `pi-package` keyword is Pi's gallery flag; attune
-ships no pi extension). The gate enforces one version across all three;
-bump them together.
+key lists `extensions` and `skills`; the `pi-package` keyword is Pi's
+gallery flag). The gate enforces one version across all three; bump them
+together.
 
 **Port matrix.** `porting.json` is the single control for what ships
 where: per platform, which reference docs inject and which skills ship.
 Claude Code never appears in it — it ships every feature with a Claude
 surface and its source tree is the source of truth; the other platforms
-are projections. The keystone skill inverts the direction:
-it compensates for sub-frontier models that miss a plan's load-bearing
-decision, so it ships to Pi only — Claude Code and Codex run
-frontier-class models and do not carry it. Re-porting any of this is a
-`porting.json` edit plus regeneration, not a code change.
+are projections. Both skills and both communication documents ship to all
+three today; `execution-guidelines.md` ships to Claude Code alone.
+Re-porting any of this is a `porting.json` edit plus regeneration, not a
+code change.
+
+**Skills are user-invoked, never model-triggered** (ruled 2026-08-27).
+The source frontmatter carries `disable-model-invocation: true`, which
+Claude Code honors and pi 0.84.3 honors (`dist/core/skills.js` drops such
+a skill from the prompt, leaving `/skill:name`). Codex has no frontmatter
+equivalent — its own skill validator demands the field be false — so the
+generator TRANSLATES rather than copies: it strips the line from the
+Codex mirror and writes `codex/skills/<name>/agents/openai.yaml` with
+`policy.allow_implicit_invocation: false`, which Codex documents as "the
+skill is not injected into the model context by default, but can still be
+invoked explicitly via `$skill`". One ruling in one place, projected three
+ways; a new skill needs no generator edit.
 
 **Skill variants (@port DSL).** A source skill that needs per-platform text
 carries `@port` blocks, spliced by the generator (`projectSkill` in
@@ -67,9 +98,8 @@ another platform's variant hides inside a comment block
 (`<!-- @port codex pi` … `-->`) Claude never sees and must not list
 `claude` — the parser enforces both. This is how explore ports to Codex
 and Pi in a variant that runs its research without background subagents.
-Experiment and definition-of-done ship one text everywhere: their external
-widening is conditional on the dispatch plugin's presence, which is never
-true off Claude Code.
+Experiment ships one text everywhere: its external widening is conditional
+on the dispatch plugin's presence, which is never true off Claude Code.
 
 **Generated trees.** `codex/`, `pi/`, and the root `hooks.json` are build
 products of `utils/generate-platform-assets.sh` — never hand-edit them; edit
@@ -78,16 +108,16 @@ The pre-commit gate fails on stale, missing, or foreign files there (and on
 any resurrected `kimi/` file). Matrix-selected skills mirror into
 `<platform>/skills/`, sourced from `skills/` or `portable-skills/` (exactly
 one home per skill). A skill mirrors as its whole directory: SKILL.md
-carries the `@port` splice, and every sibling file (e.g.
-definition-of-done's `references/use-paths/*.md` playbooks) is copied
+carries the `@port` splice and the Codex invocation-policy translation,
+and every sibling file (a skill's own `references/*.md`, say) is copied
 verbatim so progressive-disclosure references travel with the skill to
 every platform — verified that Codex, Pi, and Claude Code all load
 skill-local `references/` files. A new reference document means a new hook
 plus a `HOOK_BY_DOC` entry in `utils/_porting.mjs`, and — when the doc
 ships beyond Claude Code — per-platform `porting.json` listings, never a
-bigger hook. `execution-guidelines.md` takes the hook and the `HOOK_BY_DOC`
-entry but no `porting.json` listing, which is why the generated root
-`hooks.json` is `{"hooks":{}}` today — nothing is ported to Codex.
+bigger hook. The generated root `hooks.json` wires the two communication
+hooks and nothing else, because `execution-guidelines.md` takes the hook
+and the `HOOK_BY_DOC` entry but no `porting.json` listing.
 
 **Codex facts (verified against codex-cli 0.144.4).** Codex has native
 subagents (TOML files in `~/.codex/agents/`, GA 2026-03-16), but a plugin
@@ -107,7 +137,11 @@ payload carries `model` (exact id), `session_id`, `transcript_path`, and
 `cwd`; `additionalContext` injection works only at SessionStart,
 SubagentStart, and UserPromptSubmit — PreToolUse outputs permission
 decisions alone, so just-in-time injection at a tool call is impossible.
-There is no model-change event. Codex plugins can also ship MCP servers
+There is no model-change event. A skill directory may carry
+`agents/openai.yaml`, whose `policy.allow_implicit_invocation: false`
+keeps the skill out of the model's context until it is invoked explicitly
+(verified against the skill metadata schema and bundled docs in codex-cli
+0.149.1). Codex plugins can also ship MCP servers
 (manifest `mcpServers` → a Claude-style `.mcp.json`) — unused by attune.
 Skills are namespaced `attune:*`. Codex also installs Claude-format plugins
 (falls back to `.claude-plugin/plugin.json`), which is why the native
@@ -116,13 +150,15 @@ manifest must stay present and correct.
 **Pi facts (verified against pi 0.80.10).** Extensions are TS/JS
 default-export factories loaded by jiti; `before_agent_start` returns a
 chained `systemPrompt` (the injection path — no documented cap; re-verify
-after sizeable growth), which is how a Pi extension would inject context
-if attune shipped one — it does not today. `pi install`
+after sizeable growth). `extensions/attune.js` uses it: Pi has no hook
+mechanism, so the extension is Pi's counterpart to the SessionStart hooks,
+reading the same `porting.json` list the other two platforms read.
+`pi install`
 accepts a GitHub URL (full git clone into `~/.pi/agent/git/<host>/<path>`,
 `npm install` run when package.json exists) or a local path (referenced in
 place, stored relative to the settings file). Skills follow the same Agent
-Skills standard as Claude Code (SKILL.md frontmatter), mirrored per the
-port matrix. RPC mode (`pi --mode rpc`) is the headless path that actually
+Skills standard as Claude Code (SKILL.md frontmatter, including
+`disable-model-invocation`), mirrored per the port matrix. RPC mode (`pi --mode rpc`) is the headless path that actually
 loads package extensions and reports load errors at startup
 (`pi --list-models` does not) — the gate's load check relies on that.
 
@@ -148,6 +184,11 @@ from the GitHub URL (`pi install https://github.com/WeZZard/attune`).
 - `utils/generate-platform-assets.sh --check` — staleness of the generated
   trees and the generated root `hooks.json`, all projected from
   `porting.json`.
+- `utils/check-hook-budget.sh` — every SessionStart hook's injected
+  context against `CONTEXT_LIMIT`, with 300 chars of headroom reserved for
+  machine-dependent variation. This is the gate that makes growth of a
+  reference document a commit-time failure rather than a silent
+  truncation at session start.
 - `utils/check-plugins.sh` — the three-packaging gate: structural checks
   (manifest schemas, version equality, referenced paths, SKILL.md
   frontmatter, hook-command targets), then official validators when the CLI
@@ -166,10 +207,9 @@ WeZZard/dispatch plugin (Claude Code only): the external-agent router, the
 agent registry and probe scripts, and the use-external-agents, audit, and
 image-generation skills. Attune references dispatch only
 presence-conditionally — experiment widens its producers and judges
-through dispatch's skills when they are installed, and definition-of-done
-routes independent re-checks through dispatch's `audit` skill when
-present; both degrade to self-run variants otherwise. Attune never
-assumes dispatch exists, and dispatch works without attune.
+through dispatch's skills when they are installed, and degrades to a
+self-run variant otherwise. Attune never assumes dispatch exists, and
+dispatch works without attune.
 
 ## Command naming convention
 
@@ -180,18 +220,17 @@ surface, underscored internals may be reshaped freely. Hook entry points are wir
 follow one event-prefixed convention — `hooks/<event>-<function>.mjs`,
 e.g. `session-start-execution.mjs` (SessionStart) — with no shell
 wrappers: their caller is generated in lockstep, so there is no typed
-surface to stabilize. Shared internals are underscored (`hooks/_lib.mjs`). Placement: `utils/` holds development tooling (the
+surface to stabilize — `hooks/user-prompt-submit-plain-language.mjs` is
+the UserPromptSubmit entry, and its emitted `hookEventName` must name the
+event that fired or the runtime drops the context. Shared internals are
+underscored (`hooks/_lib.mjs`). Placement: `utils/` holds development tooling (the
 commit gate); attune ships no runtime commands — they moved to dispatch.
 
 ## Open items
 
-- If the definition-of-done skill does not move the model's behavior,
-  escalate to a Stop hook that checks for unverified claims before the turn
-  ends. The skill is named `definition-of-done` (the moment, not the
-  activity): it fires when the agent is about to call work done, the
-  trigger point an activity-noun like `verification` matches worst; and it
-  leaves Claude Code's built-in `verify` skill (the procedure) unshadowed —
-  never ship a competing duplicate. It carries a growing store of
-  per-domain use-path playbooks under `references/use-paths/`; a domain no
-  playbook covers is driven best-effort and leaves a drafted playbook for
-  the user to fold in (source growth, git-tracked — never a runtime write).
+- The `definition-of-done` skill and the Pi-only `keystone` skill were
+  removed 2026-08-27, along with their use-path playbooks. Git history
+  holds them if either is ever wanted back.
+- Nothing observes whether the injected guidelines are followed. The
+  honest escalation, if it ever matters, is a check that observes the
+  output — never a skill that asks the model whether it complied.
