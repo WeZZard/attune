@@ -1,5 +1,5 @@
 {
-  "description": "Attune guideline injection — the communication guidelines (Orwell) and the execution guidelines at session start, one hook per document because each hook's output is capped, plus the plain-language reminder on every prompt",
+  "description": "Attune guideline injection — the communication guidelines (Orwell) and the execution guidelines at session start, one hook per document because each hook's output is capped, plus the plain-language reminder on every prompt and again before every Write tool call",
   "hooks": {
     "SessionStart": [
       {
@@ -29,6 +29,18 @@
           {
             "type": "command",
             "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/user-prompt-submit-plain-language.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pre-tool-use-plain-language.mjs\"",
             "timeout": 10
           }
         ]

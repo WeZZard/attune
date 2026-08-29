@@ -12,10 +12,11 @@ Attune holds human-ruled subjective knowledge only, of two kinds:
   else here rules prose. Every rule and every example is the source's own;
   an invented example is the failure this set exists to avoid.
   `references/plain-language.md` sits beside them: one paragraph, repeated
-  on every prompt rather than read once at session start, because the rule
-  it carries — plain words, an area's own standard terms, no jargon
-  invented on the fly — is the one that decays first as a conversation
-  grows. It is Claude Code only (ruled 2026-08-27): repeating it costs a
+  on every prompt and again before every Write tool call rather than read
+  once at session start, because the rule it carries — plain words, an
+  area's own standard terms, no jargon invented on the fly — is the one
+  that decays first as a conversation grows, and the Write call is where
+  authored prose leaves the session. It is Claude Code only (ruled 2026-08-27): repeating it costs a
   small context window more than it buys.
 - **How the agent executes work.** `references/execution-guidelines.md`
   (subagent model selection — Claude-only, since its model names are
@@ -50,8 +51,9 @@ port everywhere. `execution-guidelines.md` and `plain-language.md` are
 Claude-only — wired in `hooks/hooks.json` like the others, but carrying no
 `porting.json` listing, so neither the generated root `hooks.json` nor the
 Pi extension picks either up. `plain-language.md` is also the only
-document injected at a per-turn event; every other one injects once at
-session start.
+document injected at per-turn events — every prompt (UserPromptSubmit)
+and again before each Write tool call (PreToolUse, two hooks over one
+document); every other one injects once at session start.
 
 `portable-skills/` holds nothing today — the one skill that lived there,
 `keystone`, was removed 2026-08-27 — and the mechanism above stays for the

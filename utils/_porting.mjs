@@ -14,7 +14,9 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 // plain-language.md are Claude-only (wired directly in hooks/hooks.json)
 // and carry no porting.json listing, so they need no entry that
 // loadPorting() checks — kept here anyway as the single source of the hook
-// filename, and so the budget gate runs them.
+// filename, and so the budget gate runs them. plain-language.md has a
+// second, unlisted hook (pre-tool-use-plain-language.mjs): it emits the
+// identical context, so the listed hook already proves its budget.
 export const HOOK_BY_DOC = {
   'communication-guidelines.md': 'session-start-communication.mjs',
   'communication-specimens.md': 'session-start-communication-specimens.mjs',

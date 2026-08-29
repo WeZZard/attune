@@ -1,8 +1,8 @@
 // _lib.mjs — shared context-injection mechanics for the hooks. Serves two
 // hook platforms: Claude Code (hooks/hooks.json) and Codex (the generated
-// root hooks.json), and two events: SessionStart, which injects the
-// standing guidelines once, and UserPromptSubmit, which repeats the
-// plain-language reminder on every turn. The emitted hookEventName MUST
+// root hooks.json), and three events: SessionStart, which injects the
+// standing guidelines once, and UserPromptSubmit and PreToolUse (Write),
+// which repeat the plain-language reminder. The emitted hookEventName MUST
 // name the event that fired, or the runtime discards the context. Each
 // hook's output is capped at 10,000 chars on Claude Code
 // (code.claude.com/docs/en/hooks); each injects within CONTEXT_LIMIT to
