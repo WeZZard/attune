@@ -1,6 +1,6 @@
 {
   "name": "attune",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "George Orwell's rules on writing well, injected at session start to govern every reply and every document the agent writes, plus two user-invoked skills for the questions a discussion turns on: explore drives the design conversation and brings the user only what only they can settle; experiment settles by blind comparison.",
   "author": {
     "name": "WeZZard",
