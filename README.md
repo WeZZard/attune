@@ -1,6 +1,6 @@
 # Attune
 
-Attune carries the standing communication guidelines — George Orwell's rules from "Politics and the English Language" (1946) — and injects them at session start, so they govern every reply in conversation and every prose artifact the agent writes. Beside them it carries the execution rulings and two skills for settling unknowns by evidence. One repo ships three plugins: Claude Code, Codex, and Pi, all fed by the same `references/*.md` and `skills/*` source of truth. Claude Code always carries the full feature set; `porting.json` (the port matrix) decides what ships to the other platforms. External-agent delegation lives in the sibling [dispatch](https://github.com/WeZZard/dispatch) plugin — attune's experiment widens through it when it is installed, and degrades gracefully without it.
+Attune carries the standing communication guidelines — George Orwell's rules from "Politics and the English Language" (1946) — and injects them at session start, so they govern every reply in conversation and every prose artifact the agent writes. Beside them it carries the execution rulings and two user-invoked skills for the questions a design discussion turns on. Explore drives the discussion and brings you only what only you can settle. Experiment settles a question by blind comparison. One repo ships three plugins: Claude Code, Codex, and Pi, all fed by the same `references/*.md` and `skills/*` source of truth. Claude Code always carries the full feature set; `porting.json` (the port matrix) decides what ships to the other platforms.
 
 - **The communication guidelines** are the whole rule set, and nothing else here rules prose: cut a word wherever a word can be cut; never use a metaphor you are used to seeing in print; never a long word where a short one will do; never the passive where the active will serve; never a foreign or jargon word when an everyday English one exists — and break any of these sooner than say anything outright barbarous. A second document carries the whole-passage specimens, prose gone dead at length.
 - **The clear-expression reminder** is one paragraph, and it arrives with every prompt and again before every Write tool call rather than once at session start. It carries four rules.
@@ -12,8 +12,13 @@ Attune carries the standing communication guidelines — George Orwell's rules f
 
   These are the rules that decay first in a long conversation, so they are the ones worth repeating. Claude Code only — on a small context window the repetition costs more than it buys.
 - **The execution guidelines** rule how work is delegated: which model a spawned subagent gets, and why caution alone is never a reason to escalate one.
-- **Explore** routes every open question in a discussion to the instrument that settles it: derive what reasoning alone can settle, research the world, run an experiment when no answer exists yet, and ask the human for the rulings only their judgment can make.
-- **The experiment** settles questions that only trying can answer, such as "does the shorter opening actually read better?". It produces candidate versions, blinds them, has external models rank them against one criterion stated up front, and hands you the verdicts. You make the ruling.
+- **Explore** drives a design discussion by four moves. The model drives; you spend judgment, never legwork.
+
+  1. Ask raises the purpose, alternative, and shortcut questions at the model itself first, then puts what is left to you well-shaped.
+  2. Sort splits every open point into a world fact, a fact only you hold, or a judgment. A world fact is never asked of you, at most routed through you.
+  3. Research settles world facts through the cheapest sufficient source, trying memory, then this machine, then the web.
+  4. Experiment creates the answer nothing existing holds.
+- **The experiment** settles questions that only trying can answer, such as "does the shorter opening actually read better?". It produces candidate versions, blinds them, has judges rank them against one criterion stated up front, and hands you the verdicts. You make the ruling.
 
 The guidelines arrive on their own; the skills never do. Both skills are user-invoked only and are hidden from the model's own skill list, so `explore` and `experiment` run when you ask for them and at no other time.
 
@@ -26,7 +31,7 @@ The guidelines arrive on their own; the skills never do. Both skills are user-in
 /plugin install attune@wezzard-skills
 ```
 
-Start a session. Three SessionStart hooks inject the communication guidelines, their specimens, and the execution guidelines; a UserPromptSubmit hook adds the clear-expression reminder to every prompt, and a PreToolUse hook repeats it before every Write tool call. Run the skills with `/attune:explore` and `/attune:experiment`. Install `dispatch@wezzard-skills` alongside for the external-agent router, the audit panel, and image generation.
+Start a session. Three SessionStart hooks inject the communication guidelines, their specimens, and the execution guidelines; a UserPromptSubmit hook adds the clear-expression reminder to every prompt, and a PreToolUse hook repeats it before every Write tool call. Run the skills with `/attune:explore` and `/attune:experiment`.
 
 ### Codex
 
