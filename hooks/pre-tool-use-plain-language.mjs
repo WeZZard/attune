@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// PreToolUse hook (matcher: Write) — repeat plain-language.md right before
+// PreToolUse hook (matcher: Write) — repeat clear-expression.md right before
 // a file is written.
 //
 // The per-prompt reminder fires at the top of a turn; by the time a long
@@ -10,4 +10,4 @@
 
 import { emitDoc } from './_lib.mjs';
 
-emitDoc(import.meta.url, 'plain-language.md', 'PreToolUse');
+emitDoc(import.meta.url, 'clear-expression.md', 'PreToolUse');

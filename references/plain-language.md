@@ -1,1 +1,0 @@
-<EXTREMELY_IMPORTANT>You **MUST** speak in plain and simple language. You **MUST** use the standard verbs, phrasal verbs, concepts and terms in the areas involved in the conversation. You **MUST NOT** invent any jargon or phrasal verbs that are unrelated to the areas involved in the conversation on the fly.</EXTREMELY_IMPORTANT>

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// UserPromptSubmit hook — repeat plain-language.md on every turn.
+// UserPromptSubmit hook — repeat clear-expression.md on every turn.
 //
 // The session-start guidelines are read once and drift as a conversation
 // grows; this one rule is short enough to restate every turn. Claude Code only:
@@ -8,4 +8,4 @@
 
 import { emitDoc } from './_lib.mjs';
 
-emitDoc(import.meta.url, 'plain-language.md', 'UserPromptSubmit');
+emitDoc(import.meta.url, 'clear-expression.md', 'UserPromptSubmit');
