@@ -1,7 +1,7 @@
 {
   "name": "attune",
   "description": "George Orwell's rules on writing well, injected at session start to govern every reply and every document the agent writes, plus two user-invoked skills for the questions a discussion turns on: explore drives the design conversation and brings the user only what only they can settle; experiment settles by blind comparison. On Claude Code, two more skills: review-doc reviews a document with one blind expert per section, and fix-issues applies what the review found, asking the user only for judgments.",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "author": {
     "name": "WeZZard",
     "email": "me@wezzard.com"
